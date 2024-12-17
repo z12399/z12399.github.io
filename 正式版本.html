@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色与法宝卡选择</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+   .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        select {
+            padding: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+   .result {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!--選擇角色和法寶卡-->
+        <label>选择角色：</label>
+        <select id="characterSelect">
+            <option value="黑麥">黑麥</option>
+            <option value="雪花糖球">雪花糖球</option>
+            <option value="角色3">角色 3</option>
+        </select>
+
+        <label>选择法宝卡：</label>
+        <select id="treasureCardSelect">
+            <option value="法宝卡1">法宝卡 1</option>
+            <option value="法宝卡2">法宝卡 2</option>
+            <option value="法宝卡3">法宝卡 3</option>
+        </select>
+
+        <label>选择套裝：</label>
+        <select id="equipmentSelect">
+            <option value="屬性套">屬性套</option>
+            <option value="謎樣流浪者">謎樣流浪者</option>
+            <option value="詭異的獵人">詭異的獵人</option>
+        </select>
+
+        <button onclick="calculate()">计算</button>
+        <div id="potentialResult"></div>
+
+        <div class="result" id="baseAtkResult">基础攻击力：</div>
+        <div class="result" id="atkPercentageResult">攻击力百分比：</div>
+        <div class="result" id="attributeDamageResult">属性伤害百分比：</div>
+        <div class="result" id="critRateResult">暴击率：</div>
+        <div class="result" id="critDamageResult">暴击伤害：</div>
+    </div>
+    <!--抓取角色和法寶卡資料-->
+    <script src="CharacterData.js"></script>
+    <script src="TreasureCardData.js"></script>
+    <script src="EquipmentData.js"></script>
+    <script>
+        // 更新结果，并将抓取结果设定为常量
+        const characterSelect = document.getElementById('characterSelect');
+        const treasureCardSelect = document.getElementById('treasureCardSelect');
+        const equipmentSelect = document.getElementById('equipmentSelect');
+
+        const baseAtkResult = document.getElementById('baseAtkResult');
+        const atkPercentageResult = document.getElementById('atkPercentageResult');
+        const attributeDamageResult = document.getElementById('attributeDamageResult');
+        const critRateResult = document.getElementById('critRateResult');
+        const critDamageResult = document.getElementById('critDamageResult');
+
+        function updateResults() {
+            const selectedCharacter = characterSelect.value;
+            const selectedTreasureCard = treasureCardSelect.value;
+            const selectedEquipment = equipmentSelect.value;
+
+            const character = characterData[selectedCharacter];
+            const card = treasureCardData[selectedTreasureCard];
+            const equipment = equipmentData[selectedEquipment];
+
+            const baseAtk = character['baseAtk'] + card['baseAtk'] + equipment['baseAtk'];
+            baseAtkResult.textContent = `基础攻击力：${Math.round(baseAtk * 100) / 100}`;
+
+            const atkPercentage = character['atkPercentage'] + card['atkPercentage'] + equipment['atkPercentage'];
+            atkPercentageResult.textContent = `攻击力百分比：${Math.round(atkPercentage * 100) / 100}`;
+
+            const attributeDamage = character['attributeDamage'] + card['attributeDamage'] + equipment['attributeDamage'];
+            attributeDamageResult.textContent = `属性伤害百分比：${Math.round(attributeDamage * 100) / 100}`;
+
+            const critRate = character['critRate'] + card['critRate'] + equipment['critRate'];
+            critRateResult.textContent = `暴击率：${Math.round(critRate * 100) / 100}`;
+
+            const critDamage = character['critDamage'] + card['critDamage'] + equipment['critDamage'];
+            critDamageResult.textContent = `暴击伤害：${Math.round(critDamage * 100) / 100}`;
+        }
+
+        characterSelect.addEventListener('change', updateResults);
+        treasureCardSelect.addEventListener('change', updateResults);
+        equipmentSelect.addEventListener('change', updateResults);
+
+        function calculate() {
+            const selectedCharacter = characterSelect.value;
+            const selectedTreasureCard = treasureCardSelect.value;
+            const selectedEquipment = equipmentSelect.value;
+
+            const character = characterData[selectedCharacter];
+            const card = treasureCardData[selectedTreasureCard];
+            const equipment = equipmentData[selectedEquipment];
+
+            const baseAtk = character['baseAtk'] + card['baseAtk'] + equipment['baseAtk'];
+            const atkPercentage = character['atkPercentage'] + card['atkPercentage'] + equipment['atkPercentage'];
+            const attributeDamage = character['attributeDamage'] + card['attributeDamage'] + equipment['attributeDamage'];
+            const critRate = character['critRate'] + card['critRate'] + equipment['critRate'];
+            const critDamage = character['critDamage'] + card['critDamage'] + equipment['critDamage'];
+
+            let totalPoints = 8;
+
+            function calculateValue(pointBaseAtk, pointAtkPercentage, pointAttributeDamage, pointCritRate, pointCritDamage) {
+                let newBaseAtk = baseAtk + pointBaseAtk * 80.0;
+                let newAtkPercentage = atkPercentage + pointAtkPercentage * 0.2;
+                let newAttributeDamage = attributeDamage + pointAttributeDamage * 0.15;
+                let newCritRate = Math.min(critRate + pointCritRate * 0.15, 1.0);
+                let newCritDamage = critDamage + pointCritDamage * 0.25;
+                return newBaseAtk * (1 + newAtkPercentage) * (1 + newAttributeDamage) * (newCritRate * (1 + newCritDamage) + (1 - newCritRate) * 1);
+            }
+
+            let maxValue = 0;
+            let bestPointBaseAtk = 0;
+            let bestPointAtkPercentage = 0;
+            let bestPointAttributeDamage = 0;
+            let bestPointCritRate = 0;
+            let bestPointCritDamage = 0;
+
+            for (let pointBaseAtk = 0; pointBaseAtk < 3; pointBaseAtk++) {
+                for (let pointAtkPercentage = 0; pointAtkPercentage < totalPoints + 1 - pointBaseAtk; pointAtkPercentage++) {
+                    for (let pointAttributeDamage = 0; pointAttributeDamage < Math.min(3, totalPoints + 1 - pointBaseAtk - pointAtkPercentage); pointAttributeDamage++) {
+                        for (let pointCritRate = 0; pointCritRate < Math.min(totalPoints + 1 - pointBaseAtk - pointAtkPercentage - pointAttributeDamage, Math.floor((1 - critRate) / 0.15) + 1); pointCritRate++) {
+                            for (let pointCritDamage = 0; pointCritDamage < totalPoints + 1 - pointBaseAtk - pointAtkPercentage - pointAttributeDamage - pointCritRate; pointCritDamage++) {
+                                const currentValue = calculateValue(pointBaseAtk, pointAtkPercentage, pointAttributeDamage, pointCritRate, pointCritDamage);
+                                if (currentValue > maxValue) {
+                                    maxValue = currentValue;
+                                    bestPointBaseAtk = pointBaseAtk;
+                                    bestPointAtkPercentage = pointAtkPercentage;
+                                    bestPointAttributeDamage = pointAttributeDamage;
+                                    bestPointCritRate = pointCritRate;
+                                    bestPointCritDamage = pointCritDamage;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            const potentialResultDiv = document.getElementById('potentialResult');
+            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${Math.round(bestPointBaseAtk * 100) / 100} 点，攻擊力百分比 加 ${Math.round(bestPointAtkPercentage * 100) / 100} 点，屬性傷害 加 ${Math.round(bestPointAttributeDamage * 100) / 100} 点，爆擊率 加 ${Math.round(bestPointCritRate * 100) / 100} 点，爆擊傷害 加 ${Math.round(bestPointCritDamage * 100) / 100} 点`;
+            potentialResultDiv.innerHTML = result_text;
+        }
+    </script>
+</body>
+
+</html>
