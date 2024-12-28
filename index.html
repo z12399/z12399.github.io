@@ -36,59 +36,129 @@
             background-color: #f9f9f9;
             margin-bottom: 20px;
         }
+        
+        table {
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 5px;
+    }
+
     </style>
+    <!-- 抓取資料 -->
+    <script src="CharacterData.js"></script>
+    <script src="TreasureCardData.js"></script>
+    <script src="EquipmentData.js"></script>
 </head>
 
 <body>
     <div class="container">
         <!--選擇角色和法寶卡-->
-        <label>选择角色：</label>
+        <label>選擇角色：</label>
         <select id="characterSelect">
             <option value="黑麥">黑麥</option>
             <option value="雪花糖球">雪花糖球</option>
-            <option value="角色3">角色 3</option>
+            <option value="奶油蘇打">奶油蘇打</option>
         </select>
 
-        <label>选择法宝卡：</label>
+        <label>選擇法寶卡：</label>
         <select id="treasureCardSelect">
-            <option value="法宝卡1">法宝卡 1</option>
-            <option value="法宝卡2">法宝卡 2</option>
-            <option value="法宝卡3">法宝卡 3</option>
+            <option value="黃昏追擊戰">黃昏追擊戰</option>
+            <option value="幸福的回憶">幸福的回憶</option>
+            <option value="作戰開始">作戰開始</option>
         </select>
 
-        <label>选择套裝：</label>
+        <label>選擇套裝：</label>
         <select id="equipmentSelect">
             <option value="屬性套">屬性套</option>
             <option value="謎樣流浪者">謎樣流浪者</option>
             <option value="詭異的獵人">詭異的獵人</option>
         </select>
 
-        <button onclick="calculate()">计算</button>
+        <button onclick="calculate()">計算</button>
         <div id="potentialResult"></div>
 
-        <div class="result" id="baseAtkResult">基础攻击力：</div>
-        <div class="result" id="atkPercentageResult">攻击力百分比：</div>
-        <div class="result" id="attributeDamageResult">属性伤害百分比：</div>
-        <div class="result" id="critRateResult">暴击率：</div>
-        <div class="result" id="critDamageResult">暴击伤害：</div>
+    <table class="result">
+      <tr>
+        <th></th>
+        <th>角色</th>
+        <th>法宝卡</th>
+        <th>套装</th>
+        <th>总和</th>
+      </tr>
+      <tr>
+        <td>基础攻击力</td>
+        <td id="baseAtkCharacter"></td>
+        <td id="baseAtkCard"></td>
+        <td id="baseAtkEquipment"></td>
+        <td id="baseAtkSum"></td>
+      </tr>
+      <tr>
+        <td>攻击力百分比</td>
+        <td id="atkPercentageCharacter"></td>
+        <td id="atkPercentageCard"></td>
+        <td id="atkPercentageEquipment"></td>
+        <td id="atkPercentageSum"></td>
+      </tr>
+      <tr>
+        <td>属性伤害百分比</td>
+        <td id="attributeDamageCharacter"></td>
+        <td id="attributeDamageCard"></td>
+        <td id="attributeDamageEquipment"></td>
+        <td id="attributeDamageSum"></td>
+      </tr>
+      <tr>
+        <td>暴击率</td>
+        <td id="critRateCharacter"></td>
+        <td id="critRateCard"></td>
+        <td id="critRateEquipment"></td>
+        <td id="critRateSum"></td>
+      </tr>
+      <tr>
+        <td>暴击伤害</td>
+        <td id="critDamageCharacter"></td>
+        <td id="critDamageCard"></td>
+        <td id="critDamageEquipment"></td>
+        <td id="critDamageSum"></td>
+      </tr>
+    </table>
     </div>
-    <!--抓取角色和法寶卡資料-->
-    <script src="CharacterData.js"></script>
-    <script src="TreasureCardData.js"></script>
-    <script src="EquipmentData.js"></script>
+
     <script>
         // 更新结果，并将抓取结果设定为常量
         const characterSelect = document.getElementById('characterSelect');
         const treasureCardSelect = document.getElementById('treasureCardSelect');
         const equipmentSelect = document.getElementById('equipmentSelect');
 
-        const baseAtkResult = document.getElementById('baseAtkResult');
-        const atkPercentageResult = document.getElementById('atkPercentageResult');
-        const attributeDamageResult = document.getElementById('attributeDamageResult');
-        const critRateResult = document.getElementById('critRateResult');
-        const critDamageResult = document.getElementById('critDamageResult');
+        const baseAtkCharacter = document.getElementById('baseAtkCharacter');
+        const baseAtkCard = document.getElementById('baseAtkCard');
+        const baseAtkEquipment = document.getElementById('baseAtkEquipment');
+        const baseAtkSum = document.getElementById('baseAtkSum');
 
-        function updateResults() {
+        const atkPercentageCharacter = document.getElementById('atkPercentageCharacter');
+        const atkPercentageCard = document.getElementById('atkPercentageCard');
+        const atkPercentageEquipment = document.getElementById('atkPercentageEquipment');
+        const atkPercentageSum = document.getElementById('atkPercentageSum');
+
+        const attributeDamageCharacter = document.getElementById('attributeDamageCharacter');
+        const attributeDamageCard = document.getElementById('attributeDamageCard');
+        const attributeDamageEquipment = document.getElementById('attributeDamageEquipment');
+        const attributeDamageSum = document.getElementById('attributeDamageSum');
+
+        const critRateCharacter = document.getElementById('critRateCharacter');
+        const critRateCard = document.getElementById('critRateCard');
+        const critRateEquipment = document.getElementById('critRateEquipment');
+        const critRateSum = document.getElementById('critRateSum');
+
+        const critDamageCharacter = document.getElementById('critDamageCharacter');
+        const critDamageCard = document.getElementById('critDamageCard');
+        const critDamageEquipment = document.getElementById('critDamageEquipment');
+        const critDamageSum = document.getElementById('critDamageSum');
+
+        function NewestBaselValue() {
             const selectedCharacter = characterSelect.value;
             const selectedTreasureCard = treasureCardSelect.value;
             const selectedEquipment = equipmentSelect.value;
@@ -97,25 +167,40 @@
             const card = treasureCardData[selectedTreasureCard];
             const equipment = equipmentData[selectedEquipment];
 
+            baseAtkCharacter.textContent = character['baseAtk'];
+            baseAtkCard.textContent = card['baseAtk'];
+            baseAtkEquipment.textContent = equipment['baseAtk'];
             const baseAtk = character['baseAtk'] + card['baseAtk'] + equipment['baseAtk'];
-            baseAtkResult.textContent = `基础攻击力：${Math.round(baseAtk * 100) / 100}`;
+            baseAtkSum.textContent = Math.round(baseAtk * 100) / 100;
 
+            atkPercentageCharacter.textContent = character['atkPercentage'];
+            atkPercentageCard.textContent = card['atkPercentage'];
+            atkPercentageEquipment.textContent = equipment['atkPercentage'];
             const atkPercentage = character['atkPercentage'] + card['atkPercentage'] + equipment['atkPercentage'];
-            atkPercentageResult.textContent = `攻击力百分比：${Math.round(atkPercentage * 100) / 100}`;
+            atkPercentageSum.textContent = Math.round(atkPercentage * 100) / 100;
 
+            attributeDamageCharacter.textContent = character['attributeDamage'];
+            attributeDamageCard.textContent = card['attributeDamage'];
+            attributeDamageEquipment.textContent = equipment['attributeDamage'];
             const attributeDamage = character['attributeDamage'] + card['attributeDamage'] + equipment['attributeDamage'];
-            attributeDamageResult.textContent = `属性伤害百分比：${Math.round(attributeDamage * 100) / 100}`;
+            attributeDamageSum.textContent = Math.round(attributeDamage * 100) / 100;
 
+            critRateCharacter.textContent = Math.round(character['critRate'] * 100) / 100;
+            critRateCard.textContent = Math.round(card['critRate'] * 100) / 100;
+            critRateEquipment.textContent = Math.round(equipment['critRate'] * 100) / 100;
             const critRate = character['critRate'] + card['critRate'] + equipment['critRate'];
-            critRateResult.textContent = `暴击率：${Math.round(critRate * 100) / 100}`;
+            critRateSum.textContent = Math.round(critRate * 100) / 100;
 
+            critDamageCharacter.textContent = character['critDamage'];
+            critDamageCard.textContent = card['critDamage'];
+            critDamageEquipment.textContent = equipment['critDamage'];
             const critDamage = character['critDamage'] + card['critDamage'] + equipment['critDamage'];
-            critDamageResult.textContent = `暴击伤害：${Math.round(critDamage * 100) / 100}`;
+            critDamageSum.textContent = Math.round(critDamage * 100) / 100;
         }
 
-        characterSelect.addEventListener('change', updateResults);
-        treasureCardSelect.addEventListener('change', updateResults);
-        equipmentSelect.addEventListener('change', updateResults);
+        characterSelect.addEventListener('change', NewestBaselValue);
+        treasureCardSelect.addEventListener('change', NewestBaselValue);
+        equipmentSelect.addEventListener('change', NewestBaselValue);
 
         function calculate() {
             const selectedCharacter = characterSelect.value;
