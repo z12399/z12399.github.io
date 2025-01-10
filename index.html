@@ -21,6 +21,12 @@
             font-size: 18px;
             margin-bottom: 10px;
         }
+    .assist1-container {
+             display: flex;
+              width: 50%;
+             justify-content: center;
+        }
+
 
         select {
             padding: 5px;
@@ -56,27 +62,61 @@
 
 <body>
     <div class="container">
-        <!--選擇角色和法寶卡-->
-        <label>選擇角色：</label>
+        <!--選擇角色,法寶卡,套裝,和輔助(默認無)-->
+        <label for = "characterSelect">角色：</label>
         <select id="characterSelect">
+            <option value="NoCharacter">請選擇角色</option>
             <option value="黑麥">黑麥</option>
             <option value="雪花糖球">雪花糖球</option>
             <option value="奶油蘇打">奶油蘇打</option>
+            <option value="冰薄荷">冰薄荷</option>
         </select>
 
-        <label>選擇法寶卡：</label>
+        <label for = "treasureCardSelect">法寶卡：</label>
         <select id="treasureCardSelect">
+            <option value="NoTreasureCard">請選擇法寶卡</option>
             <option value="黃昏追擊戰">黃昏追擊戰</option>
             <option value="幸福的回憶">幸福的回憶</option>
             <option value="作戰開始">作戰開始</option>
+            <option value="雪地飛馳">雪地飛馳</option>
         </select>
 
-        <label>選擇套裝：</label>
+        <label for = "equipmentSelect">套裝：</label>
         <select id="equipmentSelect">
+            <option value="NoEquipment">請選擇套裝</option>
             <option value="屬性套">屬性套</option>
             <option value="謎樣流浪者">謎樣流浪者</option>
             <option value="詭異的獵人">詭異的獵人</option>
         </select>
+
+        <!--以下為還沒與計算功能連接的代碼 僅有會影響面板的輔助/輔助套裝/法寶卡-->
+        <div class="assist1-container">
+            
+              <label for="assist1Select">輔助一：</label>
+              <select id="assist1Select">
+                <option value="NoAssist">無/其他</option>
+                <option value="NoAssist">檸檬</option>
+                <option value="NoAssist">辣椒碎片</option>
+                <option value="NoAssist">開心果</option>
+              </select>
+            
+            
+              <label for="assist1EquipmentSelect"> 輔助套裝：</label>
+              <select id="assist1EquipmentSelect">
+                <option value="NoAssist">無/其他</option>
+                <option value="AssistEquip1">雪怪</option>
+                <option value="AssistEquip2">魔術</option>
+              </select>
+
+              <label for="assist1TreasureCardSelect"> 輔助法寶卡：</label>
+              <select id="assist1TreasureCardSelect">
+                <option value="NoAssist">無/其他</option>
+                <option value="AssistEquip1">悠閒的下午</option>
+                <option value="AssistEquip2">午夜的華爾滋</option>
+              </select>
+            
+          </div>
+        <!--到這-->
 
         <button onclick="calculate()">計算</button>
         <div id="potentialResult"></div>

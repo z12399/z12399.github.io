@@ -1,4 +1,11 @@
 const equipmentData = {
+            'NoEquipment': {
+                'baseAtk': 0,
+                'atkPercentage': 0,
+                'attributeDamage': 0,
+                'critRate': 0,
+                'critDamage': 0
+            },
             '屬性套': {
                 'baseAtk': 120,
                 'atkPercentage': 0,
