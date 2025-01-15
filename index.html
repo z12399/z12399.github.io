@@ -70,6 +70,7 @@
             <option value="雪花糖球">雪花糖球</option>
             <option value="奶油蘇打">奶油蘇打</option>
             <option value="冰薄荷">冰薄荷</option>
+            <option value="麻花捲">麻花捲</option>
         </select>
 
         <label for = "treasureCardSelect">法寶卡：</label>
@@ -79,6 +80,7 @@
             <option value="幸福的回憶">幸福的回憶</option>
             <option value="作戰開始">作戰開始</option>
             <option value="雪地飛馳">雪地飛馳</option>
+            <option value="狂熱狙擊">狂熱狙擊</option>
         </select>
 
         <label for = "equipmentSelect">套裝：</label>
@@ -87,6 +89,7 @@
             <option value="屬性套">屬性套</option>
             <option value="謎樣流浪者">謎樣流浪者</option>
             <option value="詭異的獵人">詭異的獵人</option>
+            <option value="時間管理局">時間管理局</option>
         </select>
 
         <!--以下為還沒與計算功能連接的代碼 僅有會影響面板的輔助/輔助套裝/法寶卡-->
@@ -95,9 +98,9 @@
               <label for="assist1Select">輔助一：</label>
               <select id="assist1Select">
                 <option value="NoAssist">無/其他</option>
-                <option value="NoAssist">檸檬</option>
-                <option value="NoAssist">辣椒碎片</option>
-                <option value="NoAssist">開心果</option>
+                <option value="檸檬">檸檬</option>
+                <option value="辣椒碎片">辣椒碎片</option>
+                <option value="開心果">開心果</option>
               </select>
             
             
@@ -118,129 +121,58 @@
           </div>
         <!--到這-->
 
+        <table class="result" id="statsTable">
+          <tr>
+            <th></th>
+            <th>角色</th>
+            <th>法宝卡</th>
+            <th>套装</th>
+            <th>总和</th>
+          </tr>
+        </table>
+
         <button onclick="calculate()">計算</button>
         <div id="potentialResult"></div>
-
-    <table class="result">
-      <tr>
-        <th></th>
-        <th>角色</th>
-        <th>法宝卡</th>
-        <th>套装</th>
-        <th>总和</th>
-      </tr>
-      <tr>
-        <td>基础攻击力</td>
-        <td id="baseAtkCharacter"></td>
-        <td id="baseAtkCard"></td>
-        <td id="baseAtkEquipment"></td>
-        <td id="baseAtkSum"></td>
-      </tr>
-      <tr>
-        <td>攻击力百分比</td>
-        <td id="atkPercentageCharacter"></td>
-        <td id="atkPercentageCard"></td>
-        <td id="atkPercentageEquipment"></td>
-        <td id="atkPercentageSum"></td>
-      </tr>
-      <tr>
-        <td>属性伤害百分比</td>
-        <td id="attributeDamageCharacter"></td>
-        <td id="attributeDamageCard"></td>
-        <td id="attributeDamageEquipment"></td>
-        <td id="attributeDamageSum"></td>
-      </tr>
-      <tr>
-        <td>暴击率</td>
-        <td id="critRateCharacter"></td>
-        <td id="critRateCard"></td>
-        <td id="critRateEquipment"></td>
-        <td id="critRateSum"></td>
-      </tr>
-      <tr>
-        <td>暴击伤害</td>
-        <td id="critDamageCharacter"></td>
-        <td id="critDamageCard"></td>
-        <td id="critDamageEquipment"></td>
-        <td id="critDamageSum"></td>
-      </tr>
-    </table>
     </div>
 
-    <script>
-        // 更新结果，并将抓取结果设定为常量
-        const characterSelect = document.getElementById('characterSelect');
-        const treasureCardSelect = document.getElementById('treasureCardSelect');
-        const equipmentSelect = document.getElementById('equipmentSelect');
+<script>
+    // 在<script>标签内添加以下代码
+    const statsData = [
+        { name: '基础攻击力', id: 'baseAtk' },
+        { name: '攻击力百分比', id: 'atkPercentage' },
+        { name: '属性伤害百分比', id: 'attributeDamage' },
+        { name: '暴击率', id: 'critRate' },
+        { name: '暴击伤害', id: 'critDamage' }
+    ];
 
-        const baseAtkCharacter = document.getElementById('baseAtkCharacter');
-        const baseAtkCard = document.getElementById('baseAtkCard');
-        const baseAtkEquipment = document.getElementById('baseAtkEquipment');
-        const baseAtkSum = document.getElementById('baseAtkSum');
+    function generateTable() {
+    const table = document.getElementById('statsTable');
+    // 清空表格内容，但保留表头
+    while (table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+    
+    statsData.forEach(stat => {
+        const row = table.insertRow();
+        row.insertCell().textContent = stat.name;
+        ['Character', 'Card', 'Equipment', 'Sum'].forEach(source => {
+            row.insertCell().id = `${stat.id}${source}`;
+        });
+    });
+}
 
-        const atkPercentageCharacter = document.getElementById('atkPercentageCharacter');
-        const atkPercentageCard = document.getElementById('atkPercentageCard');
-        const atkPercentageEquipment = document.getElementById('atkPercentageEquipment');
-        const atkPercentageSum = document.getElementById('atkPercentageSum');
+// 在页面加载完成后调用此函数
+    document.addEventListener('DOMContentLoaded', generateTable);
 
-        const attributeDamageCharacter = document.getElementById('attributeDamageCharacter');
-        const attributeDamageCard = document.getElementById('attributeDamageCard');
-        const attributeDamageEquipment = document.getElementById('attributeDamageEquipment');
-        const attributeDamageSum = document.getElementById('attributeDamageSum');
 
-        const critRateCharacter = document.getElementById('critRateCharacter');
-        const critRateCard = document.getElementById('critRateCard');
-        const critRateEquipment = document.getElementById('critRateEquipment');
-        const critRateSum = document.getElementById('critRateSum');
 
-        const critDamageCharacter = document.getElementById('critDamageCharacter');
-        const critDamageCard = document.getElementById('critDamageCard');
-        const critDamageEquipment = document.getElementById('critDamageEquipment');
-        const critDamageSum = document.getElementById('critDamageSum');
+    const characterSelect = document.getElementById('characterSelect');
+    const treasureCardSelect = document.getElementById('treasureCardSelect');
+    const equipmentSelect = document.getElementById('equipmentSelect');
 
-        function NewestBaselValue() {
-            const selectedCharacter = characterSelect.value;
-            const selectedTreasureCard = treasureCardSelect.value;
-            const selectedEquipment = equipmentSelect.value;
-
-            const character = characterData[selectedCharacter];
-            const card = treasureCardData[selectedTreasureCard];
-            const equipment = equipmentData[selectedEquipment];
-
-            baseAtkCharacter.textContent = character['baseAtk'];
-            baseAtkCard.textContent = card['baseAtk'];
-            baseAtkEquipment.textContent = equipment['baseAtk'];
-            const baseAtk = character['baseAtk'] + card['baseAtk'] + equipment['baseAtk'];
-            baseAtkSum.textContent = Math.round(baseAtk * 100) / 100;
-
-            atkPercentageCharacter.textContent = character['atkPercentage'];
-            atkPercentageCard.textContent = card['atkPercentage'];
-            atkPercentageEquipment.textContent = equipment['atkPercentage'];
-            const atkPercentage = character['atkPercentage'] + card['atkPercentage'] + equipment['atkPercentage'];
-            atkPercentageSum.textContent = Math.round(atkPercentage * 100) / 100;
-
-            attributeDamageCharacter.textContent = character['attributeDamage'];
-            attributeDamageCard.textContent = card['attributeDamage'];
-            attributeDamageEquipment.textContent = equipment['attributeDamage'];
-            const attributeDamage = character['attributeDamage'] + card['attributeDamage'] + equipment['attributeDamage'];
-            attributeDamageSum.textContent = Math.round(attributeDamage * 100) / 100;
-
-            critRateCharacter.textContent = Math.round(character['critRate'] * 100) / 100;
-            critRateCard.textContent = Math.round(card['critRate'] * 100) / 100;
-            critRateEquipment.textContent = Math.round(equipment['critRate'] * 100) / 100;
-            const critRate = character['critRate'] + card['critRate'] + equipment['critRate'];
-            critRateSum.textContent = Math.round(critRate * 100) / 100;
-
-            critDamageCharacter.textContent = character['critDamage'];
-            critDamageCard.textContent = card['critDamage'];
-            critDamageEquipment.textContent = equipment['critDamage'];
-            const critDamage = character['critDamage'] + card['critDamage'] + equipment['critDamage'];
-            critDamageSum.textContent = Math.round(critDamage * 100) / 100;
-        }
-
-        characterSelect.addEventListener('change', NewestBaselValue);
-        treasureCardSelect.addEventListener('change', NewestBaselValue);
-        equipmentSelect.addEventListener('change', NewestBaselValue);
+    characterSelect.addEventListener('change', NewestBaselValue);
+    treasureCardSelect.addEventListener('change', NewestBaselValue);
+    equipmentSelect.addEventListener('change', NewestBaselValue);
 
         function calculate() {
             const selectedCharacter = characterSelect.value;
@@ -299,6 +231,40 @@
             const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${Math.round(bestPointBaseAtk * 100) / 100} 点，攻擊力百分比 加 ${Math.round(bestPointAtkPercentage * 100) / 100} 点，屬性傷害 加 ${Math.round(bestPointAttributeDamage * 100) / 100} 点，爆擊率 加 ${Math.round(bestPointCritRate * 100) / 100} 点，爆擊傷害 加 ${Math.round(bestPointCritDamage * 100) / 100} 点`;
             potentialResultDiv.innerHTML = result_text;
         }
+    
+        function NewestBaselValue() {
+    const selectedCharacter = characterSelect.value;
+    const selectedTreasureCard = treasureCardSelect.value;
+    const selectedEquipment = equipmentSelect.value;
+
+    const character = characterData[selectedCharacter] || {};
+    const card = treasureCardData[selectedTreasureCard] || {};
+    const equipment = equipmentData[selectedEquipment] || {};
+
+    statsData.forEach(stat => {
+        const characterValue = character[stat.id] || 0;
+        const cardValue = card[stat.id] || 0;
+        const equipmentValue = equipment[stat.id] || 0;
+        const sum = characterValue + cardValue + equipmentValue;
+
+        document.getElementById(`${stat.id}Character`).textContent = characterValue.toFixed(2);
+        document.getElementById(`${stat.id}Card`).textContent = cardValue.toFixed(2);
+        document.getElementById(`${stat.id}Equipment`).textContent = equipmentValue.toFixed(2);
+        document.getElementById(`${stat.id}Sum`).textContent = sum.toFixed(2);
+    });
+}
+
+// 在页面加载完成后调用此函数
+document.addEventListener('DOMContentLoaded', () => {
+    generateTable();
+    NewestBaselValue(); // 初始化表格数据
+});
+
+// 更新事件监听器
+characterSelect.addEventListener('change', NewestBaselValue);
+treasureCardSelect.addEventListener('change', NewestBaselValue);
+equipmentSelect.addEventListener('change', NewestBaselValue);
+
     </script>
 </body>
 
