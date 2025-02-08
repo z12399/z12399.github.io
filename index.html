@@ -1,203 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>角色与法宝卡选择</title>
+    <title>潛能計算機</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-   .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 50px;
-        }
-
-        label {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-    .assist1-container {
-             display: flex;
-              width: 50%;
-             justify-content: center;
-        }
-
-
-        select {
-            padding: 5px;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-   .result {
-            font-size: 20px;
-            font-weight: bold;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-        }
-        
-        table {
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      border: 1px solid black;
-      padding: 5px;
-    }
-
+        body { font-family: Arial, sans-serif; }
+        .container { display: flex; flex-direction: column; align-items: center; margin-top: 50px; }
+        label { font-size: 18px; margin-bottom: 10px; }
+        .assist1-container { display: flex; width: 50%; justify-content: center; }
+        select { padding: 5px; font-size: 16px; margin-bottom: 20px; }
+        .result { font-size: 20px; font-weight: bold; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; margin-bottom: 20px; }
+        table { border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 5px; }
     </style>
-    <!-- 抓取資料 -->
     <script src="CharacterData.js"></script>
     <script src="TreasureCardData.js"></script>
     <script src="EquipmentData.js"></script>
+    <script src="AssistData.js"></script>
+    <script src="AssistEquipmentData.js"></script>
+    <script src="AssistTreasureCardData.js"></script>
 </head>
-
 <body>
     <div class="container">
-        <!--選擇角色,法寶卡,套裝,和輔助(默認無)-->
-        <label for = "characterSelect">角色：</label>
+        <label for="characterSelect">角色：</label>
         <select id="characterSelect">
-            <option value="NoCharacter">請選擇角色</option>
-            <option value="黑麥">黑麥</option>
-            <option value="雪花糖球">雪花糖球</option>
-            <option value="奶油蘇打">奶油蘇打</option>
-            <option value="冰薄荷">冰薄荷</option>
-            <option value="麻花捲">麻花捲</option>
+            <!-- 选项将通过 JavaScript 动态生成 -->
         </select>
-
-        <label for = "treasureCardSelect">法寶卡：</label>
+    
+        <label for="treasureCardSelect">法寶卡：</label>
         <select id="treasureCardSelect">
-            <option value="NoTreasureCard">請選擇法寶卡</option>
-            <option value="黃昏追擊戰">黃昏追擊戰</option>
-            <option value="幸福的回憶">幸福的回憶</option>
-            <option value="作戰開始">作戰開始</option>
-            <option value="雪地飛馳">雪地飛馳</option>
-            <option value="狂熱狙擊">狂熱狙擊</option>
+            <!-- 选项将通过 JavaScript 动态生成 -->
         </select>
-
-        <label for = "equipmentSelect">套裝：</label>
+    
+        <label for="equipmentSelect">套裝：</label>
         <select id="equipmentSelect">
-            <option value="NoEquipment">請選擇套裝</option>
-            <option value="屬性套">屬性套</option>
-            <option value="謎樣流浪者">謎樣流浪者</option>
-            <option value="詭異的獵人">詭異的獵人</option>
-            <option value="時間管理局">時間管理局</option>
+            <!-- 选项将通过 JavaScript 动态生成 -->
         </select>
-
-        <!--以下為還沒與計算功能連接的代碼 僅有會影響面板的輔助/輔助套裝/法寶卡-->
+    
         <div class="assist1-container">
+            <label for="assist1Select">輔助一：</label>
+            <select id="assist1Select">
+                <!-- 选项将通过 JavaScript 动态生成 -->
+            </select>
+    
+            <label for="assist1EquipmentSelect"> 輔助套裝：</label>
+            <select id="assist1EquipmentSelect">
+                <!-- 选项将通过 JavaScript 动态生成 -->
+            </select>
             
-              <label for="assist1Select">輔助一：</label>
-              <select id="assist1Select">
-                <option value="NoAssist">無/其他</option>
-                <option value="檸檬">檸檬</option>
-                <option value="辣椒碎片">辣椒碎片</option>
-                <option value="開心果">開心果</option>
-              </select>
-            
-            
-              <label for="assist1EquipmentSelect"> 輔助套裝：</label>
-              <select id="assist1EquipmentSelect">
-                <option value="NoAssist">無/其他</option>
-                <option value="AssistEquip1">雪怪</option>
-                <option value="AssistEquip2">魔術</option>
-              </select>
-
-              <label for="assist1TreasureCardSelect"> 輔助法寶卡：</label>
-              <select id="assist1TreasureCardSelect">
-                <option value="NoAssist">無/其他</option>
-                <option value="AssistEquip1">悠閒的下午</option>
-                <option value="AssistEquip2">午夜的華爾滋</option>
-              </select>
-            
-          </div>
-        <!--到這-->
+            <label for="assist1TreasureCardSelect"> 輔助法寶卡：</label>
+            <select id="assist1TreasureCardSelect">
+                <!-- 选项将通过 JavaScript 动态生成 -->
+            </select>
+        </div>
 
         <table class="result" id="statsTable">
-          <tr>
-            <th></th>
-            <th>角色</th>
-            <th>法宝卡</th>
-            <th>套装</th>
-            <th>总和</th>
-          </tr>
+            <tr>
+                <th></th>
+                <th>角色</th>
+                <th>法宝卡</th>
+                <th>套装</th>
+                <th>辅助一</th>
+                <th>辅助套装</th>
+                <th>辅助法宝卡</th>
+                <th>总和</th>
+            </tr>
         </table>
 
-        <button onclick="calculate()">計算</button>
+        <!-- 删除“計算”按钮 -->
         <div id="potentialResult"></div>
     </div>
 
-<script>
-    // 在<script>标签内添加以下代码
-    const statsData = [
-        { name: '基础攻击力', id: 'baseAtk' },
-        { name: '攻击力百分比', id: 'atkPercentage' },
-        { name: '属性伤害百分比', id: 'attributeDamage' },
-        { name: '暴击率', id: 'critRate' },
-        { name: '暴击伤害', id: 'critDamage' }
-    ];
+    <script>
+        const statsData = [
+            { name: '基础攻击力', id: 'baseAtk' },
+            { name: '攻击力百分比', id: 'atkPercentage' },
+            { name: '属性伤害百分比', id: 'attributeDamage' },
+            { name: '暴击率', id: 'critRate' },
+            { name: '暴击伤害', id: 'critDamage' }
+        ];
 
-    function generateTable() {
-    const table = document.getElementById('statsTable');
-    // 清空表格内容，但保留表头
-    while (table.rows.length > 1) {
-        table.deleteRow(1);
-    }
-    
-    statsData.forEach(stat => {
-        const row = table.insertRow();
-        row.insertCell().textContent = stat.name;
-        ['Character', 'Card', 'Equipment', 'Sum'].forEach(source => {
-            row.insertCell().id = `${stat.id}${source}`;
-        });
-    });
-}
+        // 生成表格
+        function generateTable() {
+            const table = document.getElementById('statsTable');
+            while (table.rows.length > 1) table.deleteRow(1);
+            statsData.forEach(stat => {
+                const row = table.insertRow();
+                row.insertCell().textContent = stat.name;
+                ['Character', 'Card', 'Equipment', 'Assist1', 'Assist1Equipment', 'Assist1TreasureCard', 'Sum'].forEach(source => {
+                    row.insertCell().id = `${stat.id}${source}`;
+                });
+            });
+        }
 
-// 在页面加载完成后调用此函数
-    document.addEventListener('DOMContentLoaded', generateTable);
-
-
-
-    const characterSelect = document.getElementById('characterSelect');
-    const treasureCardSelect = document.getElementById('treasureCardSelect');
-    const equipmentSelect = document.getElementById('equipmentSelect');
-
-    characterSelect.addEventListener('change', NewestBaselValue);
-    treasureCardSelect.addEventListener('change', NewestBaselValue);
-    equipmentSelect.addEventListener('change', NewestBaselValue);
-
+        // 計算函數
         function calculate() {
-            const selectedCharacter = characterSelect.value;
-            const selectedTreasureCard = treasureCardSelect.value;
-            const selectedEquipment = equipmentSelect.value;
+            const selectedCharacter = document.getElementById('characterSelect').value;
+            const selectedTreasureCard = document.getElementById('treasureCardSelect').value;
+            const selectedEquipment = document.getElementById('equipmentSelect').value;
+            const selectedAssist1 = document.getElementById('assist1Select').value;
+            const selectedAssist1Equipment = document.getElementById('assist1EquipmentSelect').value;
+            const selectedAssist1TreasureCard = document.getElementById('assist1TreasureCardSelect').value;
 
-            const character = characterData[selectedCharacter];
-            const card = treasureCardData[selectedTreasureCard];
-            const equipment = equipmentData[selectedEquipment];
+            const character = characterData[selectedCharacter] || {};
+            const card = treasureCardData[selectedTreasureCard] || {};
+            const equipment = equipmentData[selectedEquipment] || {};
+            const assist1 = assistData[selectedAssist1] || {};
+            const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
+            const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
 
-            const baseAtk = character['baseAtk'] + card['baseAtk'] + equipment['baseAtk'];
-            const atkPercentage = character['atkPercentage'] + card['atkPercentage'] + equipment['atkPercentage'];
-            const attributeDamage = character['attributeDamage'] + card['attributeDamage'] + equipment['attributeDamage'];
-            const critRate = character['critRate'] + card['critRate'] + equipment['critRate'];
-            const critDamage = character['critDamage'] + card['critDamage'] + equipment['critDamage'];
+            statsData.forEach(stat => {
+                const values = [
+                    character[stat.id] || 0,
+                    card[stat.id] || 0,
+                    equipment[stat.id] || 0,
+                    assist1[stat.id] || 0,
+                    assist1Equipment[stat.id] || 0,
+                    assist1TreasureCard[stat.id] || 0
+                ];
+                const sum = values.reduce((a, b) => a + b, 0);
+                
+                document.getElementById(`${stat.id}Character`).textContent = values[0].toFixed(2);
+                document.getElementById(`${stat.id}Card`).textContent = values[1].toFixed(2);
+                document.getElementById(`${stat.id}Equipment`).textContent = values[2].toFixed(2);
+                document.getElementById(`${stat.id}Assist1`).textContent = values[3].toFixed(2);
+                document.getElementById(`${stat.id}Assist1Equipment`).textContent = values[4].toFixed(2);
+                document.getElementById(`${stat.id}Assist1TreasureCard`).textContent = values[5].toFixed(2);
+                document.getElementById(`${stat.id}Sum`).textContent = sum.toFixed(2);
+            });
+
+            NewestBaselValue();
+        }
+
+        function populateOptions(selectId, data) {
+    const select = document.getElementById(selectId);
+    select.innerHTML = '';
+    
+    // 添加默认选项
+    const defaultOption = document.createElement('option');
+    defaultOption.value = 'No' + selectId.replace('Select', '');
+    defaultOption.textContent = '請選擇' + select.previousElementSibling.textContent.trim().slice(0, -1);
+    select.appendChild(defaultOption);
+    
+    // 为数据中的每个键创建一个选项
+    for (const key in data) {
+        if (key !== defaultOption.value) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = key;
+            select.appendChild(option);
+        }
+    }
+}
+        
+        function initializeSelects() {
+            populateOptions('characterSelect', characterData);
+            populateOptions('treasureCardSelect', treasureCardData);
+            populateOptions('equipmentSelect', equipmentData);
+            populateOptions('assist1Select', assistData);
+            populateOptions('assist1EquipmentSelect', assistEquipmentData);
+            populateOptions('assist1TreasureCardSelect', assistTreasureCardData);
+        }
+        
+        // 修改 DOMContentLoaded 事件监听器
+        document.addEventListener('DOMContentLoaded', () => {
+            generateTable();
+            initializeSelects();
+            calculate(); // 初始化时计算一次
+        });
+
+        // 为所有 select 元素添加事件监听器
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.addEventListener('change', calculate);
+        });
+
+        // 潜力计算函数
+        function NewestBaselValue() {
+            const selectedCharacter = document.getElementById('characterSelect').value;
+            const selectedTreasureCard = document.getElementById('treasureCardSelect').value;
+            const selectedEquipment = document.getElementById('equipmentSelect').value;
+            const selectedAssist1 = document.getElementById('assist1Select').value;
+            const selectedAssist1Equipment = document.getElementById('assist1EquipmentSelect').value;
+            const selectedAssist1TreasureCard = document.getElementById('assist1TreasureCardSelect').value;
+
+            const character = characterData[selectedCharacter] || {};
+            const card = treasureCardData[selectedTreasureCard] || {};
+            const equipment = equipmentData[selectedEquipment] || {};
+            const assist1 = assistData[selectedAssist1] || {};
+            const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
+            const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
+
+            const baseAtk = 
+                (character.baseAtk || 0) + 
+                (card.baseAtk || 0) + 
+                (equipment.baseAtk || 0) + 
+                (assist1.baseAtk || 0) + 
+                (assist1Equipment.baseAtk || 0) + 
+                (assist1TreasureCard.baseAtk || 0);
+
+            const atkPercentage = 
+                (character.atkPercentage || 0) + 
+                (card.atkPercentage || 0) + 
+                (equipment.atkPercentage || 0) + 
+                (assist1.atkPercentage || 0) + 
+                (assist1Equipment.atkPercentage || 0) + 
+                (assist1TreasureCard.atkPercentage || 0);
+
+            const attributeDamage = 
+                (character.attributeDamage || 0) + 
+                (card.attributeDamage || 0) + 
+                (equipment.attributeDamage || 0) + 
+                (assist1.attributeDamage || 0) + 
+                (assist1Equipment.attributeDamage || 0) + 
+                (assist1TreasureCard.attributeDamage || 0);
+
+            const critRate = 
+                (character.critRate || 0) + 
+                (card.critRate || 0) + 
+                (equipment.critRate || 0) + 
+                (assist1.critRate || 0) + 
+                (assist1Equipment.critRate || 0) + 
+                (assist1TreasureCard.critRate || 0);
+
+            const critDamage = 
+                (character.critDamage || 0) + 
+                (card.critDamage || 0) + 
+                (equipment.critDamage || 0) + 
+                (assist1.critDamage || 0) + 
+                (assist1Equipment.critDamage || 0) + 
+                (assist1TreasureCard.critDamage || 0);
 
             let totalPoints = 8;
 
             function calculateValue(pointBaseAtk, pointAtkPercentage, pointAttributeDamage, pointCritRate, pointCritDamage) {
+                // 限制 PointBaseAtk 和 PointAttributeDamage 的最大值为 2
+                pointBaseAtk = Math.min(pointBaseAtk, 2);
+                pointAttributeDamage = Math.min(pointAttributeDamage, 2);
+
                 let newBaseAtk = baseAtk + pointBaseAtk * 80.0;
                 let newAtkPercentage = atkPercentage + pointAtkPercentage * 0.2;
                 let newAttributeDamage = attributeDamage + pointAttributeDamage * 0.15;
                 let newCritRate = Math.min(critRate + pointCritRate * 0.15, 1.0);
                 let newCritDamage = critDamage + pointCritDamage * 0.25;
-                return newBaseAtk * (1 + newAtkPercentage) * (1 + newAttributeDamage) * (newCritRate * (1 + newCritDamage) + (1 - newCritRate) * 1);
+
+                let value = newBaseAtk * (1 + newAtkPercentage) * (1 + newAttributeDamage) * (1 + newCritRate * newCritDamage);
+                return value;
             }
 
             let maxValue = 0;
@@ -207,20 +256,19 @@
             let bestPointCritRate = 0;
             let bestPointCritDamage = 0;
 
-            for (let pointBaseAtk = 0; pointBaseAtk < 3; pointBaseAtk++) {
-                for (let pointAtkPercentage = 0; pointAtkPercentage < totalPoints + 1 - pointBaseAtk; pointAtkPercentage++) {
-                    for (let pointAttributeDamage = 0; pointAttributeDamage < Math.min(3, totalPoints + 1 - pointBaseAtk - pointAtkPercentage); pointAttributeDamage++) {
-                        for (let pointCritRate = 0; pointCritRate < Math.min(totalPoints + 1 - pointBaseAtk - pointAtkPercentage - pointAttributeDamage, Math.floor((1 - critRate) / 0.15) + 1); pointCritRate++) {
-                            for (let pointCritDamage = 0; pointCritDamage < totalPoints + 1 - pointBaseAtk - pointAtkPercentage - pointAttributeDamage - pointCritRate; pointCritDamage++) {
-                                const currentValue = calculateValue(pointBaseAtk, pointAtkPercentage, pointAttributeDamage, pointCritRate, pointCritDamage);
-                                if (currentValue > maxValue) {
-                                    maxValue = currentValue;
-                                    bestPointBaseAtk = pointBaseAtk;
-                                    bestPointAtkPercentage = pointAtkPercentage;
-                                    bestPointAttributeDamage = pointAttributeDamage;
-                                    bestPointCritRate = pointCritRate;
-                                    bestPointCritDamage = pointCritDamage;
-                                }
+            for (let pointBaseAtk = 0; pointBaseAtk <= totalPoints; pointBaseAtk++) {
+                for (let pointAtkPercentage = 0; pointAtkPercentage <= totalPoints - pointBaseAtk; pointAtkPercentage++) {
+                    for (let pointAttributeDamage = 0; pointAttributeDamage <= totalPoints - pointBaseAtk - pointAtkPercentage; pointAttributeDamage++) {
+                        for (let pointCritRate = 0; pointCritRate <= totalPoints - pointBaseAtk - pointAtkPercentage - pointAttributeDamage; pointCritRate++) {
+                            let pointCritDamage = totalPoints - pointBaseAtk - pointAtkPercentage - pointAttributeDamage - pointCritRate;
+                            let value = calculateValue(pointBaseAtk, pointAtkPercentage, pointAttributeDamage, pointCritRate, pointCritDamage);
+                            if (value > maxValue) {
+                                maxValue = value;
+                                bestPointBaseAtk = pointBaseAtk;
+                                bestPointAtkPercentage = pointAtkPercentage;
+                                bestPointAttributeDamage = pointAttributeDamage;
+                                bestPointCritRate = pointCritRate;
+                                bestPointCritDamage = pointCritDamage;
                             }
                         }
                     }
@@ -228,44 +276,9 @@
             }
 
             const potentialResultDiv = document.getElementById('potentialResult');
-            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${Math.round(bestPointBaseAtk * 100) / 100} 点，攻擊力百分比 加 ${Math.round(bestPointAtkPercentage * 100) / 100} 点，屬性傷害 加 ${Math.round(bestPointAttributeDamage * 100) / 100} 点，爆擊率 加 ${Math.round(bestPointCritRate * 100) / 100} 点，爆擊傷害 加 ${Math.round(bestPointCritDamage * 100) / 100} 点`;
+            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${bestPointBaseAtk} 点，攻擊力百分比 加 ${bestPointAtkPercentage} 点，屬性傷害 加 ${bestPointAttributeDamage} 点，爆擊率 加 ${bestPointCritRate} 点，爆擊傷害 加 ${bestPointCritDamage} 点`;
             potentialResultDiv.innerHTML = result_text;
         }
-    
-        function NewestBaselValue() {
-    const selectedCharacter = characterSelect.value;
-    const selectedTreasureCard = treasureCardSelect.value;
-    const selectedEquipment = equipmentSelect.value;
-
-    const character = characterData[selectedCharacter] || {};
-    const card = treasureCardData[selectedTreasureCard] || {};
-    const equipment = equipmentData[selectedEquipment] || {};
-
-    statsData.forEach(stat => {
-        const characterValue = character[stat.id] || 0;
-        const cardValue = card[stat.id] || 0;
-        const equipmentValue = equipment[stat.id] || 0;
-        const sum = characterValue + cardValue + equipmentValue;
-
-        document.getElementById(`${stat.id}Character`).textContent = characterValue.toFixed(2);
-        document.getElementById(`${stat.id}Card`).textContent = cardValue.toFixed(2);
-        document.getElementById(`${stat.id}Equipment`).textContent = equipmentValue.toFixed(2);
-        document.getElementById(`${stat.id}Sum`).textContent = sum.toFixed(2);
-    });
-}
-
-// 在页面加载完成后调用此函数
-document.addEventListener('DOMContentLoaded', () => {
-    generateTable();
-    NewestBaselValue(); // 初始化表格数据
-});
-
-// 更新事件监听器
-characterSelect.addEventListener('change', NewestBaselValue);
-treasureCardSelect.addEventListener('change', NewestBaselValue);
-equipmentSelect.addEventListener('change', NewestBaselValue);
-
     </script>
 </body>
-
 </html>
