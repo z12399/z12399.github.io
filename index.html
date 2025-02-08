@@ -59,12 +59,12 @@
             <tr>
                 <th></th>
                 <th>角色</th>
-                <th>法宝卡</th>
-                <th>套装</th>
-                <th>辅助一</th>
-                <th>辅助套装</th>
-                <th>辅助法宝卡</th>
-                <th>总和</th>
+                <th>法寶卡</th>
+                <th>套裝</th>
+                <th>輔助</th>
+                <th>輔助套裝</th>
+                <th>輔助法寶卡</th>
+                <th>總和</th>
             </tr>
         </table>
 
@@ -276,7 +276,7 @@
             }
 
             const potentialResultDiv = document.getElementById('potentialResult');
-            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${bestPointBaseAtk} 点，攻擊力百分比 加 ${bestPointAtkPercentage} 点，屬性傷害 加 ${bestPointAttributeDamage} 点，爆擊率 加 ${bestPointCritRate} 点，爆擊傷害 加 ${bestPointCritDamage} 点`;
+            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加點方案：屬性攻擊力 加 ${bestPointBaseAtk} 點，攻擊力百分比 加 ${bestPointAtkPercentage} 點，屬性傷害 加 ${bestPointAttributeDamage} 點，爆擊率 加 ${bestPointCritRate} 點，爆擊傷害 加 ${bestPointCritDamage} 點`;
             potentialResultDiv.innerHTML = result_text;
         }
     </script>
