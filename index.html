@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-adsense-account" content="ca-pub-3678795487155446">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>潛能計算機</title>
@@ -14,6 +13,7 @@
         .result { font-size: 20px; font-weight: bold; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; margin-bottom: 20px; }
         table { border-collapse: collapse; }
         th, td { border: 1px solid black; padding: 5px; }
+        #cornerText {position: fixed;bottom: 10px;right: 10px;font-size: 12px;color: #666;}
     </style>
     <script src="CharacterData.js"></script>
     <script src="TreasureCardData.js"></script>
@@ -21,8 +21,6 @@
     <script src="AssistData.js"></script>
     <script src="AssistEquipmentData.js"></script>
     <script src="AssistTreasureCardData.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3678795487155446"
-     crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
@@ -42,7 +40,7 @@
         </select>
     
         <div class="assist1-container">
-            <label for="assist1Select">輔助一：</label>
+            <label for="assist1Select">輔助：</label>
             <select id="assist1Select">
                 <!-- 选项将通过 JavaScript 动态生成 -->
             </select>
@@ -63,9 +61,9 @@
                 <th></th>
                 <th>角色</th>
                 <th>法寶卡</th>
-                <th>套裝</th>
+                <th>套装</th>
                 <th>輔助</th>
-                <th>輔助套裝</th>
+                <th>輔助套装</th>
                 <th>輔助法寶卡</th>
                 <th>總和</th>
             </tr>
@@ -122,15 +120,15 @@
                     assist1Equipment[stat.id] || 0,
                     assist1TreasureCard[stat.id] || 0
                 ];
-                const sum = values.reduce((a, b) => a + b, 0);
+                const sum = Math.round((values.reduce((a, b) => a + b, 0) + Number.EPSILON) * 1000) / 1000;
                 
-                document.getElementById(`${stat.id}Character`).textContent = values[0].toFixed(2);
-                document.getElementById(`${stat.id}Card`).textContent = values[1].toFixed(2);
-                document.getElementById(`${stat.id}Equipment`).textContent = values[2].toFixed(2);
-                document.getElementById(`${stat.id}Assist1`).textContent = values[3].toFixed(2);
-                document.getElementById(`${stat.id}Assist1Equipment`).textContent = values[4].toFixed(2);
-                document.getElementById(`${stat.id}Assist1TreasureCard`).textContent = values[5].toFixed(2);
-                document.getElementById(`${stat.id}Sum`).textContent = sum.toFixed(2);
+                document.getElementById(`${stat.id}Character`).textContent = values[0];
+                document.getElementById(`${stat.id}Card`).textContent = values[1];
+                document.getElementById(`${stat.id}Equipment`).textContent = values[2];
+                document.getElementById(`${stat.id}Assist1`).textContent = values[3];
+                document.getElementById(`${stat.id}Assist1Equipment`).textContent = values[4];
+                document.getElementById(`${stat.id}Assist1TreasureCard`).textContent = values[5];
+                document.getElementById(`${stat.id}Sum`).textContent = sum;
             });
 
             NewestBaselValue();
@@ -279,10 +277,10 @@
             }
 
             const potentialResultDiv = document.getElementById('potentialResult');
-            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加點方案：屬性攻擊力 加 ${bestPointBaseAtk} 點，攻擊力百分比 加 ${bestPointAtkPercentage} 點，屬性傷害 加 ${bestPointAttributeDamage} 點，爆擊率 加 ${bestPointCritRate} 點，爆擊傷害 加 ${bestPointCritDamage} 點`;
+            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${bestPointBaseAtk} 点，攻擊力百分比 加 ${bestPointAtkPercentage} 点，屬性傷害 加 ${bestPointAttributeDamage} 点，爆擊率 加 ${bestPointCritRate} 点，爆擊傷害 加 ${bestPointCritDamage} 点`;
             potentialResultDiv.innerHTML = result_text;
         }
-        
     </script>
+    <div id="cornerText">Last Updated :2025/02/12</div>
 </body>
 </html>
