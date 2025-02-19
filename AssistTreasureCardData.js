@@ -13,5 +13,12 @@ const assistTreasureCardData = {
         attributeDamage: 0,
         critRate: 0,
         critDamage: 0.3
+    },
+    "好眠秘訣(蜜熊)": {
+    baseAtk: 0,
+    atkPercentage: 0,
+    attributeDamage: 0.3,
+    critRate: 0,
+    critDamage: 0
     }
 };
