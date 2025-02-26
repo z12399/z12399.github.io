@@ -35,11 +35,11 @@ function showModal(title, data, buttonId) {
         const img = document.createElement('img');
         if (title === '選擇角色' || title === '選擇輔助') {
             const baseCharacterName = key.split('(')[0];
-            img.src = `TOA_image/${baseCharacterName}.webp`;
+            img.src = `./TOA_image/${baseCharacterName}.webp`;
         } else if (title === '選擇法寶卡' || title === '選擇輔助法寶卡') {
-            img.src = data[key].image || 'image/光.png';
+            img.src = data[key].image || './image/光.png';
         } else {
-            img.src = 'image/光.png';
+            img.src = './image/光.png';
         }
         img.alt = key;
         
