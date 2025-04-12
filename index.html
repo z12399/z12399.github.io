@@ -7,7 +7,7 @@
     <style>
         body { 
             font-family: Arial, sans-serif;
-            background-image: url('image/薑餅人之塔_封面.webp');
+            background-image: url('./image/薑餅人之塔_封面.webp');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -120,6 +120,7 @@
         table { border-collapse: collapse; }
         th, td { border: 1px solid black; padding: 5px; }
         #cornerText {position: fixed;bottom: 10px;right: 10px;font-size: 12px;color: #666;}
+<<<<<<< Updated upstream
         .select-button {
             padding: 10px;
             margin: 5px;
@@ -129,6 +130,8 @@
             border-radius: 5px;
         }
         
+=======
+>>>>>>> Stashed changes
         .modal {
             display: none;
             position: fixed;
@@ -136,6 +139,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+<<<<<<< Updated upstream
             background-color: rgba(0,0,0,0.7);
             z-index: 1000;
         }
@@ -156,20 +160,50 @@
         
         .close {
             display: none;
+=======
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .option-btn {
+            padding: 5px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .selected-value {
+            padding: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            min-width: 150px;
+            display: inline-block;
+>>>>>>> Stashed changes
         }
     </style>
     <!-- 先載入所有資料檔案 -->
-    <script src="data/CharacterData.js"></script>
-    <script src="data/TreasureCardData.js"></script>
-    <script src="data/EquipmentData.js"></script>
-    <script src="data/AssistData.js"></script>
-    <script src="data/AssistEquipmentData.js"></script>
-    <script src="data/AssistTreasureCardData.js"></script>
+    <script src="./data/CharacterData.js"></script>
+    <script src="./data/TreasureCardData.js"></script>
+    <script src="./data/EquipmentData.js"></script>
+    <script src="./data/AssistData.js"></script>
+    <script src="./data/AssistEquipmentData.js"></script>
+    <script src="./data/AssistTreasureCardData.js"></script>
     <!-- 再載入功能模組 -->
-    <script src="js/modal.js"></script>
+    <script src="./js/modal.js"></script>
 </head>
 <body>
     <div class="container">
+<<<<<<< Updated upstream
         <div>
             <label>角色：</label>
             <button class="select-button" id="characterButton" onclick="showModal('選擇角色', characterData, 'characterButton')">請選擇角色</button>
@@ -200,6 +234,26 @@
                 <label>輔助法寶卡：</label>
                 <button class="select-button" id="assist1TreasureCardButton" onclick="showModal('選擇輔助法寶卡', assistTreasureCardData, 'assist1TreasureCardButton')">請選擇輔助法寶卡</button>
             </div>
+=======
+        <label>角色：</label>
+        <div class="selected-value" id="characterValue" onclick="openModal('character')">請選擇角色</div>
+        
+        <label>法寶卡：</label>
+        <div class="selected-value" id="treasureCardValue" onclick="openModal('treasureCard')">請選擇法寶卡</div>
+        
+        <label>套裝：</label>
+        <div class="selected-value" id="equipmentValue" onclick="openModal('equipment')">請選擇套裝</div>
+        
+        <div class="assist1-container">
+            <label>輔助：</label>
+            <div class="selected-value" id="assist1Value" onclick="openModal('assist1')">請選擇輔助</div>
+            
+            <label>輔助套裝：</label>
+            <div class="selected-value" id="assist1EquipmentValue" onclick="openModal('assist1Equipment')">請選擇輔助套裝</div>
+            
+            <label>輔助法寶卡：</label>
+            <div class="selected-value" id="assist1TreasureCardValue" onclick="openModal('assist1TreasureCard')">請選擇輔助法寶卡</div>
+>>>>>>> Stashed changes
         </div>
 
         <table class="result" id="statsTable">
@@ -219,12 +273,21 @@
         <div id="potentialResult"></div>
     </div>
 
+<<<<<<< Updated upstream
     <!-- 模態框 -->
     <div id="selectionModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 id="modalTitle"></h2>
             <div id="optionsGrid" class="option-grid"></div>
+=======
+    <!-- 添加模態框 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalOptions"></div>
+>>>>>>> Stashed changes
         </div>
     </div>
 
@@ -250,8 +313,73 @@
             });
         }
 
+        // 添加新的模態框相關函數
+        let currentModalType = '';
+        let selectedValues = {
+            character: 'Nocharacter',
+            treasureCard: 'NotreasureCard',
+            equipment: 'Noequipment',
+            assist1: 'Noassist1',
+            assist1Equipment: 'Noassist1Equipment',
+            assist1TreasureCard: 'Noassist1TreasureCard'
+        };
+
+        function openModal(type) {
+            currentModalType = type;
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalOptions = document.getElementById('modalOptions');
+            
+            modalTitle.textContent = `選擇${getTypeLabel(type)}`;
+            modalOptions.innerHTML = '';
+            
+            let data;
+            switch(type) {
+                case 'character': data = characterData; break;
+                case 'treasureCard': data = treasureCardData; break;
+                case 'equipment': data = equipmentData; break;
+                case 'assist1': data = assistData; break;
+                case 'assist1Equipment': data = assistEquipmentData; break;
+                case 'assist1TreasureCard': data = assistTreasureCardData; break;
+            }
+            
+            for (const key in data) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = key;
+                btn.onclick = () => selectOption(type, key);
+                modalOptions.appendChild(btn);
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function selectOption(type, value) {
+            selectedValues[type] = value;
+            document.getElementById(`${type}Value`).textContent = value;
+            closeModal();
+            calculate();
+        }
+
+        function getTypeLabel(type) {
+            const labels = {
+                character: '角色',
+                treasureCard: '法寶卡',
+                equipment: '套裝',
+                assist1: '輔助',
+                assist1Equipment: '輔助套裝',
+                assist1TreasureCard: '輔助法寶卡'
+            };
+            return labels[type] || type;
+        }
+
         // 計算函數
         function calculate() {
+<<<<<<< Updated upstream
             const selectedCharacter = document.getElementById('characterButton').textContent;
             const selectedTreasureCard = document.getElementById('treasureCardButton').textContent;
             const selectedEquipment = document.getElementById('equipmentButton').textContent;
@@ -265,6 +393,14 @@
             const assist1 = assistData[selectedAssist1] || {};
             const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
             const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
+=======
+            const character = characterData[selectedValues.character] || {};
+            const card = treasureCardData[selectedValues.treasureCard] || {};
+            const equipment = equipmentData[selectedValues.equipment] || {};
+            const assist1 = assistData[selectedValues.assist1] || {};
+            const assist1Equipment = assistEquipmentData[selectedValues.assist1Equipment] || {};
+            const assist1TreasureCard = assistTreasureCardData[selectedValues.assist1TreasureCard] || {};
+>>>>>>> Stashed changes
 
             statsData.forEach(stat => {
                 const values = [
@@ -291,6 +427,7 @@
 
         // 潜力计算函数
         function NewestBaselValue() {
+<<<<<<< Updated upstream
             const selectedCharacter = document.getElementById('characterButton').textContent;
             const selectedTreasureCard = document.getElementById('treasureCardButton').textContent;
             const selectedEquipment = document.getElementById('equipmentButton').textContent;
@@ -304,6 +441,14 @@
             const assist1 = assistData[selectedAssist1] || {};
             const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
             const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
+=======
+            const character = characterData[selectedValues.character] || {};
+            const card = treasureCardData[selectedValues.treasureCard] || {};
+            const equipment = equipmentData[selectedValues.equipment] || {};
+            const assist1 = assistData[selectedValues.assist1] || {};
+            const assist1Equipment = assistEquipmentData[selectedValues.assist1Equipment] || {};
+            const assist1TreasureCard = assistTreasureCardData[selectedValues.assist1TreasureCard] || {};
+>>>>>>> Stashed changes
 
             const baseAtk = 
                 (character.baseAtk || 0) + 
@@ -395,11 +540,25 @@
 
         // 修改 DOMContentLoaded 事件监听器
         document.addEventListener('DOMContentLoaded', () => {
+<<<<<<< Updated upstream
             console.log('DOM 載入完成，開始初始化');
             generateTable();
             calculate(); // 初始化时计算一次
             console.log('初始化完成');
         });
+=======
+            generateTable();
+            calculate();
+        });
+
+        // 點擊模態框外部時關閉
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+>>>>>>> Stashed changes
     </script>
     <div id="cornerText">Last Updated :2025/02/12</div>
 </body>
