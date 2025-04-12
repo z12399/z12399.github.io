@@ -34,6 +34,33 @@
             color: white; /* 因為背景變暗了，文字改為白色 */
         }
 
+        /* 遊戲集合導航按鈕 */
+        .game-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .game-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .game-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
         /* 調整標籤文字的背景和文字陰影 */
         label { 
             font-size: 18px; 
@@ -120,18 +147,6 @@
         table { border-collapse: collapse; }
         th, td { border: 1px solid black; padding: 5px; }
         #cornerText {position: fixed;bottom: 10px;right: 10px;font-size: 12px;color: #666;}
-<<<<<<< Updated upstream
-        .select-button {
-            padding: 10px;
-            margin: 5px;
-            cursor: pointer;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        
-=======
->>>>>>> Stashed changes
         .modal {
             display: none;
             position: fixed;
@@ -139,28 +154,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-<<<<<<< Updated upstream
-            background-color: rgba(0,0,0,0.7);
-            z-index: 1000;
-        }
-        
-        .option-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            padding: 10px;
-        }
-        
-        .option-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 5px;
-        }
-        
-        .close {
-            display: none;
-=======
             background-color: rgba(0,0,0,0.5);
             z-index: 1000;
         }
@@ -188,7 +181,6 @@
             cursor: pointer;
             min-width: 150px;
             display: inline-block;
->>>>>>> Stashed changes
         }
     </style>
     <!-- 先載入所有資料檔案 -->
@@ -203,47 +195,21 @@
 </head>
 <body>
     <div class="container">
-<<<<<<< Updated upstream
         <div>
             <label>角色：</label>
-            <button class="select-button" id="characterButton" onclick="showModal('選擇角色', characterData, 'characterButton')">請選擇角色</button>
+            <div class="selected-value" id="characterValue" onclick="openModal('character')">請選擇角色</div>
         </div>
         
         <div>
             <label>法寶卡：</label>
-            <button class="select-button" id="treasureCardButton" onclick="showModal('選擇法寶卡', treasureCardData, 'treasureCardButton')">請選擇法寶卡</button>
+            <div class="selected-value" id="treasureCardValue" onclick="openModal('treasureCard')">請選擇法寶卡</div>
         </div>
     
         <div>
             <label>套裝：</label>
-            <button class="select-button" id="equipmentButton" onclick="showModal('選擇套裝', equipmentData, 'equipmentButton')">請選擇套裝</button>
+            <div class="selected-value" id="equipmentValue" onclick="openModal('equipment')">請選擇套裝</div>
         </div>
     
-        <div class="assist1-container">
-            <div>
-                <label>輔助：</label>
-                <button class="select-button" id="assist1Button" onclick="showModal('選擇輔助', assistData, 'assist1Button')">請選擇輔助</button>
-            </div>
-    
-            <div>
-                <label>輔助套裝：</label>
-                <button class="select-button" id="assist1EquipmentButton" onclick="showModal('選擇輔助套裝', assistEquipmentData, 'assist1EquipmentButton')">請選擇輔助套裝</button>
-            </div>
-            
-            <div>
-                <label>輔助法寶卡：</label>
-                <button class="select-button" id="assist1TreasureCardButton" onclick="showModal('選擇輔助法寶卡', assistTreasureCardData, 'assist1TreasureCardButton')">請選擇輔助法寶卡</button>
-            </div>
-=======
-        <label>角色：</label>
-        <div class="selected-value" id="characterValue" onclick="openModal('character')">請選擇角色</div>
-        
-        <label>法寶卡：</label>
-        <div class="selected-value" id="treasureCardValue" onclick="openModal('treasureCard')">請選擇法寶卡</div>
-        
-        <label>套裝：</label>
-        <div class="selected-value" id="equipmentValue" onclick="openModal('equipment')">請選擇套裝</div>
-        
         <div class="assist1-container">
             <label>輔助：</label>
             <div class="selected-value" id="assist1Value" onclick="openModal('assist1')">請選擇輔助</div>
@@ -253,7 +219,6 @@
             
             <label>輔助法寶卡：</label>
             <div class="selected-value" id="assist1TreasureCardValue" onclick="openModal('assist1TreasureCard')">請選擇輔助法寶卡</div>
->>>>>>> Stashed changes
         </div>
 
         <table class="result" id="statsTable">
@@ -273,21 +238,12 @@
         <div id="potentialResult"></div>
     </div>
 
-<<<<<<< Updated upstream
-    <!-- 模態框 -->
-    <div id="selectionModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <div id="optionsGrid" class="option-grid"></div>
-=======
     <!-- 添加模態框 -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle"></h2>
             <div id="modalOptions"></div>
->>>>>>> Stashed changes
         </div>
     </div>
 
@@ -379,28 +335,12 @@
 
         // 計算函數
         function calculate() {
-<<<<<<< Updated upstream
-            const selectedCharacter = document.getElementById('characterButton').textContent;
-            const selectedTreasureCard = document.getElementById('treasureCardButton').textContent;
-            const selectedEquipment = document.getElementById('equipmentButton').textContent;
-            const selectedAssist1 = document.getElementById('assist1Button').textContent;
-            const selectedAssist1Equipment = document.getElementById('assist1EquipmentButton').textContent;
-            const selectedAssist1TreasureCard = document.getElementById('assist1TreasureCardButton').textContent;
-
-            const character = characterData[selectedCharacter] || {};
-            const card = treasureCardData[selectedTreasureCard] || {};
-            const equipment = equipmentData[selectedEquipment] || {};
-            const assist1 = assistData[selectedAssist1] || {};
-            const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
-            const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
-=======
             const character = characterData[selectedValues.character] || {};
             const card = treasureCardData[selectedValues.treasureCard] || {};
             const equipment = equipmentData[selectedValues.equipment] || {};
             const assist1 = assistData[selectedValues.assist1] || {};
             const assist1Equipment = assistEquipmentData[selectedValues.assist1Equipment] || {};
             const assist1TreasureCard = assistTreasureCardData[selectedValues.assist1TreasureCard] || {};
->>>>>>> Stashed changes
 
             statsData.forEach(stat => {
                 const values = [
@@ -427,28 +367,12 @@
 
         // 潜力计算函数
         function NewestBaselValue() {
-<<<<<<< Updated upstream
-            const selectedCharacter = document.getElementById('characterButton').textContent;
-            const selectedTreasureCard = document.getElementById('treasureCardButton').textContent;
-            const selectedEquipment = document.getElementById('equipmentButton').textContent;
-            const selectedAssist1 = document.getElementById('assist1Button').textContent;
-            const selectedAssist1Equipment = document.getElementById('assist1EquipmentButton').textContent;
-            const selectedAssist1TreasureCard = document.getElementById('assist1TreasureCardButton').textContent;
-
-            const character = characterData[selectedCharacter] || {};
-            const card = treasureCardData[selectedTreasureCard] || {};
-            const equipment = equipmentData[selectedEquipment] || {};
-            const assist1 = assistData[selectedAssist1] || {};
-            const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
-            const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
-=======
             const character = characterData[selectedValues.character] || {};
             const card = treasureCardData[selectedValues.treasureCard] || {};
             const equipment = equipmentData[selectedValues.equipment] || {};
             const assist1 = assistData[selectedValues.assist1] || {};
             const assist1Equipment = assistEquipmentData[selectedValues.assist1Equipment] || {};
             const assist1TreasureCard = assistTreasureCardData[selectedValues.assist1TreasureCard] || {};
->>>>>>> Stashed changes
 
             const baseAtk = 
                 (character.baseAtk || 0) + 
@@ -540,13 +464,6 @@
 
         // 修改 DOMContentLoaded 事件监听器
         document.addEventListener('DOMContentLoaded', () => {
-<<<<<<< Updated upstream
-            console.log('DOM 載入完成，開始初始化');
-            generateTable();
-            calculate(); // 初始化时计算一次
-            console.log('初始化完成');
-        });
-=======
             generateTable();
             calculate();
         });
@@ -558,7 +475,6 @@
                 closeModal();
             }
         }
->>>>>>> Stashed changes
     </script>
     <div id="cornerText">Last Updated :2025/02/12</div>
 </body>
