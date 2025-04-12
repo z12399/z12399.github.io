@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小游戏集合</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .games-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        .game-card {
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .game-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .game-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .play-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .play-button:hover {
+            background-color: #45a049;
+        }
+        footer {
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>小游戏集合</h1>
+        <p>欢迎来到小游戏世界，这里有多种有趣的游戏供你选择！</p>
+    </header>
+
+    <main>
+        <div class="games-container">
+            <div class="game-card">
+                <div class="game-title">猜数字小游戏</div>
+                <div class="game-description">
+                    一个简单有趣的猜数字游戏。系统会随机生成一个1到100之间的数字，你需要猜出这个数字。每次猜测后，系统会提示数字是太大还是太小。
+                </div>
+                <a href="guess-number.html" class="play-button">开始游戏</a>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-title">围墙小游戏</div>
+                <div class="game-description">
+                    一个策略性游戏，通过点击格子建立墙来阻止中心的物体逃向边缘。每建立一座墙，物体就会移动一步。如果物体达到边缘，游戏结束。
+                </div>
+                <a href="wall-game.html" class="play-button">开始游戏</a>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-title">2048数字合成</div>
+                <div class="game-description">
+                    经典的2048数字合成游戏。滑动屏幕合并相同的数字方块，当数字达到2048时获胜。每次合并方块都有清晰的视觉与音效反馈。
+                </div>
+                <a href="2048-game.html" class="play-button">开始游戏</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 小游戏集合 | 为您提供简单有趣的游戏体验</p>
+    </footer>
+</body>
+</html> 
