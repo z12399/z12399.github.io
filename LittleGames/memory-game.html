@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記憶配對遊戲</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select {
+            padding: 8px;
+            width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 23px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .game-board {
+            display: grid;
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .card {
+            width: 100%;
+            height: 120px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            position: relative;
+        }
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 40px;
+        }
+        .card-front {
+            background-color: #3498db;
+        }
+        .card-back {
+            background-color: #f1c40f;
+            transform: rotateY(180deg);
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card.matched .card-back {
+            background-color: #2ecc71;
+        }
+        .stats {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .description {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #4CAF50;
+            border-radius: 0 4px 4px 0;
+        }
+        footer {
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>記憶配對遊戲</h1>
+        <p>翻開卡片，找出所有成對的符號</p>
+    </header>
+
+    <main>
+        <div class="description">
+            <p><strong>記憶配對遊戲說明：</strong> 這是一個測試記憶力的遊戲。所有卡片開始時都面朝下。每次可以翻開兩張卡片，如果它們匹配，則保持翻開；如果不匹配，則再次翻回。目標是以最少的嘗試次數找出所有匹配的卡片對。</p>
+            <p><a href="memory-explanation.html">查看功能詳解 &raquo;</a></p>
+        </div>
+
+        <div class="control-panel">
+            <div class="input-group">
+                <label for="difficulty">難度選擇：</label>
+                <select id="difficulty">
+                    <option value="easy">簡單 (4x3)</option>
+                    <option value="medium">中等 (4x4)</option>
+                    <option value="hard">困難 (6x4)</option>
+                </select>
+            </div>
+            <button id="start-btn">開始遊戲</button>
+            <button id="reset-btn">重置</button>
+        </div>
+
+        <div id="game-board" class="game-board"></div>
+
+        <div id="stats" class="stats">
+            嘗試次數: 0 | 配對成功: 0 | 剩餘對數: 0
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 小遊戲集合 | <a href="index.html">返回遊戲列表</a></p>
+    </footer>
+
+    <script>
+        // 主要變數
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let attempts = 0;
+        let totalPairs = 0;
+        let isProcessing = false;
+        
+        // 卡片符號
+        const symbols = ['🐱', '🐶', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐭', '🐹', '🐵'];
+        
+        // DOM元素
+        const gameBoard = document.getElementById('game-board');
+        const difficultySelect = document.getElementById('difficulty');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const statsDisplay = document.getElementById('stats');
+        
+        // 初始化
+        function init() {
+            cards = [];
+            flippedCards = [];
+            matchedPairs = 0;
+            attempts = 0;
+            isProcessing = false;
+            
+            // 更新統計信息
+            updateStats();
+        }
+        
+        // 創建遊戲板
+        function createGameBoard() {
+            // 清空遊戲板
+            gameBoard.innerHTML = '';
+            
+            // 獲取難度設置
+            const difficulty = difficultySelect.value;
+            let rows, cols;
+            
+            switch(difficulty) {
+                case 'easy':
+                    rows = 3;
+                    cols = 4;
+                    break;
+                case 'medium':
+                    rows = 4;
+                    cols = 4;
+                    break;
+                case 'hard':
+                    rows = 4;
+                    cols = 6;
+                    break;
+                default:
+                    rows = 3;
+                    cols = 4;
+            }
+            
+            // 設置總對數
+            totalPairs = (rows * cols) / 2;
+            
+            // 設置網格樣式
+            gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+            
+            // 準備卡片符號
+            let cardSymbols = [];
+            for (let i = 0; i < totalPairs; i++) {
+                cardSymbols.push(symbols[i]);
+                cardSymbols.push(symbols[i]);
+            }
+            
+            // 洗牌
+            cardSymbols = shuffleArray(cardSymbols);
+            
+            // 創建卡片
+            for (let i = 0; i < rows * cols; i++) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = i;
+                card.dataset.symbol = cardSymbols[i];
+                
+                const cardInner = document.createElement('div');
+                cardInner.className = 'card-inner';
+                
+                const cardFront = document.createElement('div');
+                cardFront.className = 'card-front';
+                cardFront.textContent = '?';
+                
+                const cardBack = document.createElement('div');
+                cardBack.className = 'card-back';
+                cardBack.textContent = cardSymbols[i];
+                
+                cardInner.appendChild(cardFront);
+                cardInner.appendChild(cardBack);
+                card.appendChild(cardInner);
+                
+                card.addEventListener('click', flipCard);
+                gameBoard.appendChild(card);
+                cards.push(card);
+            }
+            
+            // 初始化統計
+            init();
+        }
+        
+        // 翻牌
+        function flipCard() {
+            // 如果正在處理中或卡片已翻開或已配對，則返回
+            if (isProcessing || this.classList.contains('flipped') || this.classList.contains('matched')) {
+                return;
+            }
+            
+            // 如果已經翻開兩張卡片，則返回
+            if (flippedCards.length >= 2) {
+                return;
+            }
+            
+            // 翻開卡片
+            this.classList.add('flipped');
+            flippedCards.push(this);
+            
+            // 如果翻開了兩張卡片，則檢查是否匹配
+            if (flippedCards.length === 2) {
+                attempts++;
+                updateStats();
+                
+                if (flippedCards[0].dataset.symbol === flippedCards[1].dataset.symbol) {
+                    // 匹配
+                    matchedPairs++;
+                    flippedCards[0].classList.add('matched');
+                    flippedCards[1].classList.add('matched');
+                    flippedCards = [];
+                    
+                    // 更新統計
+                    updateStats();
+                    
+                    // 檢查是否完成
+                    if (matchedPairs === totalPairs) {
+                        setTimeout(() => {
+                            alert(`恭喜！你完成了遊戲！\n嘗試次數: ${attempts}`);
+                        }, 500);
+                    }
+                } else {
+                    // 不匹配，翻回
+                    isProcessing = true;
+                    setTimeout(() => {
+                        flippedCards[0].classList.remove('flipped');
+                        flippedCards[1].classList.remove('flipped');
+                        flippedCards = [];
+                        isProcessing = false;
+                    }, 1000);
+                }
+            }
+        }
+        
+        // 洗牌函數 (Fisher-Yates 算法)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        // 更新統計信息
+        function updateStats() {
+            statsDisplay.textContent = `嘗試次數: ${attempts} | 配對成功: ${matchedPairs} | 剩餘對數: ${totalPairs - matchedPairs}`;
+        }
+        
+        // 事件監聽器
+        startBtn.addEventListener('click', createGameBoard);
+        resetBtn.addEventListener('click', createGameBoard);
+        
+        // 初始加載
+        window.onload = function() {
+            createGameBoard();
+        };
+    </script>
+</body>
+</html> 
