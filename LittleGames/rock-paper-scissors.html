@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石頭剪刀布遊戲</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .game-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .choice {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        .choice:hover {
+            border-color: #4CAF50;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+        .result-area {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f5f5f5;
+            min-height: 200px;
+            position: relative;
+        }
+        .vs {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .player-choice, .computer-choice {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 10px auto;
+            background-color: white;
+        }
+        .result-message {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 30px;
+        }
+        .win {
+            color: #4CAF50;
+        }
+        .lose {
+            color: #e74c3c;
+        }
+        .draw {
+            color: #3498db;
+        }
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+        }
+        .score {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .reset-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .reset-btn:hover {
+            background-color: #45a049;
+        }
+        .description {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #4CAF50;
+            border-radius: 0 4px 4px 0;
+        }
+        .rounds-selector {
+            margin: 20px 0;
+        }
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .game-history {
+            margin-top: 30px;
+            border-top: 1px dashed #ddd;
+            padding-top: 20px;
+        }
+        .history-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .round-history {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .round-history:nth-child(odd) {
+            background-color: #f0f0f0;
+        }
+        footer {
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+        .animate {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-10px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(10px); }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3678795487155446"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1>石頭剪刀布遊戲</h1>
+        <p>挑戰電腦，測試你的運氣和策略！</p>
+    </header>
+
+    <main>
+        <div class="description">
+            <p><strong>石頭剪刀布遊戲說明：</strong> 這是一個簡單的石頭剪刀布遊戲。你可以選擇石頭、剪刀或布，與電腦對戰。規則是：石頭勝過剪刀，剪刀勝過布，布勝過石頭。</p>
+            <p><a href="rock-paper-scissors-explanation.html">查看功能詳解 &raquo;</a></p>
+        </div>
+
+        <div class="game-container">
+            <div class="rounds-selector">
+                <label for="rounds">選擇回合數：</label>
+                <select id="rounds">
+                    <option value="3">3 回合</option>
+                    <option value="5" selected>5 回合</option>
+                    <option value="7">7 回合</option>
+                    <option value="10">10 回合</option>
+                </select>
+            </div>
+
+            <div class="score-board">
+                <div class="score" id="player-score">玩家: 0</div>
+                <div class="score" id="computer-score">電腦: 0</div>
+                <div class="score" id="rounds-played">回合: 0/5</div>
+            </div>
+
+            <h2>選擇你的武器</h2>
+            <div class="choices">
+                <div class="choice" id="rock">✊</div>
+                <div class="choice" id="paper">✋</div>
+                <div class="choice" id="scissors">✌️</div>
+            </div>
+
+            <div class="result-area">
+                <div class="player-choice" id="player-choice-display"></div>
+                <div class="vs">VS</div>
+                <div class="computer-choice" id="computer-choice-display"></div>
+                <div class="result-message" id="result-message"></div>
+            </div>
+
+            <button class="reset-btn" id="reset-game">重置遊戲</button>
+
+            <div class="game-history">
+                <div class="history-title">遊戲歷史</div>
+                <div id="history-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 小遊戲集合 | <a href="index.html">返回遊戲列表</a></p>
+    </footer>
+
+    <script>
+        // 主要變數
+        let playerScore = 0;
+        let computerScore = 0;
+        let roundsPlayed = 0;
+        let maxRounds = 5;
+        let gameActive = true;
+        let gameHistory = [];
+
+        // DOM元素
+        const choices = document.querySelectorAll('.choice');
+        const playerScoreDisplay = document.getElementById('player-score');
+        const computerScoreDisplay = document.getElementById('computer-score');
+        const roundsPlayedDisplay = document.getElementById('rounds-played');
+        const resultMessage = document.getElementById('result-message');
+        const playerChoiceDisplay = document.getElementById('player-choice-display');
+        const computerChoiceDisplay = document.getElementById('computer-choice-display');
+        const resetButton = document.getElementById('reset-game');
+        const roundsSelector = document.getElementById('rounds');
+        const historyContainer = document.getElementById('history-container');
+
+        // 表情符號對應
+        const emojis = {
+            rock: '✊',
+            paper: '✋',
+            scissors: '✌️'
+        };
+
+        // 初始化
+        function init() {
+            playerScore = 0;
+            computerScore = 0;
+            roundsPlayed = 0;
+            gameActive = true;
+            gameHistory = [];
+            
+            // 更新顯示
+            updateScoreDisplay();
+            
+            // 清空結果區域
+            resultMessage.textContent = '';
+            playerChoiceDisplay.textContent = '';
+            computerChoiceDisplay.textContent = '';
+            playerChoiceDisplay.classList.remove('animate');
+            computerChoiceDisplay.classList.remove('animate');
+            
+            // 清空歷史記錄
+            historyContainer.innerHTML = '';
+            
+            // 獲取最大回合數
+            maxRounds = parseInt(roundsSelector.value);
+        }
+
+        // 更新分數顯示
+        function updateScoreDisplay() {
+            playerScoreDisplay.textContent = `玩家: ${playerScore}`;
+            computerScoreDisplay.textContent = `電腦: ${computerScore}`;
+            roundsPlayedDisplay.textContent = `回合: ${roundsPlayed}/${maxRounds}`;
+        }
+
+        // 獲取電腦選擇
+        function getComputerChoice() {
+            const choices = ['rock', 'paper', 'scissors'];
+            const randomIndex = Math.floor(Math.random() * 3);
+            return choices[randomIndex];
+        }
+
+        // 判斷勝負
+        function getResult(playerChoice, computerChoice) {
+            if (playerChoice === computerChoice) {
+                return 'draw';
+            }
+            
+            if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                return 'win';
+            }
+            
+            return 'lose';
+        }
+
+        // 添加到歷史記錄
+        function addToHistory(round, playerChoice, computerChoice, result) {
+            const historyEntry = document.createElement('div');
+            historyEntry.className = 'round-history';
+            
+            let resultText;
+            if (result === 'win') {
+                resultText = '玩家勝利';
+            } else if (result === 'lose') {
+                resultText = '電腦勝利';
+            } else {
+                resultText = '平局';
+            }
+            
+            historyEntry.innerHTML = `
+                <div>回合 ${round}</div>
+                <div>玩家: ${emojis[playerChoice]}</div>
+                <div>電腦: ${emojis[computerChoice]}</div>
+                <div class="${result}">${resultText}</div>
+            `;
+            
+            historyContainer.appendChild(historyEntry);
+            
+            // 保存到歷史數組
+            gameHistory.push({
+                round,
+                playerChoice,
+                computerChoice,
+                result
+            });
+        }
+
+        // 處理遊戲結束
+        function endGame() {
+            gameActive = false;
+            
+            let finalMessage;
+            if (playerScore > computerScore) {
+                finalMessage = '恭喜！你贏了遊戲！';
+            } else if (computerScore > playerScore) {
+                finalMessage = '很遺憾，電腦贏了遊戲！';
+            } else {
+                finalMessage = '遊戲結束，平局！';
+            }
+            
+            resultMessage.textContent = finalMessage;
+        }
+
+        // 播放回合
+        function playRound(playerChoice) {
+            if (!gameActive) return;
+            
+            const computerChoice = getComputerChoice();
+            
+            // 顯示選擇
+            playerChoiceDisplay.textContent = emojis[playerChoice];
+            computerChoiceDisplay.textContent = emojis[computerChoice];
+            
+            // 添加動畫
+            playerChoiceDisplay.classList.add('animate');
+            computerChoiceDisplay.classList.add('animate');
+            
+            // 判斷結果
+            const result = getResult(playerChoice, computerChoice);
+            
+            let message;
+            
+            // 更新分數
+            if (result === 'win') {
+                playerScore++;
+                message = '你贏了這回合！';
+                resultMessage.className = 'result-message win';
+            } else if (result === 'lose') {
+                computerScore++;
+                message = '電腦贏了這回合！';
+                resultMessage.className = 'result-message lose';
+            } else {
+                message = '平局！';
+                resultMessage.className = 'result-message draw';
+            }
+            
+            resultMessage.textContent = message;
+            
+            // 更新回合數
+            roundsPlayed++;
+            
+            // 更新分數顯示
+            updateScoreDisplay();
+            
+            // 添加到歷史記錄
+            addToHistory(roundsPlayed, playerChoice, computerChoice, result);
+            
+            // 檢查遊戲是否結束
+            if (roundsPlayed >= maxRounds) {
+                endGame();
+            }
+            
+            // 移除動畫
+            setTimeout(() => {
+                playerChoiceDisplay.classList.remove('animate');
+                computerChoiceDisplay.classList.remove('animate');
+            }, 500);
+        }
+
+        // 事件監聽器
+        choices.forEach(choice => {
+            choice.addEventListener('click', function() {
+                const playerChoice = this.id;
+                playRound(playerChoice);
+            });
+        });
+
+        resetButton.addEventListener('click', init);
+        
+        roundsSelector.addEventListener('change', function() {
+            maxRounds = parseInt(this.value);
+            init();
+        });
+
+        // 初始加載
+        window.onload = function() {
+            init();
+        };
+    </script>
+</body>
+</html> 

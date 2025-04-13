@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石頭剪刀布遊戲說明</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .feature-list {
+            padding-left: 20px;
+        }
+        .feature-list li {
+            margin-bottom: 10px;
+        }
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .rules-table th, .rules-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .rules-table th {
+            background-color: #f1f9fe;
+        }
+        .rules-table td.win {
+            background-color: #e6ffe6;
+        }
+        .rules-table td.lose {
+            background-color: #ffe6e6;
+        }
+        .rules-table td.draw {
+            background-color: #e6f7ff;
+        }
+        .emoji-display {
+            font-size: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+        .emoji-item {
+            text-align: center;
+        }
+        .emoji {
+            font-size: 60px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+        footer {
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 10px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3678795487155446"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1>石頭剪刀布遊戲功能詳解</h1>
+        <p>瞭解本遊戲的所有功能及實現原理</p>
+    </header>
+
+    <main>
+        <div class="section">
+            <h2>遊戲概述</h2>
+            <p>石頭剪刀布是一款全球流行的手勢遊戲，通常用於在兩人之間解決小爭執或做出選擇。在我們的數字版本中，玩家與電腦對戰，通過選擇石頭、剪刀或布來進行比拼。</p>
+            
+            <div class="emoji-display">
+                <div class="emoji-item">
+                    <span class="emoji">✊</span>
+                    <div>石頭</div>
+                </div>
+                <div class="emoji-item">
+                    <span class="emoji">✋</span>
+                    <div>布</div>
+                </div>
+                <div class="emoji-item">
+                    <span class="emoji">✌️</span>
+                    <div>剪刀</div>
+                </div>
+            </div>
+            
+            <p>遊戲提供多種回合選擇，讓玩家可以選擇3、5、7或10回合的比賽。每個回合的勝負將被記錄，最終以總分決定遊戲勝負。</p>
+        </div>
+
+        <div class="section">
+            <h2>遊戲規則</h2>
+            <p>石頭剪刀布的規則簡單明了：</p>
+            <ul class="feature-list">
+                <li><strong>石頭 (✊)</strong> 勝過 <strong>剪刀 (✌️)</strong>：石頭可以砸鈍剪刀</li>
+                <li><strong>剪刀 (✌️)</strong> 勝過 <strong>布 (✋)</strong>：剪刀可以剪斷布</li>
+                <li><strong>布 (✋)</strong> 勝過 <strong>石頭 (✊)</strong>：布可以包裹石頭</li>
+                <li>相同的選擇會導致平局</li>
+            </ul>
+            
+            <p>以下是規則的表格表示：</p>
+            <table class="rules-table">
+                <tr>
+                    <th></th>
+                    <th>電腦：石頭</th>
+                    <th>電腦：布</th>
+                    <th>電腦：剪刀</th>
+                </tr>
+                <tr>
+                    <th>玩家：石頭</th>
+                    <td class="draw">平局</td>
+                    <td class="lose">電腦勝</td>
+                    <td class="win">玩家勝</td>
+                </tr>
+                <tr>
+                    <th>玩家：布</th>
+                    <td class="win">玩家勝</td>
+                    <td class="draw">平局</td>
+                    <td class="lose">電腦勝</td>
+                </tr>
+                <tr>
+                    <th>玩家：剪刀</th>
+                    <td class="lose">電腦勝</td>
+                    <td class="win">玩家勝</td>
+                    <td class="draw">平局</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>功能特點</h2>
+            <ul class="feature-list">
+                <li><strong>多回合制</strong>：可以選擇3、5、7或10回合的比賽</li>
+                <li><strong>動畫效果</strong>：選擇後的手勢會有輕微的動畫效果</li>
+                <li><strong>視覺反饋</strong>：勝利、失敗和平局有不同的顏色標識</li>
+                <li><strong>得分記錄</strong>：實時顯示玩家和電腦的得分</li>
+                <li><strong>遊戲歷史</strong>：記錄每一回合的選擇和結果</li>
+                <li><strong>重置功能</strong>：可以隨時重新開始遊戲</li>
+                <li><strong>響應式設計</strong>：在各種屏幕尺寸上都能良好顯示</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>技術實現</h2>
+            <p>這款石頭剪刀布遊戲完全使用純HTML、CSS和JavaScript實現，沒有使用任何外部庫。以下是一些關鍵技術亮點：</p>
+            
+            <h3>隨機選擇生成</h3>
+            <p>電腦的選擇是通過JavaScript的隨機數生成函數來確定的：</p>
+            <pre>
+function getComputerChoice() {
+    const choices = ['rock', 'paper', 'scissors'];
+    const randomIndex = Math.floor(Math.random() * 3);
+    return choices[randomIndex];
+}</pre>
+            
+            <h3>勝負判斷邏輯</h3>
+            <p>遊戲使用簡潔的邏輯來判斷每回合的勝負：</p>
+            <pre>
+function getResult(playerChoice, computerChoice) {
+    if (playerChoice === computerChoice) {
+        return 'draw';
+    }
+    
+    if (
+        (playerChoice === 'rock' && computerChoice === 'scissors') ||
+        (playerChoice === 'paper' && computerChoice === 'rock') ||
+        (playerChoice === 'scissors' && computerChoice === 'paper')
+    ) {
+        return 'win';
+    }
+    
+    return 'lose';
+}</pre>
+            
+            <h3>CSS動畫效果</h3>
+            <p>遊戲中的手勢有簡單的上下晃動動畫，通過CSS @keyframes實現：</p>
+            <pre>
+.animate {
+    animation: shake 0.5s;
+}
+@keyframes shake {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-10px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(10px); }
+}</pre>
+        </div>
+
+        <div class="section">
+            <h2>遊戲策略</h2>
+            <p>雖然石頭剪刀布常被視為純粹的運氣遊戲，但實際上有一些策略可以提高獲勝機率：</p>
+            <ul class="feature-list">
+                <li><strong>觀察模式</strong>：在現實生活中的遊戲中，觀察對手之前的選擇可能會發現一些模式</li>
+                <li><strong>心理戰術</strong>：人們往往在連續出同一選擇後會改變，這一點可以利用</li>
+                <li><strong>統計優勢</strong>：研究表明，許多人第一次會選擇石頭，所以首輪選擇布可能有優勢</li>
+                <li><strong>隨機性</strong>：對抗電腦時，最好的策略反而是保持隨機選擇，避免形成可預測的模式</li>
+            </ul>
+            <p>請注意，在我們的遊戲中，電腦是完全隨機選擇的，所以沒有確定的"必勝"策略。</p>
+        </div>
+
+        <div class="center">
+            <a href="rock-paper-scissors.html" class="button">返回遊戲</a>
+            <a href="index.html" class="button">返回遊戲列表</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 小遊戲集合 | 為您提供簡單有趣的遊戲體驗</p>
+    </footer>
+</body>
+</html> 
