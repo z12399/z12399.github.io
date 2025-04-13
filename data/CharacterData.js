@@ -4,7 +4,7 @@
 
 const characterData = {
     '冰岩': {
-        'image': 'TOA_image/冰岩.webp',
+        'image': 'TOA_image/character/冰岩.webp',
         'baseAtk': 734,
         'atkPercentage': 0.52,
         'attributeDamage': 0.3,
@@ -12,7 +12,7 @@ const characterData = {
         'critDamage': 0.5
     },
     '冰薄荷': {
-        'image': 'TOA_image/冰薄荷.webp',
+        'image': 'TOA_image/character/冰薄荷.webp',
         'baseAtk': 680,
         'atkPercentage': 0.82,
         'attributeDamage': 0.3,
@@ -21,7 +21,7 @@ const characterData = {
     },
 
     '雪花糖球': {
-        'image': 'TOA_image/雪花糖球.webp',
+        'image': 'TOA_image/character/雪花糖球.webp',
         'baseAtk': 683,
         'atkPercentage': 0.52,
         'attributeDamage': 0.30,
@@ -30,7 +30,7 @@ const characterData = {
     },
 
     '羅勒青醬': {
-        'image': 'TOA_image/羅勒青醬.webp',
+        'image': 'TOA_image/character/羅勒青醬.webp',
         'baseAtk': 672,
         'atkPercentage': 0.82,
         'attributeDamage': 0.3,
@@ -38,7 +38,7 @@ const characterData = {
         'critDamage': 0.5
     },
     '哈拉帕辣椒': {
-        'image': 'TOA_image/哈拉帕辣椒.webp',
+        'image': 'TOA_image/character/哈拉帕辣椒.webp',
         'baseAtk': 722,
         'atkPercentage': 0.82,
         'attributeDamage': 0.3,
@@ -46,7 +46,7 @@ const characterData = {
         'critDamage': 0.5
     },
     '紫玉甘藍': {
-        'image': 'TOA_image/紫玉甘藍.webp',
+        'image': 'TOA_image/character/紫玉甘藍.webp',
         'baseAtk': 744,
         'atkPercentage': 0.82,
         'attributeDamage': 0.3,
@@ -54,7 +54,7 @@ const characterData = {
         'critDamage': 0.5,
     },
     '檸檬皮': {
-        'image': 'TOA_image/檸檬皮.webp',
+        'image': 'TOA_image/character/檸檬皮.webp',
         'baseAtk': 712,
         'atkPercentage': 0.52,
         'attributeDamage': 0.54,
@@ -62,7 +62,7 @@ const characterData = {
         'critDamage': 0.5,
     },
     '奶油蘇打': {
-        'image': 'TOA_image/奶油蘇打.webp',
+        'image': 'TOA_image/character/奶油蘇打.webp',
         'baseAtk': 725,
         'atkPercentage': 0.82,
         'attributeDamage': 0.3,
@@ -70,7 +70,7 @@ const characterData = {
         'critDamage': 0.5
     },
     '黑麥': {
-        'image': 'TOA_image/黑麥.webp',
+        'image': 'TOA_image/character/黑麥.webp',
         'baseAtk': 737,
         'atkPercentage': 0.82,
         'attributeDamage': 0.30,
@@ -78,7 +78,7 @@ const characterData = {
         'critDamage': 1.3
     },    
     '甜辣醬': {
-        'image': 'TOA_image/甜辣醬.webp',
+        'image': 'TOA_image/character/甜辣醬.webp',
         'baseAtk': 719,
         'atkPercentage': 0.52,
         'attributeDamage': 0.6,
@@ -86,7 +86,7 @@ const characterData = {
         'critDamage': 1.619,
     },
     '黑巧克力': {
-        'image': 'TOA_image/黑巧克力.webp',
+        'image': 'TOA_image/character/黑巧克力.webp',
         'baseAtk': 755,
         'atkPercentage': 0.52,
         'attributeDamage': 0.3,
@@ -95,7 +95,7 @@ const characterData = {
     },
 
     '麻花捲': {
-        'image': 'TOA_image/麻花捲.webp',
+        'image': 'TOA_image/character/麻花捲.webp',
         'baseAtk': 567,
         'atkPercentage': 0.82,
         'attributeDamage': 0.525,

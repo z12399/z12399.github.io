@@ -1,6 +1,6 @@
-
 const assistData = {
     '檸檬(0%增益,光)': {
+        'image': 'TOA_image/character/檸檬.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.15,
@@ -8,6 +8,7 @@ const assistData = {
         'critDamage': 0.4
     },
     '檸檬(109%增益)': {
+        'image': 'TOA_image/character/檸檬.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0,
@@ -15,6 +16,7 @@ const assistData = {
         'critDamage': 0.836
     },
     '檸檬(109%增益,光)': {
+        'image': 'TOA_image/character/檸檬.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.314,
@@ -22,6 +24,7 @@ const assistData = {
         'critDamage': 0.836
     },
     '桃子(0%增益,火)': {
+        'image': 'TOA_image/character/桃子.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.15,
@@ -29,6 +32,7 @@ const assistData = {
         'critDamage': 0
     },
     '桃子(155%增益,火)': {
+        'image': 'TOA_image/character/桃子.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.383,
@@ -36,6 +40,7 @@ const assistData = {
         'critDamage': 0
     },
     '辣椒碎片(0%增益,火)': {
+        'image': 'TOA_image/character/辣椒碎片.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.20,
@@ -43,6 +48,7 @@ const assistData = {
         'critDamage': 0
     },
     '辣椒碎片(40%增益,火)': {
+        'image': 'TOA_image/character/辣椒碎片.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.28,
@@ -50,6 +56,7 @@ const assistData = {
         'critDamage': 0
     },
     '搖滾(0%增益,水)': {
+        'image': 'TOA_image/character/搖滾.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.30,
@@ -57,6 +64,7 @@ const assistData = {
         'critDamage': 0
     },
     '搖滾(155%增益,水)': {
+        'image': 'TOA_image/character/搖滾.webp',
         'baseAtk': 0,
         'atkPercentage': 0,
         'attributeDamage': 0.765,

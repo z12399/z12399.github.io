@@ -6,12 +6,15 @@
     <title>潛能計算機</title>
     <style>
         body { 
-            font-family: Arial, sans-serif;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
             background-image: url('./image/薑餅人之塔_封面.webp');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             position: relative;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
         }
 
         /* 添加一個暗色遮罩 */
@@ -26,127 +29,266 @@
             z-index: -1;
         }
 
+        /* 添加導航欄樣式 */
+        .nav-tabs {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab.active {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-bottom: 3px solid var(--tower-gold, #ffd700);
+        }
+        
+        .nav-tab:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+
         .container { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            margin-top: 50px;
-            color: white; /* 因為背景變暗了，文字改為白色 */
+            margin: 0 auto 30px;
+            max-width: 1200px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
-        /* 遊戲集合導航按鈕 */
-        .game-nav {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        
-        .game-button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
+        /* 页面2的样式 */
+        .page2-content {
             color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s;
+            text-align: center;
+            padding: 40px 20px;
         }
         
-        .game-button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        .page2-title {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--tower-gold, #ffd700);
+        }
+        
+        .page2-description {
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 30px;
         }
 
-        /* 調整標籤文字的背景和文字陰影 */
         label { 
             font-size: 18px; 
             margin-bottom: 10px;
             color: white;
-            text-shadow: 
-                -1px -1px 0 #000,  
-                 1px -1px 0 #000,
-                -1px  1px 0 #000,
-                 1px  1px 0 #000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            display: block;
+            margin-bottom: 8px;
         }
 
-        /* 調整選擇按鈕的顏色 */
         .select-button {
-            padding: 10px;
-            margin: 5px;
+            padding: 12px 24px;
+            margin: 8px 0;
             cursor: pointer;
-            background-color: #f5f5f5ab;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        /* 調整模態框內容的背景色 */
+        .select-button:hover {
+            background-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
         .modal-content {
             position: relative;
-            background-color: #f5f5f5ab;
-            margin: 15% auto;
-            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            margin: 10% auto;
+            padding: 25px;
             width: 80%;
+            max-width: 1000px;
             max-height: 70vh;
             overflow-y: auto;
-            border-radius: 5px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        /* 調整選項的背景色 */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+
         .option-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            background-color: #f5f5f5ab;
+            background-color: #fff;
+            transition: all 0.3s ease;
         }
 
         .option-item:hover {
-            background-color: #e8e8e8;
+            background-color: #f0f0f0;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* 調整表格的背景色 */
-        .result { 
-            background-color: #f5f5f5ab;
-            color: black;
+        .option-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
 
-        /* 調整潛能計算結果的文字陰影 */
+        .result {
+            width: 100%;
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .result th, .result td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .result th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .result tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
         #potentialResult {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(to bottom, var(--cookie-dark), #3a2617);
+            border-radius: 10px;
             color: white;
-            text-shadow: 
-                -1px -1px 0 #000,  
-                 1px -1px 0 #000,
-                -1px  1px 0 #000,
-                 1px  1px 0 #000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            text-align: center;
+            border: 2px solid var(--cookie-brown);
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+        
+        #potentialResult .max-value {
+            color: var(--tower-gold);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        #potentialResult .best-distribution {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        #potentialResult .stat-point {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 5px 10px;
+            display: inline-block;
+        }
+        
+        #potentialResult .stat-name {
+            color: var(--icing-white);
+        }
+        
+        #potentialResult .point-value {
+            color: var(--tower-gold);
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .current-damage .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--icing-white);
+        }
+
+        #cornerText {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-size: 12px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .assist1-container {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
             margin-top: 20px;
         }
 
-        /* 調整右下角更新時間的文字陰影 */
-        #cornerText {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 12px;
-            color: white;
-            text-shadow: 
-                -1px -1px 0 #000,  
-                 1px -1px 0 #000,
-                -1px  1px 0 #000,
-                 1px  1px 0 #000;
+        .assist1-container > div {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
         }
 
-        .assist1-container { display: flex; width: 50%; justify-content: center; }
         select { padding: 5px; font-size: 16px; margin-bottom: 20px; }
         table { border-collapse: collapse; }
         th, td { border: 1px solid black; padding: 5px; }
         #cornerText {position: fixed;bottom: 10px;right: 10px;font-size: 12px;color: #666;}
+        .select-button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -154,33 +296,316 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.7);
             z-index: 1000;
         }
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 5px;
+        
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 10px;
         }
-        .option-btn {
-            padding: 5px 15px;
-            margin: 5px;
-            cursor: pointer;
+        
+        .option-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 5px;
         }
+        
         .close {
-            float: right;
-            cursor: pointer;
-            font-size: 24px;
+            display: none;
         }
-        .selected-value {
-            padding: 5px;
-            border: 1px solid #ccc;
+        
+        /* 潜能点数分配界面样式 */
+        :root {
+            --cookie-brown: #a5682a;
+            --cookie-light: #dfb78c;
+            --cookie-dark: #65422d;
+            --icing-white: #f5f5f5;
+            --icing-pink: #ffb7c5;
+            --tower-blue: #5c8dc9;
+            --tower-gold: #ffd700;
+            --shadow: rgba(0, 0, 0, 0.2);
+        }
+
+        .potential-allocation-card {
+            background: linear-gradient(to bottom, var(--cookie-light), #e3c8a6);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px var(--shadow);
+            padding: 24px;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            color: var(--cookie-dark);
+            max-width: 580px;
+            margin: 20px auto;
+            border: 2px solid var(--cookie-brown);
+            width: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--cookie-brown);
+            padding-bottom: 12px;
+        }
+
+        .card-header h3 {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--cookie-dark);
+            margin: 0;
+        }
+
+        .points-counter {
+            background-color: var(--cookie-brown);
+            color: var(--icing-white);
+            padding: 8px 12px;
+            border-radius: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .remaining-value {
+            font-size: 20px;
+            margin: 0 4px;
+            color: var(--tower-gold);
+        }
+
+        .stat-slider {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        /* 新增加減按鈕樣式 */
+        .point-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        
+        .control-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--cookie-brown);
+            color: white;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            min-width: 150px;
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .control-button:hover {
+            background-color: #85521e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+        
+        .control-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px var(--shadow);
+        }
+        
+        .control-button.minus {
+            background-color: #8b5927;
+        }
+        
+        .control-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .point-value-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--cookie-dark);
+            width: 40px;
+            text-align: center;
+        }
+        
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .stat-bonus {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .stat-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--cookie-dark);
+        }
+        
+        /* 移除舊的滑桿樣式 */
+        .slider-container, .slider-track, .slider-fill, .slider-handle, .slider-markers, .marker {
+            display: none;
+        }
+
+        .auto-optimize-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: var(--tower-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        .auto-optimize-btn:hover {
+            background-color: #4c7db8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px var(--shadow);
+        }
+
+        .auto-optimize-btn .icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .damage-preview-card {
+            background: linear-gradient(to bottom, var(--cookie-dark), #3a2617);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px var(--shadow);
+            padding: 24px;
+            color: var(--icing-white);
+            max-width: 580px;
+            margin: 20px auto;
+            border: 2px solid var(--cookie-brown);
+            width: 100%;
+        }
+
+        .damage-preview-card h3 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--tower-gold);
+            font-size: 22px;
+        }
+
+        .damage-value {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+
+        .current-damage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .current-damage .label {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .damage-change {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .damage-change.positive {
+            color: #4CAF50;
+        }
+
+        .damage-change.negative {
+            color: #f44336;
+        }
+
+        .breakdown-header {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--tower-gold);
+        }
+
+        .breakdown-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .bar-label {
+            flex: 0 0 120px;
+            text-align: right;
+            padding-right: 10px;
+            font-size: 14px;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background-color: var(--tower-gold);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .bar-value {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: var(--cookie-dark);
+            font-weight: bold;
+        }
+
+        .slider-handle.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .damage-value.optimized .current-damage .value {
+            animation: pulse 1.5s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: var(--tower-gold); }
+            100% { transform: scale(1); }
         }
     </style>
     <!-- 先載入所有資料檔案 -->
@@ -190,60 +615,205 @@
     <script src="./data/AssistData.js"></script>
     <script src="./data/AssistEquipmentData.js"></script>
     <script src="./data/AssistTreasureCardData.js"></script>
+    <!-- 載入映射表 -->
+    <script src="./js/filenameMapping.js"></script>
     <!-- 再載入功能模組 -->
     <script src="./js/modal.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3678795487155446"
+     crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container">
-        <div>
-            <label>角色：</label>
-            <div class="selected-value" id="characterValue" onclick="openModal('character')">請選擇角色</div>
-        </div>
-        
-        <div>
-            <label>法寶卡：</label>
-            <div class="selected-value" id="treasureCardValue" onclick="openModal('treasureCard')">請選擇法寶卡</div>
-        </div>
-    
-        <div>
-            <label>套裝：</label>
-            <div class="selected-value" id="equipmentValue" onclick="openModal('equipment')">請選擇套裝</div>
-        </div>
-    
-        <div class="assist1-container">
-            <label>輔助：</label>
-            <div class="selected-value" id="assist1Value" onclick="openModal('assist1')">請選擇輔助</div>
-            
-            <label>輔助套裝：</label>
-            <div class="selected-value" id="assist1EquipmentValue" onclick="openModal('assist1Equipment')">請選擇輔助套裝</div>
-            
-            <label>輔助法寶卡：</label>
-            <div class="selected-value" id="assist1TreasureCardValue" onclick="openModal('assist1TreasureCard')">請選擇輔助法寶卡</div>
-        </div>
-
-        <table class="result" id="statsTable">
-            <tr>
-                <th>屬性</th>
-                <th>角色</th>
-                <th>法寶卡</th>
-                <th>套裝</th>
-                <th>輔助</th>
-                <th>輔助套裝</th>
-                <th>輔助法寶卡</th>
-                <th>總和</th>
-            </tr>
-        </table>
-
-        <!-- 删除"計算"按钮 -->
-        <div id="potentialResult"></div>
+    <!-- 導航欄 -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" data-page="page1">潛能計算機</div>
+        <div class="nav-tab" data-page="page2">頁面2</div>
     </div>
 
-    <!-- 添加模態框 -->
-    <div id="modal" class="modal">
+    <!-- 頁面1: 潛能計算機 -->
+    <div id="page1" class="page active">
+        <div class="container">
+            <div>
+                <label>角色：</label>
+                <button class="select-button" id="characterButton" onclick="showModal('選擇角色', characterData, 'characterButton')">請選擇角色</button>
+            </div>
+            
+            <div>
+                <label>法寶卡：</label>
+                <button class="select-button" id="treasureCardButton" onclick="showModal('選擇法寶卡', treasureCardData, 'treasureCardButton')">請選擇法寶卡</button>
+            </div>
+        
+            <div>
+                <label>套裝：</label>
+                <button class="select-button" id="equipmentButton" onclick="showModal('選擇套裝', equipmentData, 'equipmentButton')">請選擇套裝</button>
+            </div>
+        
+            <div class="assist1-container">
+                <div>
+                    <label>輔助：</label>
+                    <button class="select-button" id="assist1Button" onclick="showModal('選擇輔助', assistData, 'assist1Button')">請選擇輔助</button>
+                </div>
+        
+                <div>
+                    <label>輔助套裝：</label>
+                    <button class="select-button" id="assist1EquipmentButton" onclick="showModal('選擇輔助套裝', assistEquipmentData, 'assist1EquipmentButton')">請選擇輔助套裝</button>
+                </div>
+                
+                <div>
+                    <label>輔助法寶卡：</label>
+                    <button class="select-button" id="assist1TreasureCardButton" onclick="showModal('選擇輔助法寶卡', assistTreasureCardData, 'assist1TreasureCardButton')">請選擇輔助法寶卡</button>
+                </div>
+            </div>
+    
+            <table class="result" id="statsTable">
+                <tr>
+                    <th>屬性</th>
+                    <th>角色</th>
+                    <th>法寶卡</th>
+                    <th>套裝</th>
+                    <th>輔助</th>
+                    <th>輔助套裝</th>
+                    <th>輔助法寶卡</th>
+                    <th>總和</th>
+                </tr>
+            </table>
+    
+            <!-- 最佳加點方案顯示 -->
+            <div id="potentialResult"></div>
+    
+            <!-- 潛能點數分配界面 -->
+            <div class="potential-allocation-card">
+                <div class="card-header">
+                    <h3>潛能點數分配</h3>
+                    <div class="points-counter">
+                        <span class="remaining-label">剩餘點數:</span>
+                        <span class="remaining-value">8</span>
+                        <span class="total-label">/8</span>
+                    </div>
+                </div>
+                
+                <div class="allocation-controls">
+                    <!-- 基礎攻擊力 -->
+                    <div class="stat-slider" data-stat="baseAtk" data-max="2">
+                        <div class="slider-header">
+                            <div class="stat-info">
+                                <label class="stat-name">基礎攻擊力</label>
+                                <div class="stat-bonus">+<span class="bonus-value">0</span></div>
+                            </div>
+                        </div>
+                        <div class="point-control">
+                            <button class="control-button minus" disabled>-</button>
+                            <span class="point-value-display">0</span>
+                            <button class="control-button plus">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 攻擊力百分比 -->
+                    <div class="stat-slider" data-stat="atkPercentage" data-max="8">
+                        <div class="slider-header">
+                            <div class="stat-info">
+                                <label class="stat-name">攻擊力百分比</label>
+                                <div class="stat-bonus">+<span class="bonus-value">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="point-control">
+                            <button class="control-button minus" disabled>-</button>
+                            <span class="point-value-display">0</span>
+                            <button class="control-button plus">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 屬性傷害百分比 -->
+                    <div class="stat-slider" data-stat="attributeDamage" data-max="2">
+                        <div class="slider-header">
+                            <div class="stat-info">
+                                <label class="stat-name">屬性傷害百分比</label>
+                                <div class="stat-bonus">+<span class="bonus-value">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="point-control">
+                            <button class="control-button minus" disabled>-</button>
+                            <span class="point-value-display">0</span>
+                            <button class="control-button plus">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 爆擊率 -->
+                    <div class="stat-slider" data-stat="critRate" data-max="8">
+                        <div class="slider-header">
+                            <div class="stat-info">
+                                <label class="stat-name">爆擊率</label>
+                                <div class="stat-bonus">+<span class="bonus-value">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="point-control">
+                            <button class="control-button minus" disabled>-</button>
+                            <span class="point-value-display">0</span>
+                            <button class="control-button plus">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 爆擊傷害 -->
+                    <div class="stat-slider" data-stat="critDamage" data-max="8">
+                        <div class="slider-header">
+                            <div class="stat-info">
+                                <label class="stat-name">爆擊傷害</label>
+                                <div class="stat-bonus">+<span class="bonus-value">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="point-control">
+                            <button class="control-button minus" disabled>-</button>
+                            <span class="point-value-display">0</span>
+                            <button class="control-button plus">+</button>
+                        </div>
+                    </div>
+                    
+                    <button class="auto-optimize-btn">
+                        <span class="icon">✨</span>
+                        <span class="label">自動優化分配</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 傷害預覽卡片 -->
+            <div class="damage-preview-card">
+                <h3>傷害預覽</h3>
+                
+                <div class="damage-value">
+                    <div class="current-damage">
+                        <span class="value">0</span>
+                        <span class="label">預計傷害</span>
+                    </div>
+                    
+                    <div class="damage-change positive">
+                        <span class="change-arrow">↑</span>
+                        <span class="change-value">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁面2: 新頁面 -->
+    <div id="page2" class="page">
+        <div class="container">
+            <div class="page2-content">
+                <h2 class="page2-title">頁面2</h2>
+                <p class="page2-description">
+                    這是第二個頁面的內容。您可以在這裡添加更多功能或信息。
+                </p>
+                <div class="page2-feature">
+                    <!-- 這裡可以添加頁面2的具體功能 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模態框 -->
+    <div id="selectionModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close">&times;</span>
             <h2 id="modalTitle"></h2>
-            <div id="modalOptions"></div>
+            <div id="optionsGrid" class="option-grid"></div>
         </div>
     </div>
 
@@ -269,78 +839,56 @@
             });
         }
 
-        // 添加新的模態框相關函數
-        let currentModalType = '';
-        let selectedValues = {
-            character: 'Nocharacter',
-            treasureCard: 'NotreasureCard',
-            equipment: 'Noequipment',
-            assist1: 'Noassist1',
-            assist1Equipment: 'Noassist1Equipment',
-            assist1TreasureCard: 'Noassist1TreasureCard'
-        };
-
-        function openModal(type) {
-            currentModalType = type;
-            const modal = document.getElementById('modal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalOptions = document.getElementById('modalOptions');
-            
-            modalTitle.textContent = `選擇${getTypeLabel(type)}`;
-            modalOptions.innerHTML = '';
-            
-            let data;
-            switch(type) {
-                case 'character': data = characterData; break;
-                case 'treasureCard': data = treasureCardData; break;
-                case 'equipment': data = equipmentData; break;
-                case 'assist1': data = assistData; break;
-                case 'assist1Equipment': data = assistEquipmentData; break;
-                case 'assist1TreasureCard': data = assistTreasureCardData; break;
-            }
+        // 修改模態框顯示函數，處理套裝圖片
+        function showModal(title, data, buttonId) {
+            document.getElementById('modalTitle').textContent = title;
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
             
             for (const key in data) {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = key;
-                btn.onclick = () => selectOption(type, key);
-                modalOptions.appendChild(btn);
+                const item = document.createElement('div');
+                item.className = 'option-item';
+                
+                // 處理圖片 - 所有類型的圖片現在都使用單一image屬性
+                if (data[key].image) {
+                    const img = document.createElement('img');
+                    // 使用映射函數處理圖片路徑
+                    img.src = getImagePath(data[key].image);
+                    img.alt = key;
+                    item.appendChild(img);
+                }
+                
+                const name = document.createElement('div');
+                name.textContent = key;
+                item.appendChild(name);
+                
+                item.addEventListener('click', () => {
+                    document.getElementById(buttonId).textContent = key;
+                    document.getElementById('selectionModal').style.display = 'none';
+                    calculate();
+                });
+                
+                optionsGrid.appendChild(item);
             }
             
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        function selectOption(type, value) {
-            selectedValues[type] = value;
-            document.getElementById(`${type}Value`).textContent = value;
-            closeModal();
-            calculate();
-        }
-
-        function getTypeLabel(type) {
-            const labels = {
-                character: '角色',
-                treasureCard: '法寶卡',
-                equipment: '套裝',
-                assist1: '輔助',
-                assist1Equipment: '輔助套裝',
-                assist1TreasureCard: '輔助法寶卡'
-            };
-            return labels[type] || type;
+            document.getElementById('selectionModal').style.display = 'block';
         }
 
         // 計算函數
         function calculate() {
-            const character = characterData[selectedValues.character] || {};
-            const card = treasureCardData[selectedValues.treasureCard] || {};
-            const equipment = equipmentData[selectedValues.equipment] || {};
-            const assist1 = assistData[selectedValues.assist1] || {};
-            const assist1Equipment = assistEquipmentData[selectedValues.assist1Equipment] || {};
-            const assist1TreasureCard = assistTreasureCardData[selectedValues.assist1TreasureCard] || {};
+            const selectedCharacter = document.getElementById('characterButton').textContent;
+            const selectedTreasureCard = document.getElementById('treasureCardButton').textContent;
+            const selectedEquipment = document.getElementById('equipmentButton').textContent;
+            const selectedAssist1 = document.getElementById('assist1Button').textContent;
+            const selectedAssist1Equipment = document.getElementById('assist1EquipmentButton').textContent;
+            const selectedAssist1TreasureCard = document.getElementById('assist1TreasureCardButton').textContent;
+
+            const character = characterData[selectedCharacter] || {};
+            const card = treasureCardData[selectedTreasureCard] || {};
+            const equipment = equipmentData[selectedEquipment] || {};
+            const assist1 = assistData[selectedAssist1] || {};
+            const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
+            const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
 
             statsData.forEach(stat => {
                 const values = [
@@ -363,16 +911,24 @@
             });
 
             NewestBaselValue();
+            updateDamagePreview(); // 更新潜能点数预览
         }
 
         // 潜力计算函数
         function NewestBaselValue() {
-            const character = characterData[selectedValues.character] || {};
-            const card = treasureCardData[selectedValues.treasureCard] || {};
-            const equipment = equipmentData[selectedValues.equipment] || {};
-            const assist1 = assistData[selectedValues.assist1] || {};
-            const assist1Equipment = assistEquipmentData[selectedValues.assist1Equipment] || {};
-            const assist1TreasureCard = assistTreasureCardData[selectedValues.assist1TreasureCard] || {};
+            const selectedCharacter = document.getElementById('characterButton').textContent;
+            const selectedTreasureCard = document.getElementById('treasureCardButton').textContent;
+            const selectedEquipment = document.getElementById('equipmentButton').textContent;
+            const selectedAssist1 = document.getElementById('assist1Button').textContent;
+            const selectedAssist1Equipment = document.getElementById('assist1EquipmentButton').textContent;
+            const selectedAssist1TreasureCard = document.getElementById('assist1TreasureCardButton').textContent;
+
+            const character = characterData[selectedCharacter] || {};
+            const card = treasureCardData[selectedTreasureCard] || {};
+            const equipment = equipmentData[selectedEquipment] || {};
+            const assist1 = assistData[selectedAssist1] || {};
+            const assist1Equipment = assistEquipmentData[selectedAssist1Equipment] || {};
+            const assist1TreasureCard = assistTreasureCardData[selectedAssist1TreasureCard] || {};
 
             const baseAtk = 
                 (character.baseAtk || 0) + 
@@ -458,24 +1014,335 @@
             }
 
             const potentialResultDiv = document.getElementById('potentialResult');
-            const result_text = `Max value: ${Math.round(maxValue * 100) / 100}<br>最佳加点方案：屬性攻擊力 加 ${bestPointBaseAtk} 点，攻擊力百分比 加 ${bestPointAtkPercentage} 点，屬性傷害 加 ${bestPointAttributeDamage} 点，爆擊率 加 ${bestPointCritRate} 点，爆擊傷害 加 ${bestPointCritDamage} 点`;
-            potentialResultDiv.innerHTML = result_text;
+            const maxValueFormatted = Math.round(maxValue * 100) / 100;
+            
+            const result_html = `
+                <div class="max-value">最大傷害值: ${maxValueFormatted}</div>
+                <div class="best-distribution">
+                    <div class="stat-point"><span class="stat-name">基礎攻擊力:</span><span class="point-value">${bestPointBaseAtk}</span></div>
+                    <div class="stat-point"><span class="stat-name">攻擊力百分比:</span><span class="point-value">${bestPointAtkPercentage}</span></div>
+                    <div class="stat-point"><span class="stat-name">屬性傷害:</span><span class="point-value">${bestPointAttributeDamage}</span></div>
+                    <div class="stat-point"><span class="stat-name">爆擊率:</span><span class="point-value">${bestPointCritRate}</span></div>
+                    <div class="stat-point"><span class="stat-name">爆擊傷害:</span><span class="point-value">${bestPointCritDamage}</span></div>
+                </div>
+            `;
+            potentialResultDiv.innerHTML = result_html;
+            
+            // 保存最佳加点方案，供自动优化按钮使用
+            window.bestDistribution = {
+                baseAtk: bestPointBaseAtk,
+                atkPercentage: bestPointAtkPercentage,
+                attributeDamage: bestPointAttributeDamage,
+                critRate: bestPointCritRate,
+                critDamage: bestPointCritDamage
+            };
+            
+            // 保存基础属性，供潜能点数预览使用
+            window.baseStats = {
+                baseAtk,
+                atkPercentage, 
+                attributeDamage,
+                critRate,
+                critDamage
+            };
+            
+            return maxValue;
         }
-
-        // 修改 DOMContentLoaded 事件监听器
-        document.addEventListener('DOMContentLoaded', () => {
-            generateTable();
-            calculate();
-        });
-
-        // 點擊模態框外部時關閉
-        window.onclick = function(event) {
-            const modal = document.getElementById('modal');
-            if (event.target == modal) {
-                closeModal();
+        
+        // 潜能点数分配交互逻辑
+        function initPotentialAllocation() {
+            const totalPoints = 8;
+            let usedPoints = 0;
+            
+            // 更新已使用的点数
+            function updateRemainingPoints() {
+                usedPoints = 0;
+                document.querySelectorAll('.point-value-display').forEach(display => {
+                    usedPoints += parseInt(display.textContent);
+                });
+                
+                const remainingPoints = totalPoints - usedPoints;
+                document.querySelector('.remaining-value').textContent = remainingPoints;
+                
+                // 更新按钮状态
+                document.querySelectorAll('.stat-slider').forEach(slider => {
+                    const value = parseInt(slider.querySelector('.point-value-display').textContent);
+                    const minusBtn = slider.querySelector('.control-button.minus');
+                    const plusBtn = slider.querySelector('.control-button.plus');
+                    const statType = slider.getAttribute('data-stat');
+                    
+                    // 检查最小值
+                    if (value <= 0) {
+                        minusBtn.setAttribute('disabled', true);
+                        minusBtn.classList.add('disabled');
+                    } else {
+                        minusBtn.removeAttribute('disabled');
+                        minusBtn.classList.remove('disabled');
+                    }
+                    
+                    // 检查最大值和剩余点数
+                    let maxValue = parseInt(slider.getAttribute('data-max'));
+                    if (statType === 'baseAtk' || statType === 'attributeDamage') {
+                        maxValue = Math.min(maxValue, 2);
+                    }
+                    
+                    if (value >= maxValue || remainingPoints <= 0) {
+                        plusBtn.setAttribute('disabled', true);
+                        plusBtn.classList.add('disabled');
+                    } else {
+                        plusBtn.removeAttribute('disabled');
+                        plusBtn.classList.remove('disabled');
+                    }
+                });
+                
+                // 更新预览
+                updateDamagePreview();
+            }
+            
+            // 更新加成值显示
+            function updateBonusValue(slider) {
+                const value = parseInt(slider.querySelector('.point-value-display').textContent);
+                const bonusElement = slider.querySelector('.bonus-value');
+                const statType = slider.getAttribute('data-stat');
+                
+                let bonus;
+                switch (statType) {
+                    case 'baseAtk':
+                        bonus = value * 80;
+                        bonusElement.textContent = bonus;
+                        break;
+                    case 'atkPercentage':
+                        bonus = (value * 0.2 * 100).toFixed(0);
+                        bonusElement.textContent = `${bonus}%`;
+                        break;
+                    case 'attributeDamage':
+                        bonus = (value * 0.15 * 100).toFixed(0);
+                        bonusElement.textContent = `${bonus}%`;
+                        break;
+                    case 'critRate':
+                        bonus = (value * 0.15 * 100).toFixed(0);
+                        bonusElement.textContent = `${bonus}%`;
+                        break;
+                    case 'critDamage':
+                        bonus = (value * 0.25 * 100).toFixed(0);
+                        bonusElement.textContent = `${bonus}%`;
+                        break;
+                }
+            }
+            
+            // 设置值
+            function setValue(slider, newValue) {
+                const display = slider.querySelector('.point-value-display');
+                const statType = slider.getAttribute('data-stat');
+                const currentValue = parseInt(display.textContent);
+                
+                // 限制特定属性的最大值
+                let maxValue = parseInt(slider.getAttribute('data-max'));
+                if (statType === 'baseAtk' || statType === 'attributeDamage') {
+                    maxValue = Math.min(maxValue, 2);
+                }
+                
+                // 确保值在有效范围内
+                newValue = Math.max(0, Math.min(newValue, maxValue));
+                
+                // 检查是否超出剩余点数
+                if (newValue > currentValue && (usedPoints + (newValue - currentValue)) > totalPoints) {
+                    newValue = currentValue + (totalPoints - usedPoints);
+                }
+                
+                // 更新显示
+                display.textContent = newValue;
+                
+                // 更新加成值
+                updateBonusValue(slider);
+                
+                // 更新剩余点数和按钮状态
+                updateRemainingPoints();
+            }
+            
+            // 设置点击事件
+            document.querySelectorAll('.control-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.hasAttribute('disabled')) return;
+                    
+                    const slider = button.closest('.stat-slider');
+                    const display = slider.querySelector('.point-value-display');
+                    const currentValue = parseInt(display.textContent);
+                    
+                    if (button.classList.contains('plus')) {
+                        // 增加点数
+                        setValue(slider, currentValue + 1);
+                    } else if (button.classList.contains('minus')) {
+                        // 减少点数
+                        setValue(slider, currentValue - 1);
+                    }
+                });
+            });
+            
+            // 自动优化按钮
+            document.querySelector('.auto-optimize-btn').addEventListener('click', () => {
+                if (!window.bestDistribution) return;
+                
+                // 应用最佳分配方案
+                Object.entries(window.bestDistribution).forEach(([stat, value]) => {
+                    const slider = document.querySelector(`.stat-slider[data-stat="${stat}"]`);
+                    if (slider) {
+                        setValue(slider, value);
+                    }
+                });
+                
+                // 添加动画效果
+                document.querySelector('.damage-value').classList.add('optimized');
+                setTimeout(() => {
+                    document.querySelector('.damage-value').classList.remove('optimized');
+                }, 1500);
+            });
+            
+            // 初始化
+            updateRemainingPoints();
+        }
+        
+        // 更新伤害预览
+        function updateDamagePreview() {
+            if (!window.baseStats) return;
+            
+            // 获取基础属性
+            const baseStats = window.baseStats;
+            
+            // 获取当前所有点数分配
+            const additionalStats = {};
+            document.querySelectorAll('.stat-slider').forEach(slider => {
+                const statType = slider.getAttribute('data-stat');
+                const value = parseInt(slider.querySelector('.point-value-display').textContent);
+                
+                switch (statType) {
+                    case 'baseAtk':
+                        additionalStats.baseAtk = value * 80;
+                        break;
+                    case 'atkPercentage':
+                        additionalStats.atkPercentage = value * 0.2;
+                        break;
+                    case 'attributeDamage':
+                        additionalStats.attributeDamage = value * 0.15;
+                        break;
+                    case 'critRate':
+                        additionalStats.critRate = value * 0.15;
+                        break;
+                    case 'critDamage':
+                        additionalStats.critDamage = value * 0.25;
+                        break;
+                }
+            });
+            
+            // 计算总伤害
+            const totalBaseAtk = baseStats.baseAtk + (additionalStats.baseAtk || 0);
+            const totalAtkPercentage = baseStats.atkPercentage + (additionalStats.atkPercentage || 0);
+            const totalAttributeDamage = baseStats.attributeDamage + (additionalStats.attributeDamage || 0);
+            const totalCritRate = Math.min(baseStats.critRate + (additionalStats.critRate || 0), 1);
+            const totalCritDamage = baseStats.critDamage + (additionalStats.critDamage || 0);
+            
+            const damage = totalBaseAtk * (1 + totalAtkPercentage) * (1 + totalAttributeDamage) * (1 + totalCritRate * totalCritDamage);
+            
+            // 计算无加点的伤害
+            const baseDamage = baseStats.baseAtk * (1 + baseStats.atkPercentage) * (1 + baseStats.attributeDamage) * (1 + baseStats.critRate * baseStats.critDamage);
+            
+            // 计算提升百分比
+            const damageIncrease = damage - baseDamage;
+            const damageIncreasePercentage = ((damageIncrease / baseDamage) * 100).toFixed(1);
+            
+            // 更新显示
+            document.querySelector('.current-damage .value').textContent = Math.round(damage).toLocaleString();
+            
+            const damageChangeElement = document.querySelector('.damage-change');
+            damageChangeElement.querySelector('.change-value').textContent = `${damageIncreasePercentage}%`;
+            
+            if (parseFloat(damageIncreasePercentage) > 0) {
+                damageChangeElement.className = 'damage-change positive';
+                damageChangeElement.querySelector('.change-arrow').textContent = '↑';
+            } else {
+                damageChangeElement.className = 'damage-change negative';
+                damageChangeElement.querySelector('.change-arrow').textContent = '↓';
             }
         }
+
+        // 添加頁面切換功能
+        document.addEventListener('DOMContentLoaded', () => {
+            // 原有的初始化代碼
+            console.log('DOM 載入完成，開始初始化');
+            generateTable();
+            calculate(); // 初始化时计算一次
+            initPotentialAllocation(); // 初始化潜能点数分配界面
+            
+            // 新增頁面切換功能
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有tab的active類
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    // 給當前點擊的tab添加active類
+                    tab.classList.add('active');
+                    
+                    // 隱藏所有頁面
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.classList.remove('active');
+                    });
+                    
+                    // 顯示對應的頁面
+                    const pageId = tab.getAttribute('data-page');
+                    document.getElementById(pageId).classList.add('active');
+                });
+            });
+            
+            // 輸出映射測試示例（僅用於開發測試）
+            if (window.location.search.includes('test_mapping')) {
+                console.log("=== 映射測試結果 ===");
+                const testCases = [
+                    "TOA_image/冰岩.webp",
+                    "./image/equipment/屬性套_頭.png",
+                    "./image/equipment/甜蜜白糖羽毛_身.png",
+                    "TOA_image/作戰開始.webp",
+                    "./image/艾爾比.png"
+                ];
+                
+                testCases.forEach(testPath => {
+                    const mappedPath = getImagePath(testPath);
+                    console.log(`原始路徑: ${testPath}`);
+                    console.log(`映射後: ${mappedPath}`);
+                    console.log("---");
+                });
+                
+                // 顯示一個測試元素
+                const mappingTestDiv = document.createElement('div');
+                mappingTestDiv.style.padding = '15px';
+                mappingTestDiv.style.margin = '20px auto';
+                mappingTestDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                mappingTestDiv.style.color = 'white';
+                mappingTestDiv.style.borderRadius = '10px';
+                mappingTestDiv.style.maxWidth = '800px';
+                
+                mappingTestDiv.innerHTML = `
+                    <h3>圖片名稱映射測試</h3>
+                    <p>以下是測試的映射結果:</p>
+                    <ul>
+                        ${testCases.map(testPath => `
+                            <li>
+                                <strong>原始路徑:</strong> ${testPath}<br>
+                                <strong>映射後:</strong> ${getImagePath(testPath)}<br>
+                                ${testPath.includes('.webp') || testPath.includes('.png') ? 
+                                    `<img src="${getImagePath(testPath)}" alt="測試圖片" style="max-width:100px; max-height:100px; background:#333; padding:5px; margin:5px 0;">` : 
+                                    ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p>要使用映射，您需要將實際文件命名為映射後的英文名稱。例如，如果您有一個 "冰岩.webp" 的中文檔名，實際檔案應命名為 "Frostrock.webp"。</p>
+                `;
+                
+                document.querySelector('.container').appendChild(mappingTestDiv);
+            }
+            
+            console.log('初始化完成');
+        });
     </script>
-    <div id="cornerText">Last Updated :2025/02/12</div>
+    <div id="cornerText">Last Updated :2025/02/26</div>
 </body>
 </html>
