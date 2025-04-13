@@ -193,7 +193,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 小遊戲集合 | <a href="index.html">返回遊戲列表</a></p>
+        <p>&copy; 2025 小遊戲集合 | <a href="../games/index.html">返回遊戲列表</a></p>
     </footer>
 
     <script>
@@ -353,55 +353,58 @@
 
         // 執行一步模擬
         function simulateStep() {
-            if (!isSimulating) return;
+            if (!isSimulating || eliminatedCount >= totalPeople - 1) {
+                endSimulation();
+                return;
+            }
+
+            // 當前人報數
+            countingNumber = (countingNumber % countingInterval) + 1;
             
-            // 更新顯示
-            drawCircle();
-            
-            // 增加計數
-            countingNumber++;
-            
-            // 獲取當前人員
-            const currentPerson = people[currentIndex];
-            
-            // 添加日誌
-            addLogEntry(`${currentPerson.id}號報數: ${countingNumber}`);
-            
-            // 檢查是否達到報數上限
+            // 檢查當前人是否被淘汰
             if (countingNumber === countingInterval) {
-                // 標記當前人員被淘汰
-                currentPerson.eliminated = true;
+                people[currentIndex].eliminated = true;
                 eliminatedCount++;
                 
-                // 更新UI
-                drawCircle();
+                // 標記被淘汰的人
+                markEliminated(currentIndex);
                 
-                addLogEntry(`第${eliminatedCount}個被淘汰的是 ${currentPerson.id}號`);
+                // 記錄淘汰信息
+                addLogEntry(`${people[currentIndex].id}號被淘汰了`);
+                
+                // 更新結果顯示
                 updateResult();
-                
-                // 檢查是否只剩一人
-                const remainingCount = people.filter(p => !p.eliminated).length;
-                if (remainingCount <= 1) {
-                    // 找到最後一個倖存者
-                    const survivorIndex = people.findIndex(p => !p.eliminated);
-                    if (survivorIndex !== -1) {
-                        markSurvivor(survivorIndex);
-                        endSimulation();
-                        return;
-                    }
+
+                // 檢查是否只剩下最後一人
+                if (eliminatedCount >= totalPeople - 1) {
+                    endSimulation();
+                    return;
                 }
                 
-                // 重置報數
+                // 重置計數
                 countingNumber = 0;
             }
             
-            // 找到下一個未被淘汰的人
+            // 移動到下一個未被淘汰的人
             do {
                 currentIndex = (currentIndex + 1) % people.length;
             } while (people[currentIndex].eliminated);
             
-            // 使用setTimeout替代setInterval以防止函數堆疊
-            const delay = Math.max(10, 1100 - simulationSpeed);
+            // 更新顯示
+            drawCircle();
+            
+            // 優化高速模式邏輯：根據速度調整延遲
+            let delay;
+            if (simulationSpeed >= 900) { // 高速模式
+                delay = 10;
+            } else if (simulationSpeed >= 700) { // 快速模式
+                delay = 100;
+            } else if (simulationSpeed >= 300) { // 中等速度
+                delay = 500;
+            } else { // 慢速模式
+                delay = 1000;
+            }
+            
             clearTimeout(simulationTimer);
             simulationTimer = setTimeout(simulateStep, delay);
         }
