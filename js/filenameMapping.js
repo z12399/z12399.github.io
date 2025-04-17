@@ -13,6 +13,7 @@ const filenameMapping = {
     "甜辣醬": "Chili_Pepper",
     "黑巧克力": "Dark_Choco",
     "麻花捲": "Twisted_Donut",
+    "大理石漿果": "Marbleberry",
     
     // 法寶卡映射
     "覺醒的瞬間": "Moment_of_Awakening",
@@ -27,6 +28,7 @@ const filenameMapping = {
     "作戰開始": "Operation_Start",
     "無法回頭的選擇": "No_Return_Choice",
     "被遺忘的魔法書的秘密": "Forgotten_Book_Secret",
+    "充電的時機": "Well-timed_Recharge",
     
     // 輔助法寶卡映射
     "悠閒的下午": "Leisurely_Afternoon",
@@ -42,6 +44,7 @@ const filenameMapping = {
     "時間管理局": "TBD_Uniform",
     "被遺忘的英雄": "Forgotten_Hero",
     "記憶的奧妙世界": "Memory_Shard",
+    "黃金禮服": "Golden_Finery",
     
     // 輔助套裝映射
     "雪怪的暴風雪": "Snowstrider",

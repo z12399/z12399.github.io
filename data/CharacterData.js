@@ -101,5 +101,13 @@ const characterData = {
         'attributeDamage': 0.525,
         'critRate': 0.15,
         'critDamage': 0.5
+    },
+    '大理石漿果': {
+        'image': 'TOA_image/character/大理石漿果.webp',
+        'baseAtk': 650,
+        'atkPercentage': 0.52,
+        'attributeDamage': 0.525,
+        'critRate': 0.15,
+        'critDamage': 0.5
     }
 };

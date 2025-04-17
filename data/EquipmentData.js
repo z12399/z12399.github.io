@@ -64,5 +64,12 @@ const equipmentData = {
         'critDamage': 0.375,
         'image': './TOA_image/equip/Memory_Shard.webp'
     },
-
+    '黃金禮服': {
+        'baseAtk': 0,
+        'atkPercentage': 0,
+        'attributeDamage': 0.312,
+        'critRate': 0.225,
+        'critDamage': 0,
+        'image': './TOA_image/equip/Golden_Finery.webp'
+    },
 };

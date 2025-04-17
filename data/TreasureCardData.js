@@ -94,5 +94,13 @@ const treasureCardData = {
         'attributeDamage': 0,
         'critRate': 0.16,
         'critDamage': 0
+    },
+    '充電的時機(大理石漿果)': {
+        'image': './TOA_image/card/充電的時機.webp',
+        'baseAtk': 0,
+        'atkPercentage': 0.35,
+        'attributeDamage': 0,
+        'critRate': 0,
+        'critDamage': 0
     }
 };
