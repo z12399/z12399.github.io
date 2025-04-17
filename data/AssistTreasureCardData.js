@@ -22,5 +22,13 @@ const assistTreasureCardData = {
         attributeDamage: 0.36,
         critRate: 0,
         critDamage: 0
+    },
+    "溫柔的希望(白玉草)": {
+        'image': './TOA_image/card/溫柔的希望.webp',
+        baseAtk: 0,
+        atkPercentage: 0,
+        attributeDamage: 0.40,
+        critRate: 0,
+        critDamage: 0
     }
 };

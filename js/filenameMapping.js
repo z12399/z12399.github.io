@@ -34,6 +34,7 @@ const filenameMapping = {
     "悠閒的下午": "Leisurely_Afternoon",
     "午夜的華爾滋": "Midnight_Waltz",
     "好眠秘訣": "The_Secret_of_Sweet_Sleep",
+    "溫柔的希望": "Lovely_Wish",
     
     // 套裝映射
     "屬性套": "Attribute_Set",
@@ -56,7 +57,8 @@ const filenameMapping = {
     "檸檬": "Lemon",
     "桃子": "Peach",
     "辣椒碎片": "Crushed_Pepper",
-    "搖滾": "Rockstar"
+    "搖滾": "Rockstar",
+    "白玉草": "Greenbell"
 };
 
 // 映射函數 - 將中文名稱轉換為對應的檔案名稱
