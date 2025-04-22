@@ -352,9 +352,11 @@
             max-width: 100%;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2; /* 添加標準屬性 */
             -webkit-box-orient: vertical;
             overflow: hidden;
             line-height: 1.3;
+            max-height: 2.6em; /* 支援非webkit瀏覽器的備選方案: 2 x line-height */
         }
 
         .option-item.selected {
@@ -1259,6 +1261,181 @@
             text-shadow: 0 0 3px rgba(255, 152, 0, 0.3) !important;
             font-weight: bold !important;
         }
+
+        /* 方案管理樣式 */
+        .plan-management, .plan-comparison {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .plan-management h4, .plan-comparison h4 {
+            color: var(--tower-gold);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
+        }
+        
+        .plan-controls, .comparison-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .plan-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .plan-input, .plan-select, .comparison-select {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .plan-button, .comparison-button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            min-width: 100px;
+        }
+        
+        .save-button {
+            background-color: #4CAF50;
+        }
+        
+        .load-button {
+            background-color: #2196F3;
+        }
+        
+        .delete-button {
+            background-color: #F44336;
+        }
+        
+        .export-button, .import-button {
+            background-color: #9C27B0;
+        }
+        
+        .comparison-button {
+            background-color: var(--tower-blue);
+        }
+        
+        .plan-button:hover, .comparison-button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .comparison-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .vs-label {
+            font-weight: bold;
+            color: var(--tower-gold);
+            font-size: 18px;
+            margin: 0 5px;
+        }
+        
+        .comparison-result {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+        }
+        
+        .comparison-result.active {
+            display: block;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            color: white;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-table th {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--tower-gold);
+        }
+        
+        .comparison-metric {
+            background-color: rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        .better-value {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .worse-value {
+            color: #F44336;
+        }
+        
+        .comparison-chart {
+            height: 300px;
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .chart-bar {
+            position: absolute;
+            bottom: 50px;
+            width: 60px;
+            background-image: linear-gradient(to top, var(--tower-blue), #64B5F6);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease;
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+        }
     </style>
     <!-- 先載入所有資料檔案 -->
     <script src="./data/CharacterData.js"></script>
@@ -1278,7 +1455,7 @@
     <!-- 導航欄 -->
     <div class="nav-tabs">
         <div class="nav-tab active" data-page="page1">潛能計算機</div>
-        <div class="nav-tab" data-page="page2">頁面2</div>
+        <div class="nav-tab" data-page="page2">遊戲傷害計算器 - 時間軸版_開發中</div>
     </div>
 
     <!-- 頁面1: 潛能計算機 -->
@@ -1503,20 +1680,1210 @@
         </div>
     </div>
 
-    <!-- 頁面2: 新頁面 -->
+    <!-- 頁面2: 遊戲傷害計算器 - 時間軸版 -->
     <div id="page2" class="page">
         <div class="container">
-            <div class="page2-content">
-                <h2 class="page2-title">頁面2</h2>
-                <p class="page2-description">
-                    這是第二個頁面的內容。您可以在這裡添加更多功能或信息。
-                </p>
-                <div class="page2-feature">
-                    <!-- 這裡可以添加頁面2的具體功能 -->
+            <h3 class="section-title">遊戲傷害計算器 - 時間軸版</h3>
+            
+            <!-- 控制區 -->
+            <div class="timeline-controls">
+                <!-- 添加攻擊區域 -->
+                <div class="control-section">
+                    <h4>攻擊設定</h4>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label for="attackName">攻擊名稱</label>
+                            <input type="text" id="attackName" placeholder="輸入攻擊名稱">
+                        </div>
+                        <div class="control-group">
+                            <label for="attackDamage">基礎傷害</label>
+                            <input type="number" id="attackDamage" placeholder="輸入傷害值" min="0">
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label for="attackTime">時間點 (秒)</label>
+                            <input type="number" id="attackTime" placeholder="輸入時間" min="0" step="0.1">
+                        </div>
+                        <div class="control-group">
+                            <label for="attackType">攻擊類型</label>
+                            <select id="attackType">
+                                <option value="normal">普通攻擊</option>
+                                <option value="skill">技能攻擊</option>
+                                <option value="ultimate">絕技</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="add-attack" class="action-button add-button">添加攻擊</button>
                 </div>
+                
+                <!-- 添加增益區域 -->
+                <div class="control-section">
+                    <h4>增益效果</h4>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label for="buffName">增益名稱</label>
+                            <input type="text" id="buffName" placeholder="輸入增益名稱">
+                        </div>
+                        <div class="control-group">
+                            <label for="buffEffect">增益效果 (%)</label>
+                            <input type="number" id="buffEffect" placeholder="增益百分比" min="0">
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label for="buffStartTime">開始時間 (秒)</label>
+                            <input type="number" id="buffStartTime" placeholder="開始時間" min="0" step="0.1">
+                        </div>
+                        <div class="control-group">
+                            <label for="buffDuration">持續時間 (秒)</label>
+                            <input type="number" id="buffDuration" placeholder="持續時間" min="0" step="0.1">
+                        </div>
+                    </div>
+                    <button id="add-buff" class="action-button add-button">添加增益</button>
+                </div>
+            </div>
+            
+            <!-- 攻擊和增益列表 -->
+            <div class="timeline-lists">
+                <div class="list-section">
+                    <h4>攻擊列表</h4>
+                    <div id="attack-list" class="item-list"></div>
+                </div>
+                <div class="list-section">
+                    <h4>增益列表</h4>
+                    <div id="buff-list" class="item-list"></div>
+                </div>
+            </div>
+            
+            <!-- 時間軸視覺化 -->
+            <div class="timeline-container">
+                <h4>時間軸</h4>
+                <div class="timeline-header">
+                    <span>0秒</span>
+                    <span>5秒</span>
+                    <span>10秒</span>
+                    <span>15秒</span>
+                    <span>20秒</span>
+                    <span>25秒</span>
+                    <span>30秒</span>
+                </div>
+                <div id="timeline-visualization" class="timeline-visualization">
+                    <div class="timeline-ruler"></div>
+                    <div id="attack-markers" class="timeline-markers"></div>
+                    <div id="buff-areas" class="timeline-areas"></div>
+                </div>
+            </div>
+            
+            <!-- 傷害統計 -->
+            <div class="damage-stats">
+                <h4>傷害統計</h4>
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-title">總傷害</div>
+                        <div class="stat-value" id="total-damage">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">最高單次傷害</div>
+                        <div class="stat-value" id="max-damage">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">DPS</div>
+                        <div class="stat-value" id="dps-value">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 方案管理 -->
+            <div class="plan-management">
+                <h4>方案管理</h4>
+                <div class="plan-controls">
+                    <div class="plan-group">
+                        <input type="text" id="plan-name" placeholder="輸入方案名稱" class="plan-input">
+                        <button id="save-plan" class="plan-button save-button">儲存方案</button>
+                        <button id="export-plan" class="plan-button export-button">匯出方案</button>
+                    </div>
+                    <div class="plan-group">
+                        <select id="load-plan-select" class="plan-select">
+                            <option value="">-- 選擇已儲存方案 --</option>
+                        </select>
+                        <button id="load-plan" class="plan-button load-button">載入方案</button>
+                        <button id="delete-plan" class="plan-button delete-button">刪除方案</button>
+                        <button id="import-plan" class="plan-button import-button">匯入方案</button>
+                        <input type="file" id="import-file" style="display: none" accept=".json">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 方案對比 -->
+            <div class="plan-comparison">
+                <h4>方案對比</h4>
+                <div class="comparison-controls">
+                    <div class="comparison-row">
+                        <select id="comparison-plan1" class="comparison-select">
+                            <option value="">-- 選擇方案1 --</option>
+                        </select>
+                        <span class="vs-label">VS</span>
+                        <select id="comparison-plan2" class="comparison-select">
+                            <option value="">-- 選擇方案2 --</option>
+                        </select>
+                        <button id="compare-plans" class="comparison-button">開始對比</button>
+                    </div>
+                </div>
+                <div id="comparison-result" class="comparison-result"></div>
             </div>
         </div>
     </div>
+
+    <style>
+    /* 頁面2的時間軸版樣式 */
+    .timeline-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    
+    .control-section {
+        flex: 1;
+        min-width: 300px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .control-section h4 {
+        color: var(--tower-gold);
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 5px;
+    }
+    
+    .control-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .control-group {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .control-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: white;
+        font-size: 14px;
+    }
+    
+    .control-group input, .control-group select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    .action-button {
+        background-color: var(--tower-blue);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        width: 100%;
+    }
+    
+    .action-button:hover {
+        background-color: #4a7ab7;
+        transform: translateY(-2px);
+    }
+    
+    .add-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .add-button::before {
+        content: "+";
+        margin-right: 5px;
+        font-size: 18px;
+    }
+    
+    .timeline-lists {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .list-section {
+        flex: 1;
+        min-width: 300px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .list-section h4 {
+        color: var(--tower-gold);
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 5px;
+    }
+    
+    .item-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .list-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .list-item-info {
+        flex: 1;
+    }
+    
+    .list-item-name {
+        font-weight: bold;
+        color: white;
+        margin-bottom: 3px;
+    }
+    
+    .list-item-details {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .list-item-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .list-item-actions button {
+        background-color: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        padding: 5px;
+        transition: all 0.3s ease;
+        border-radius: 3px;
+    }
+    
+    .list-item-actions button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    .timeline-container {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .timeline-container h4 {
+        color: var(--tower-gold);
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 5px;
+    }
+    
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        color: white;
+        margin-bottom: 5px;
+        padding: 0 10px;
+    }
+    
+    .timeline-visualization {
+        position: relative;
+        height: 150px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    
+    .timeline-ruler {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        pointer-events: none;
+    }
+    
+    .timeline-ruler::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .timeline-ruler::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-image: repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent calc(100% / 30 - 1px),
+            rgba(255, 255, 255, 0.1) calc(100% / 30),
+            rgba(255, 255, 255, 0.1) calc(100% / 30 + 1px)
+        );
+    }
+    
+    .timeline-markers {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--tower-gold);
+        transform: translate(-50%, -50%);
+        top: 50%;
+        z-index: 2;
+    }
+    
+    .timeline-marker::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 215, 0, 0.3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    
+    .timeline-marker.normal {
+        background-color: #5c8dc9;
+    }
+    
+    .timeline-marker.skill {
+        background-color: #9c27b0;
+    }
+    
+    .timeline-marker.ultimate {
+        background-color: #ff5722;
+    }
+    
+    .timeline-marker.normal::before {
+        background-color: rgba(92, 141, 201, 0.3);
+    }
+    
+    .timeline-marker.skill::before {
+        background-color: rgba(156, 39, 176, 0.3);
+    }
+    
+    .timeline-marker.ultimate::before {
+        background-color: rgba(255, 87, 34, 0.3);
+    }
+    
+    .timeline-marker::after {
+        content: attr(data-label);
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-size: 10px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .timeline-marker:hover::after {
+        opacity: 1;
+    }
+    
+    .timeline-areas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .buff-area {
+        position: absolute;
+        height: 20px;
+        background-color: rgba(76, 175, 80, 0.3);
+        border: 1px solid rgba(76, 175, 80, 0.7);
+        top: 70px;
+        border-radius: 3px;
+    }
+    
+    .buff-area::after {
+        content: attr(data-label);
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-size: 10px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .buff-area:hover::after {
+        opacity: 1;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.7;
+        }
+        70% {
+            transform: scale(2);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 0;
+        }
+    }
+    
+    .damage-stats {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .damage-stats h4 {
+        color: var(--tower-gold);
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 5px;
+    }
+    
+    .stats-cards {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        flex: 1;
+        min-width: 150px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+    }
+    
+    .stat-title {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-value {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    </style>
+
+    <script>
+    // 時間軸版頁面的JavaScript代碼
+    document.addEventListener('DOMContentLoaded', function() {
+        // 定義變數
+        let attacks = [];
+        let buffs = [];
+        let nextAttackId = 1;
+        let nextBuffId = 1;
+        let savedPlans = {};
+        
+        // 載入已保存的方案
+        loadSavedPlans();
+        
+        // 獲取元素
+        const addAttackBtn = document.getElementById('add-attack');
+        const addBuffBtn = document.getElementById('add-buff');
+        const attackList = document.getElementById('attack-list');
+        const buffList = document.getElementById('buff-list');
+        const attackMarkers = document.getElementById('attack-markers');
+        const buffAreas = document.getElementById('buff-areas');
+        const totalDamageEl = document.getElementById('total-damage');
+        const maxDamageEl = document.getElementById('max-damage');
+        const dpsValueEl = document.getElementById('dps-value');
+        
+        // 方案管理元素
+        const savePlanBtn = document.getElementById('save-plan');
+        const loadPlanBtn = document.getElementById('load-plan');
+        const deletePlanBtn = document.getElementById('delete-plan');
+        const exportPlanBtn = document.getElementById('export-plan');
+        const importPlanBtn = document.getElementById('import-plan');
+        const importFileInput = document.getElementById('import-file');
+        const planNameInput = document.getElementById('plan-name');
+        const loadPlanSelect = document.getElementById('load-plan-select');
+        
+        // 對比元素
+        const comparisonPlan1 = document.getElementById('comparison-plan1');
+        const comparisonPlan2 = document.getElementById('comparison-plan2');
+        const comparePlansBtn = document.getElementById('compare-plans');
+        const comparisonResult = document.getElementById('comparison-result');
+        
+        // 方案管理功能
+        savePlanBtn.addEventListener('click', function() {
+            const planName = planNameInput.value.trim();
+            if (!planName) {
+                alert('請輸入方案名稱');
+                return;
+            }
+            
+            if (savedPlans[planName] && !confirm(`方案「${planName}」已存在，是否覆蓋？`)) {
+                return;
+            }
+            
+            // 保存當前方案
+            savedPlans[planName] = {
+                attacks: JSON.parse(JSON.stringify(attacks)),
+                buffs: JSON.parse(JSON.stringify(buffs)),
+                stats: {
+                    totalDamage: parseFloat(totalDamageEl.textContent.replace(/,/g, '')),
+                    maxDamage: parseFloat(maxDamageEl.textContent.replace(/,/g, '')),
+                    dps: parseFloat(dpsValueEl.textContent.replace(/,/g, ''))
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            // 儲存到本地存儲
+            saveToLocalStorage();
+            
+            // 更新下拉選單
+            updatePlanSelects();
+            
+            alert(`方案「${planName}」已成功儲存！`);
+        });
+        
+        loadPlanBtn.addEventListener('click', function() {
+            const planName = loadPlanSelect.value;
+            if (!planName) {
+                alert('請選擇要載入的方案');
+                return;
+            }
+            
+            const plan = savedPlans[planName];
+            if (!plan) {
+                alert('找不到該方案');
+                return;
+            }
+            
+            // 載入方案數據
+            attacks = JSON.parse(JSON.stringify(plan.attacks));
+            buffs = JSON.parse(JSON.stringify(plan.buffs));
+            
+            // 確保ID計數器正確
+            nextAttackId = attacks.length > 0 ? Math.max(...attacks.map(a => a.id)) + 1 : 1;
+            nextBuffId = buffs.length > 0 ? Math.max(...buffs.map(b => b.id)) + 1 : 1;
+            
+            // 更新UI
+            renderAttackList();
+            renderBuffList();
+            renderTimeline();
+            calculateDamage();
+            
+            alert(`方案「${planName}」已成功載入！`);
+        });
+        
+        deletePlanBtn.addEventListener('click', function() {
+            const planName = loadPlanSelect.value;
+            if (!planName) {
+                alert('請選擇要刪除的方案');
+                return;
+            }
+            
+            if (!confirm(`確定要刪除方案「${planName}」嗎？此操作無法撤銷。`)) {
+                return;
+            }
+            
+            // 刪除方案
+            delete savedPlans[planName];
+            
+            // 儲存到本地存儲
+            saveToLocalStorage();
+            
+            // 更新下拉選單
+            updatePlanSelects();
+            
+            alert(`方案「${planName}」已成功刪除！`);
+        });
+        
+        exportPlanBtn.addEventListener('click', function() {
+            const planName = planNameInput.value.trim();
+            if (!planName) {
+                alert('請輸入方案名稱以便匯出');
+                return;
+            }
+            
+            // 建立臨時方案或使用已存在的
+            const planToExport = savedPlans[planName] || {
+                attacks: JSON.parse(JSON.stringify(attacks)),
+                buffs: JSON.parse(JSON.stringify(buffs)),
+                stats: {
+                    totalDamage: parseFloat(totalDamageEl.textContent.replace(/,/g, '')),
+                    maxDamage: parseFloat(maxDamageEl.textContent.replace(/,/g, '')),
+                    dps: parseFloat(dpsValueEl.textContent.replace(/,/g, ''))
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            // 將方案轉換為JSON
+            const planJson = JSON.stringify({
+                name: planName,
+                plan: planToExport
+            });
+            
+            // 創建下載連結
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(planJson);
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", planName + "_攻擊方案.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        });
+        
+        importPlanBtn.addEventListener('click', function() {
+            importFileInput.click();
+        });
+        
+        importFileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    const planName = importedData.name;
+                    const plan = importedData.plan;
+                    
+                    if (!planName || !plan || !plan.attacks || !plan.buffs) {
+                        throw new Error('無效的方案檔案格式');
+                    }
+                    
+                    // 詢問是否覆蓋
+                    if (savedPlans[planName] && !confirm(`方案「${planName}」已存在，是否覆蓋？`)) {
+                        return;
+                    }
+                    
+                    // 儲存匯入的方案
+                    savedPlans[planName] = plan;
+                    
+                    // 儲存到本地存儲
+                    saveToLocalStorage();
+                    
+                    // 更新下拉選單
+                    updatePlanSelects();
+                    
+                    // 自動選擇剛匯入的方案
+                    loadPlanSelect.value = planName;
+                    planNameInput.value = planName;
+                    
+                    alert(`方案「${planName}」已成功匯入！`);
+                } catch (error) {
+                    alert('匯入失敗：' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // 清除檔案輸入，使得可以重複匯入同一個檔案
+            event.target.value = '';
+        });
+        
+        // 方案對比
+        comparePlansBtn.addEventListener('click', function() {
+            const plan1Name = comparisonPlan1.value;
+            const plan2Name = comparisonPlan2.value;
+            
+            if (!plan1Name || !plan2Name) {
+                alert('請選擇要對比的兩個方案');
+                return;
+            }
+            
+            if (plan1Name === plan2Name) {
+                alert('請選擇兩個不同的方案進行對比');
+                return;
+            }
+            
+            const plan1 = savedPlans[plan1Name];
+            const plan2 = savedPlans[plan2Name];
+            
+            if (!plan1 || !plan2) {
+                alert('無法找到選定的方案');
+                return;
+            }
+            
+            // 計算對比數據
+            const comparisonData = {
+                totalDamage: {
+                    plan1: plan1.stats.totalDamage,
+                    plan2: plan2.stats.totalDamage,
+                    diff: plan1.stats.totalDamage - plan2.stats.totalDamage,
+                    diffPercent: ((plan1.stats.totalDamage / plan2.stats.totalDamage) - 1) * 100
+                },
+                maxDamage: {
+                    plan1: plan1.stats.maxDamage,
+                    plan2: plan2.stats.maxDamage,
+                    diff: plan1.stats.maxDamage - plan2.stats.maxDamage,
+                    diffPercent: ((plan1.stats.maxDamage / plan2.stats.maxDamage) - 1) * 100
+                },
+                dps: {
+                    plan1: plan1.stats.dps,
+                    plan2: plan2.stats.dps,
+                    diff: plan1.stats.dps - plan2.stats.dps,
+                    diffPercent: ((plan1.stats.dps / plan2.stats.dps) - 1) * 100
+                },
+                attackCount: {
+                    plan1: plan1.attacks.length,
+                    plan2: plan2.attacks.length,
+                    diff: plan1.attacks.length - plan2.attacks.length
+                },
+                buffCount: {
+                    plan1: plan1.buffs.length,
+                    plan2: plan2.buffs.length,
+                    diff: plan1.buffs.length - plan2.buffs.length
+                }
+            };
+            
+            // 生成對比結果HTML
+            let resultHTML = `
+                <h3>「${plan1Name}」vs「${plan2Name}」對比結果</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>指標</th>
+                        <th>${plan1Name}</th>
+                        <th>${plan2Name}</th>
+                        <th>差異</th>
+                    </tr>
+                    <tr>
+                        <td class="comparison-metric">總傷害</td>
+                        <td class="${comparisonData.totalDamage.diff > 0 ? 'better-value' : comparisonData.totalDamage.diff < 0 ? 'worse-value' : ''}">${Math.round(comparisonData.totalDamage.plan1).toLocaleString()}</td>
+                        <td class="${comparisonData.totalDamage.diff < 0 ? 'better-value' : comparisonData.totalDamage.diff > 0 ? 'worse-value' : ''}">${Math.round(comparisonData.totalDamage.plan2).toLocaleString()}</td>
+                        <td>${comparisonData.totalDamage.diff > 0 ? '+' : ''}${Math.round(comparisonData.totalDamage.diff).toLocaleString()} (${comparisonData.totalDamage.diffPercent > 0 ? '+' : ''}${comparisonData.totalDamage.diffPercent.toFixed(2)}%)</td>
+                    </tr>
+                    <tr>
+                        <td class="comparison-metric">最高單次傷害</td>
+                        <td class="${comparisonData.maxDamage.diff > 0 ? 'better-value' : comparisonData.maxDamage.diff < 0 ? 'worse-value' : ''}">${Math.round(comparisonData.maxDamage.plan1).toLocaleString()}</td>
+                        <td class="${comparisonData.maxDamage.diff < 0 ? 'better-value' : comparisonData.maxDamage.diff > 0 ? 'worse-value' : ''}">${Math.round(comparisonData.maxDamage.plan2).toLocaleString()}</td>
+                        <td>${comparisonData.maxDamage.diff > 0 ? '+' : ''}${Math.round(comparisonData.maxDamage.diff).toLocaleString()} (${comparisonData.maxDamage.diffPercent > 0 ? '+' : ''}${comparisonData.maxDamage.diffPercent.toFixed(2)}%)</td>
+                    </tr>
+                    <tr>
+                        <td class="comparison-metric">DPS</td>
+                        <td class="${comparisonData.dps.diff > 0 ? 'better-value' : comparisonData.dps.diff < 0 ? 'worse-value' : ''}">${Math.round(comparisonData.dps.plan1).toLocaleString()}</td>
+                        <td class="${comparisonData.dps.diff < 0 ? 'better-value' : comparisonData.dps.diff > 0 ? 'worse-value' : ''}">${Math.round(comparisonData.dps.plan2).toLocaleString()}</td>
+                        <td>${comparisonData.dps.diff > 0 ? '+' : ''}${Math.round(comparisonData.dps.diff).toLocaleString()} (${comparisonData.dps.diffPercent > 0 ? '+' : ''}${comparisonData.dps.diffPercent.toFixed(2)}%)</td>
+                    </tr>
+                    <tr>
+                        <td class="comparison-metric">攻擊次數</td>
+                        <td>${comparisonData.attackCount.plan1}</td>
+                        <td>${comparisonData.attackCount.plan2}</td>
+                        <td>${comparisonData.attackCount.diff > 0 ? '+' : ''}${comparisonData.attackCount.diff}</td>
+                    </tr>
+                    <tr>
+                        <td class="comparison-metric">增益數量</td>
+                        <td>${comparisonData.buffCount.plan1}</td>
+                        <td>${comparisonData.buffCount.plan2}</td>
+                        <td>${comparisonData.buffCount.diff > 0 ? '+' : ''}${comparisonData.buffCount.diff}</td>
+                    </tr>
+                </table>
+                
+                <div class="comparison-chart">
+                    <div class="chart-bar" id="chart-plan1" style="left: 25%; height: ${Math.min(200, (comparisonData.totalDamage.plan1 / Math.max(comparisonData.totalDamage.plan1, comparisonData.totalDamage.plan2)) * 200)}px">
+                        <div class="chart-bar-label">${plan1Name}</div>
+                        <div class="chart-value">${Math.round(comparisonData.totalDamage.plan1).toLocaleString()}</div>
+                    </div>
+                    <div class="chart-bar" id="chart-plan2" style="left: 65%; height: ${Math.min(200, (comparisonData.totalDamage.plan2 / Math.max(comparisonData.totalDamage.plan1, comparisonData.totalDamage.plan2)) * 200)}px">
+                        <div class="chart-bar-label">${plan2Name}</div>
+                        <div class="chart-value">${Math.round(comparisonData.totalDamage.plan2).toLocaleString()}</div>
+                    </div>
+                </div>
+                
+                <div class="comparison-summary">
+                    <h4>總結</h4>
+                    <p>
+                        在總傷害方面，「${plan1Name}」${comparisonData.totalDamage.diff > 0 ? '優於' : '劣於'}「${plan2Name}」${Math.abs(comparisonData.totalDamage.diffPercent).toFixed(2)}%。
+                        在DPS方面，「${plan1Name}」${comparisonData.dps.diff > 0 ? '優於' : '劣於'}「${plan2Name}」${Math.abs(comparisonData.dps.diffPercent).toFixed(2)}%。
+                    </p>
+                    <p>
+                        綜合來看，
+                        ${
+                            comparisonData.totalDamage.diff > 0 && comparisonData.dps.diff > 0 
+                            ? `「${plan1Name}」在總傷害和DPS上均優於「${plan2Name}」，建議優先使用「${plan1Name}」方案。` 
+                            : comparisonData.totalDamage.diff < 0 && comparisonData.dps.diff < 0 
+                            ? `「${plan2Name}」在總傷害和DPS上均優於「${plan1Name}」，建議優先使用「${plan2Name}」方案。`
+                            : `兩個方案各有優勢，「${plan1Name}」在${comparisonData.totalDamage.diff > 0 ? '總傷害' : 'DPS'}上表現更好，而「${plan2Name}」在${comparisonData.totalDamage.diff < 0 ? '總傷害' : 'DPS'}上表現更好，可根據實際戰鬥需求選擇合適的方案。`
+                        }
+                    </p>
+                </div>
+            `;
+            
+            // 顯示對比結果
+            comparisonResult.innerHTML = resultHTML;
+            comparisonResult.classList.add('active');
+        });
+        
+        // 添加攻擊
+        addAttackBtn.addEventListener('click', function() {
+            const name = document.getElementById('attackName').value.trim() || `攻擊 ${nextAttackId}`;
+            const damage = parseFloat(document.getElementById('attackDamage').value) || 0;
+            const time = parseFloat(document.getElementById('attackTime').value) || 0;
+            const type = document.getElementById('attackType').value;
+            
+            if (damage <= 0) {
+                alert('請輸入有效的傷害值');
+                return;
+            }
+            
+            const attackId = nextAttackId++;
+            const attack = {
+                id: attackId,
+                name: name,
+                damage: damage,
+                time: time,
+                type: type
+            };
+            
+            attacks.push(attack);
+            renderAttackList();
+            renderTimeline();
+            calculateDamage();
+            
+            // 清空輸入
+            document.getElementById('attackName').value = '';
+            document.getElementById('attackDamage').value = '';
+            document.getElementById('attackTime').value = '';
+        });
+        
+        // 添加增益
+        addBuffBtn.addEventListener('click', function() {
+            const name = document.getElementById('buffName').value.trim() || `增益 ${nextBuffId}`;
+            const effect = parseFloat(document.getElementById('buffEffect').value) || 0;
+            const startTime = parseFloat(document.getElementById('buffStartTime').value) || 0;
+            const duration = parseFloat(document.getElementById('buffDuration').value) || 0;
+            
+            if (effect <= 0) {
+                alert('請輸入有效的增益效果');
+                return;
+            }
+            
+            if (duration <= 0) {
+                alert('請輸入有效的持續時間');
+                return;
+            }
+            
+            const buffId = nextBuffId++;
+            const buff = {
+                id: buffId,
+                name: name,
+                effect: effect / 100, // 轉換為小數
+                startTime: startTime,
+                duration: duration,
+                endTime: startTime + duration
+            };
+            
+            buffs.push(buff);
+            renderBuffList();
+            renderTimeline();
+            calculateDamage();
+            
+            // 清空輸入
+            document.getElementById('buffName').value = '';
+            document.getElementById('buffEffect').value = '';
+            document.getElementById('buffStartTime').value = '';
+            document.getElementById('buffDuration').value = '';
+        });
+        
+        // 輔助函數
+        function loadSavedPlans() {
+            const savedPlansJson = localStorage.getItem('timeline-damage-plans');
+            if (savedPlansJson) {
+                try {
+                    savedPlans = JSON.parse(savedPlansJson);
+                    updatePlanSelects();
+                } catch (e) {
+                    console.error('載入已儲存方案失敗:', e);
+                    savedPlans = {};
+                }
+            }
+        }
+        
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('timeline-damage-plans', JSON.stringify(savedPlans));
+            } catch (e) {
+                console.error('儲存方案到本地儲存失敗:', e);
+                alert('儲存失敗: ' + e.message);
+            }
+        }
+        
+        function updatePlanSelects() {
+            // 清空選項
+            loadPlanSelect.innerHTML = '<option value="">-- 選擇已儲存方案 --</option>';
+            comparisonPlan1.innerHTML = '<option value="">-- 選擇方案1 --</option>';
+            comparisonPlan2.innerHTML = '<option value="">-- 選擇方案2 --</option>';
+            
+            // 添加方案選項
+            for (const planName in savedPlans) {
+                // 為載入選單添加選項
+                const option = document.createElement('option');
+                option.value = planName;
+                option.textContent = planName;
+                loadPlanSelect.appendChild(option);
+                
+                // 為對比選單1添加選項
+                const option1 = document.createElement('option');
+                option1.value = planName;
+                option1.textContent = planName;
+                comparisonPlan1.appendChild(option1);
+                
+                // 為對比選單2添加選項
+                const option2 = document.createElement('option');
+                option2.value = planName;
+                option2.textContent = planName;
+                comparisonPlan2.appendChild(option2);
+            }
+        }
+        
+        // 渲染攻擊列表
+        function renderAttackList() {
+            attackList.innerHTML = '';
+            attacks.sort((a, b) => a.time - b.time).forEach(attack => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="list-item-info">
+                        <div class="list-item-name">${attack.name}</div>
+                        <div class="list-item-details">
+                            傷害: ${attack.damage.toLocaleString()} | 時間: ${attack.time}秒 | 類型: ${getAttackTypeName(attack.type)}
+                        </div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button onclick="editAttack(${attack.id})">編輯</button>
+                        <button onclick="deleteAttack(${attack.id})">刪除</button>
+                    </div>
+                `;
+                attackList.appendChild(item);
+            });
+        }
+        
+        // 渲染增益列表
+        function renderBuffList() {
+            buffList.innerHTML = '';
+            buffs.sort((a, b) => a.startTime - b.startTime).forEach(buff => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="list-item-info">
+                        <div class="list-item-name">${buff.name}</div>
+                        <div class="list-item-details">
+                            效果: +${(buff.effect * 100).toFixed(1)}% | 開始: ${buff.startTime}秒 | 持續: ${buff.duration}秒
+                        </div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button onclick="editBuff(${buff.id})">編輯</button>
+                        <button onclick="deleteBuff(${buff.id})">刪除</button>
+                    </div>
+                `;
+                buffList.appendChild(item);
+            });
+        }
+        
+        // 渲染時間軸
+        function renderTimeline() {
+            attackMarkers.innerHTML = '';
+            buffAreas.innerHTML = '';
+            
+            // 設置時間軸總長為30秒
+            const timelineWidth = document.querySelector('.timeline-visualization').offsetWidth;
+            const secondWidth = timelineWidth / 30;
+            
+            // 渲染攻擊標記
+            attacks.forEach(attack => {
+                const marker = document.createElement('div');
+                marker.className = `timeline-marker ${attack.type}`;
+                marker.style.left = `${(attack.time / 30) * 100}%`;
+                marker.setAttribute('data-label', `${attack.name} (${attack.damage.toLocaleString()})`);
+                attackMarkers.appendChild(marker);
+            });
+            
+            // 渲染增益區域
+            buffs.forEach(buff => {
+                const area = document.createElement('div');
+                area.className = 'buff-area';
+                area.style.left = `${(buff.startTime / 30) * 100}%`;
+                area.style.width = `${(buff.duration / 30) * 100}%`;
+                area.setAttribute('data-label', `${buff.name} (+${(buff.effect * 100).toFixed(1)}%)`);
+                buffAreas.appendChild(area);
+            });
+        }
+        
+        // 計算傷害
+        function calculateDamage() {
+            if (attacks.length === 0) {
+                totalDamageEl.textContent = '0';
+                maxDamageEl.textContent = '0';
+                dpsValueEl.textContent = '0';
+                return;
+            }
+            
+            let totalDamage = 0;
+            let maxDamage = 0;
+            
+            // 計算每次攻擊的最終傷害（考慮增益）
+            attacks.forEach(attack => {
+                // 獲取該時間點的所有生效增益
+                const activeBuffs = buffs.filter(
+                    buff => attack.time >= buff.startTime && attack.time < buff.endTime
+                );
+                
+                // 計算增益倍率
+                let buffMultiplier = 1;
+                activeBuffs.forEach(buff => {
+                    buffMultiplier *= (1 + buff.effect);
+                });
+                
+                // 計算最終傷害
+                const finalDamage = attack.damage * buffMultiplier;
+                totalDamage += finalDamage;
+                
+                // 更新最高傷害
+                if (finalDamage > maxDamage) {
+                    maxDamage = finalDamage;
+                }
+            });
+            
+            // 計算最大時間點（用於DPS計算）
+            const maxTime = Math.max(...attacks.map(a => a.time));
+            const dps = maxTime > 0 ? totalDamage / maxTime : totalDamage;
+            
+            // 更新顯示
+            totalDamageEl.textContent = Math.round(totalDamage).toLocaleString();
+            maxDamageEl.textContent = Math.round(maxDamage).toLocaleString();
+            dpsValueEl.textContent = Math.round(dps).toLocaleString();
+        }
+        
+        // 獲取攻擊類型名稱
+        function getAttackTypeName(type) {
+            switch(type) {
+                case 'normal': return '普通攻擊';
+                case 'skill': return '技能攻擊';
+                case 'ultimate': return '絕技';
+                default: return '未知';
+            }
+        }
+        
+        // 添加全局刪除和編輯函數
+        window.editAttack = function(id) {
+            const attack = attacks.find(a => a.id === id);
+            if (!attack) return;
+            
+            document.getElementById('attackName').value = attack.name;
+            document.getElementById('attackDamage').value = attack.damage;
+            document.getElementById('attackTime').value = attack.time;
+            document.getElementById('attackType').value = attack.type;
+            
+            // 刪除原有攻擊
+            deleteAttack(id);
+        };
+        
+        window.deleteAttack = function(id) {
+            attacks = attacks.filter(a => a.id !== id);
+            renderAttackList();
+            renderTimeline();
+            calculateDamage();
+        };
+        
+        window.editBuff = function(id) {
+            const buff = buffs.find(b => b.id === id);
+            if (!buff) return;
+            
+            document.getElementById('buffName').value = buff.name;
+            document.getElementById('buffEffect').value = buff.effect * 100;
+            document.getElementById('buffStartTime').value = buff.startTime;
+            document.getElementById('buffDuration').value = buff.duration;
+            
+            // 刪除原有增益
+            deleteBuff(id);
+        };
+        
+        window.deleteBuff = function(id) {
+            buffs = buffs.filter(b => b.id !== id);
+            renderBuffList();
+            renderTimeline();
+            calculateDamage();
+        };
+        
+        // 初始化
+        renderAttackList();
+        renderBuffList();
+        renderTimeline();
+        calculateDamage();
+    });
+    </script>
 
     <!-- 模態框 -->
     <div id="selectionModal" class="modal">
@@ -1561,6 +2928,10 @@
             document.getElementById('modalTitle').textContent = title;
             const optionsGrid = document.getElementById('optionsGrid');
             optionsGrid.innerHTML = '';
+            
+            // 先移除所有已存在的說明文字元素，避免顯示角色的說明文字
+            const existingNotes = document.querySelectorAll('.modal-note');
+            existingNotes.forEach(note => note.remove());
             
             // 獲取當前選擇的值
             const currentSelectedValue = getSelectedValue(buttonId);
@@ -2407,6 +3778,6 @@
             console.log('初始化完成');
         });
     </script>
-    <div id="cornerText">Last Updated :2025/04/20</div>
+    <div id="cornerText">Last Updated :2025/04/22</div>
 </body>
 </html>
