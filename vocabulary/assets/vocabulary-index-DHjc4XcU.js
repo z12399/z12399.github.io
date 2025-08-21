@@ -1,0 +1,1 @@
+const e={version:"1.0.0",totalWords:4498,lastUpdated:"2025-08-20T14:15:19",source:"高中英文參考詞彙表",description:"高中英文參考詞彙表，包含 6 個等級的詞彙"},o={4:{name:"中高級",description:"進階學術詞彙",wordCount:4498,filename:"level-4.json"}},t={metadata:e,levels:o};export{t as default,o as levels,e as metadata};

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>單字學習 App - 高中英文詞彙表</title>
+    <meta name="description" content="基於高中英文參考詞彙表的智慧學習系統，支持SRS複習算法" />
+    <meta name="keywords" content="英文單字,詞彙學習,SRS複習,高中英文" />
+    
+    <!-- GitHub Pages 部署配置 -->
+    <base href="/vocabulary/" />
+    
+    <!-- 樣式和腳本 -->
+    <script type="module" crossorigin src="./assets/index-CACEot39.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D8b4DHJx.css">
+    
+    <!-- 額外樣式 -->
+    <style>
+      .blog-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin: 2rem 0;
+      }
+      .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      .blog-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+      }
+      .blog-card:hover {
+        transform: translateY(-5px);
+      }
+      .blog-date {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+      }
+      .blog-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      .blog-excerpt {
+        opacity: 0.9;
+        line-height: 1.6;
+      }
+      .github-link {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #333;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 14px;
+        z-index: 1000;
+        transition: background 0.3s ease;
+      }
+      .github-link:hover {
+        background: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- GitHub 連結 -->
+    <a href="https://github.com/z12399/vocabulary" class="github-link" target="_blank">
+      📚 GitHub
+    </a>
+    
+    <!-- 網誌區塊 -->
+    <section class="blog-section">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">📖 學習網誌</h2>
+        <div class="blog-grid">
+          <article class="blog-card">
+            <div class="blog-date">2024-12-19</div>
+            <h3 class="blog-title">🎯 如何有效使用SRS算法學習單字</h3>
+            <p class="blog-excerpt">
+              SRS（間隔重複系統）是科學證實的高效記憶方法。本文將介紹如何利用這個系統來最大化你的單字學習效果...
+            </p>
+          </article>
+          
+          <article class="blog-card">
+            <div class="blog-date">2024-12-18</div>
+            <h3 class="blog-title">📱 手機學習單字的最佳實踐</h3>
+            <p class="blog-excerpt">
+              在忙碌的生活中，如何利用碎片時間學習單字？這裡有幾個實用的技巧和建議...
+            </p>
+          </article>
+          
+          <article class="blog-card">
+            <div class="blog-date">2024-12-17</div>
+            <h3 class="blog-title">🧠 記憶科學：為什麼我們會忘記單字？</h3>
+            <p class="blog-excerpt">
+              了解記憶的科學原理，掌握艾賓浩斯遺忘曲線，讓你的單字學習更加高效...
+            </p>
+          </article>
+          
+          <article class="blog-card">
+            <div class="blog-date">2024-12-16</div>
+            <h3 class="blog-title">📊 學習進度追蹤的重要性</h3>
+            <p class="blog-excerpt">
+              定期檢視學習進度不僅能激勵學習動力，還能幫助調整學習策略...
+            </p>
+          </article>
+          
+          <article class="blog-card">
+            <div class="blog-date">2024-12-15</div>
+            <h3 class="blog-title">🎨 視覺化學習：圖像記憶法</h3>
+            <p class="blog-excerpt">
+              結合圖像和單字，利用右腦的圖像記憶能力，讓單字學習變得更加有趣和有效...
+            </p>
+          </article>
+          
+          <article class="blog-card">
+            <div class="blog-date">2024-12-14</div>
+            <h3 class="blog-title">🌍 情境學習：在真實語境中掌握單字</h3>
+            <p class="blog-excerpt">
+              脫離孤立的單字學習，在句子和對話中理解單字的真實用法...
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+    
+    <script>
+      // 檢查瀏覽器兼容性
+      if (!window.localStorage) {
+        alert('您的瀏覽器不支持本地存儲，部分功能可能無法正常使用。建議使用Chrome、Firefox、Safari或Edge瀏覽器。');
+      }
+      
+      // 網誌點擊事件
+      document.addEventListener('DOMContentLoaded', function() {
+        const blogCards = document.querySelectorAll('.blog-card');
+        blogCards.forEach(card => {
+          card.addEventListener('click', function() {
+            const title = this.querySelector('.blog-title').textContent;
+            alert(`即將推出：${title}\n\n這篇文章正在撰寫中，敬請期待！`);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
