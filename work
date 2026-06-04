@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>輕量倉儲管理系統</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
+
+  <div class="max-w-4xl mx-auto">
+    <!-- 頂部標題區 -->
+    <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+      <h1 class="text-xl font-bold text-slate-700 flex items-center gap-2">📦 20櫃輕量倉儲系統</h1>
+      <button onclick="refreshCurrentTab()" id="refreshBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm transition-all">🔄 重新整理</button>
+    </div>
+
+    <!-- 導覽頁籤 -->
+    <div class="flex gap-2 mb-6">
+      <button onclick="switchTab('inventory')" id="tab-inventory" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-sm transition-all text-center text-sm md:text-base">📦 庫存管理</button>
+      <button onclick="switchTab('logs')" id="tab-logs" class="flex-1 py-3 bg-white text-slate-600 font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-all text-center text-sm md:text-base">📋 歷史更新紀錄</button>
+    </div>
+
+    <!-- ================= 庫存管理頁面 ================= -->
+    <div id="page-inventory">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <!-- 表單 1：添加新物品 -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+          <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1">➕ 添加全新物品</h2>
+          <form id="addForm" onsubmit="submitNewItem(event)" class="space-y-2">
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" id="newName" placeholder="物品名稱" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+              <input type="text" id="newCabinet" placeholder="所屬櫃號 (如: 櫃A-1)" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <label class="flex items-center gap-1 text-sm text-slate-600 cursor-pointer">
+                <input type="checkbox" id="newIsConsumable" class="w-4 h-4 text-blue-600 rounded border-slate-300"> 屬於耗材
+              </label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-slate-400">初始數量:</span>
+                <input type="number" id="newQty" value="0" min="0" class="w-16 p-1 rounded-lg border border-slate-200 text-sm text-center focus:ring-2 focus:ring-blue-500">
+              </div>
+            </div>
+            <button type="submit" id="addBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-sm mt-2">確認加入庫存</button>
+          </form>
+        </div>
+
+        <!-- 表單 2：變更物品狀態 -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+          <h2 class="text-sm font-bold text-purple-700 mb-3 flex items-center gap-1">📝 變更物品狀態 (輸入制)</h2>
+          <form id="updateForm" onsubmit="submitUpdateItem(event)" class="space-y-2">
+            <div>
+              <select id="updateItemId" required onchange="onUpdateItemSelect()" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500 bg-white">
+                <option value="">-- 請選擇要修改的物品 --</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-0.5">修正後數量</label>
+                <input type="number" id="updateQty" required min="0" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-0.5">調動至櫃號</label>
+                <input type="text" id="updateCabinet" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+              </div>
+            </div>
+            <button type="submit" id="updateBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-sm">確認變更狀態</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 搜尋列 -->
+      <div class="mb-6">
+        <input type="text" id="searchBar" oninput="filterItems()" placeholder="🔍 輸入物品名稱 或 櫃號進行唯讀篩選..." 
+               class="w-full p-4 rounded-xl border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+      </div>
+
+      <!-- 庫存列表容器 -->
+      <div id="loading-inventory" class="text-center py-12 text-slate-400 font-medium">📡 正在連線至雲端試算表...</div>
+      <div id="itemGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden"></div>
+    </div>
+
+    <!-- ================= 歷史更新紀錄頁面 ================= -->
+    <div id="page-logs" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 md:p-6">
+        <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">📋 最近 100 筆異動追蹤</h2>
+        <div id="loading-logs" class="text-center py-8 text-slate-400 font-medium">📡 正在讀取歷史日誌...</div>
+        <div id="logContainer" class="space-y-3 hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ 這裡精準替換成你部署時複製的那串藍色 GAS 網址
+    const API_URL = "YOUR_GAS_URL_HERE";
+
+    let allItems = [];
+    let currentTab = 'inventory';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadInventoryData();
+    });
+
+    function refreshCurrentTab() {
+      if (currentTab === 'inventory') loadInventoryData();
+      else loadLogData();
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const btnInv = document.getElementById('tab-inventory');
+      const btnLog = document.getElementById('tab-logs');
+      const pageInv = document.getElementById('page-inventory');
+      const pageLog = document.getElementById('page-logs');
+
+      if (tab === 'inventory') {
+        btnInv.className = "flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-sm transition-all text-center text-sm md:text-base";
+        btnLog.className = "flex-1 py-3 bg-white text-slate-600 font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-all text-center text-sm md:text-base";
+        pageInv.classList.remove('hidden');
+        pageLog.classList.add('hidden');
+        loadInventoryData();
+      } else {
+        btnLog.className = "flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-sm transition-all text-center text-sm md:text-base";
+        btnInv.className = "flex-1 py-3 bg-white text-slate-600 font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-all text-center text-sm md:text-base";
+        pageInv.classList.add('hidden');
+        pageLog.classList.remove('hidden');
+        loadLogData();
+      }
+    }
+
+    function loadInventoryData() {
+      document.getElementById('loading-inventory').classList.remove('hidden');
+      document.getElementById('itemGrid').classList.add('hidden');
+      document.getElementById('refreshBtn').innerText = "⚡ 讀取中...";
+      
+      fetch(`${API_URL}?action=getInventory`)
+        .then(res => res.json())
+        .then(data => {
+          allItems = data;
+          renderItems(allItems);
+          populateItemDropdown(allItems);
+          document.getElementById('loading-inventory').classList.add('hidden');
+          document.getElementById('itemGrid').classList.remove('hidden');
+          document.getElementById('refreshBtn').innerText = "🔄 重新整理";
+        }).catch(() => alert("連線失敗，請確認 GAS 網址與部署狀態"));
+    }
+
+    function populateItemDropdown(items) {
+      const select = document.getElementById('updateItemId');
+      const currentSelection = select.value;
+      select.innerHTML = '<option value="">-- 請選擇要修改的物品 --</option>';
+      const sortedItems = [...items].sort((a, b) => (a['所屬櫃號'] + a['物品名稱']).localeCompare(b['所屬櫃號'] + b['物品名稱']));
+      sortedItems.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item['物品ID'];
+        opt.innerText = `[${item['所屬櫃號']}] ${item['物品名稱']}`;
+        select.appendChild(opt);
+      });
+      select.value = currentSelection;
+    }
+
+    function onUpdateItemSelect() {
+      const id = document.getElementById('updateItemId').value;
+      if (!id) {
+        document.getElementById('updateQty').value = '';
+        document.getElementById('updateCabinet').value = '';
+        return;
+      }
+      const matched = allItems.find(i => i['物品ID'] === id);
+      if (matched) {
+        document.getElementById('updateQty').value = matched['目前數量'];
+        document.getElementById('updateCabinet').value = matched['所屬櫃號'];
+      }
+    }
+
+    function loadLogData() {
+      document.getElementById('loading-logs').classList.remove('hidden');
+      document.getElementById('logContainer').classList.add('hidden');
+      document.getElementById('refreshBtn').innerText = "⚡ 讀取中...";
+
+      fetch(`${API_URL}?action=getUpdateLogs`)
+        .then(res => res.json())
+        .then(logs => {
+          renderLogs(logs);
+          document.getElementById('loading-logs').classList.add('hidden');
+          document.getElementById('logContainer').classList.remove('hidden');
+          document.getElementById('refreshBtn').innerText = "🔄 重新整理";
+        });
+    }
+
+    function renderItems(items) {
+      const grid = document.getElementById('itemGrid');
+      grid.innerHTML = '';
+      if(items.length === 0) {
+        grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400">目前沒有找到符合的物品</div>';
+        return;
+      }
+      items.forEach(item => {
+        const isConsumable = item['是否為耗材'] === '是' || item['是否為耗材'] === true;
+        const card = document.createElement('div');
+        card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-all";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between mb-2">
+              <span class="bg-blue-50 text-blue-600 font-bold px-3 py-1 rounded-lg text-sm border border-blue-100">${item['所屬櫃號'] || '未分類'}</span>
+              <div class="flex items-center gap-2">
+                ${isConsumable ? '<span class="bg-amber-50 text-amber-600 font-medium px-2 py-0.5 rounded text-xs border border-amber-100">耗材</span>' : '<span class="bg-slate-50 text-slate-400 font-medium px-2 py-0.5 rounded text-xs">非耗材</span>'}
+                <button onclick="confirmDelete('${item['物品ID']}', '${item['物品名稱']}')" class="text-slate-300 hover:text-red-500 text-sm transition-all" title="刪除物品">🗑️</button>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">${item['物品名稱']}</h3>
+            <p class="text-xs text-slate-400 mb-4">更新時間：${item['最後更新時間'] || '無紀錄'}</p>
+          </div>
+          <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl">
+            <span class="text-xs font-bold text-slate-400 tracking-wider">當前庫存量</span>
+            <span class="text-2xl font-black text-slate-700">${item['currently_qty'] || item['目前數量']}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderLogs(logs) {
+      const container = document.getElementById('logContainer');
+      container.innerHTML = '';
+      if (logs.length === 0) {
+        container.innerHTML = '<div class="text-center py-6 text-slate-400">目前尚無任何異動紀錄</div>';
+        return;
+      }
+      logs.forEach(log => {
+        const div = document.createElement('div');
+        div.className = "flex flex-col md:flex-row md:items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 text-sm gap-2";
+        let typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-slate-200 text-slate-700">${log['動作類型']}</span>`;
+        if (log['動作類型'] === '新增物品') typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">新增物品</span>`;
+        if (log['動作類型'] === '刪除物品') typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700">刪除物品</span>`;
+        if (log['動作類型'].includes('變更')) typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-700">${log['動作類型']}</span>`;
+
+        div.innerHTML = `
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-slate-400 font-mono text-xs">${log['操作時間']}</span>
+            ${typeBadge}
+            <span class="font-bold text-slate-700">${log['物品名稱']}</span>
+            <span class="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">${log['所屬櫃號']}</span>
+          </div>
+          <div class="flex items-center gap-4 text-xs md:text-sm text-slate-500 justify-between md:justify-end">
+            <div>數量變更：<span class="font-mono font-bold text-slate-600">${log['原數量']}</span> ➔ <span class="font-mono font-bold text-blue-600">${log['新數量']}</span></div>
+            <div class="text-slate-400 text-xs truncate max-w-[120px]">${log['操作人員']}</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterItems() {
+      const query = document.getElementById('searchBar').value.toLowerCase().trim();
+      if (!query) { renderItems(allItems); return; }
+      const filtered = allItems.filter(item => {
+        return (item['物品名稱'] || '').toLowerCase().includes(query) || (item['所屬櫃號'] || '').toLowerCase().includes(query);
+      });
+      renderItems(filtered);
+    }
+
+    function submitUpdateItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('updateItemId').value;
+      const qty = document.getElementById('updateQty').value;
+      const cabinet = document.getElementById('updateCabinet').value.trim();
+      const btn = document.getElementById('updateBtn');
+      if(!id) return;
+      
+      btn.innerText = "變更中..."; btn.disabled = true;
+      fetch(`${API_URL}?action=updateItemStatus&itemId=${id}&newQty=${qty}&newCabinet=${encodeURIComponent(cabinet)}`)
+        .then(res => res.json())
+        .then(() => {
+          btn.innerText = "確認變更狀態"; btn.disabled = false;
+          document.getElementById('updateForm').reset();
+          loadInventoryData();
+        }).catch(() => { alert('同步失敗'); btn.disabled = false; });
+    }
+
+    function submitNewItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('newName').value.trim();
+      const cabinet = document.getElementById('newCabinet').value.trim();
+      const isConsumable = document.getElementById('newIsConsumable').checked;
+      const qty = document.getElementById('newQty').value;
+      const btn = document.getElementById('addBtn');
+      
+      btn.innerText = "添加中..."; btn.disabled = true;
+      fetch(`${API_URL}?action=addItem&name=${encodeURIComponent(name)}&cabinet=${encodeURIComponent(cabinet)}&isConsumable=${isConsumable}&qty=${qty}`)
+        .then(res => res.json())
+        .then(() => {
+          btn.innerText = "確認加入庫存"; btn.disabled = false;
+          document.getElementById('addForm').reset();
+          document.getElementById('newQty').value = 0;
+          loadInventoryData();
+        }).catch(() => { alert('添加失敗'); btn.disabled = false; });
+    }
+
+    function confirmDelete(itemId, name) {
+      if (confirm(`⚠️ 確定要刪除「${name}」嗎？`)) {
+        document.getElementById('loading-inventory').classList.remove('hidden');
+        document.getElementById('itemGrid').classList.add('hidden');
+        fetch(`${API_URL}?action=deleteItem&itemId=${itemId}`)
+          .then(res => res.json())
+          .then(() => loadInventoryData());
+      }
+    }
+  </script>
+</body>
+</html>
