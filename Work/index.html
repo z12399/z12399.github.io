@@ -15,9 +15,9 @@
     </div>
 
     <div class="mb-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-      <div class="text-sm font-bold text-slate-600 flex items-center gap-1">👤 當前盤點操作人員：</div>
-      <input type="text" id="operatorInput" onchange="saveOperatorName()" placeholder="請輸入您的名字 (系統會自動記住)" 
-             class="p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-64 font-medium text-slate-700 bg-slate-50">
+      <div class="text-sm font-bold text-red-500 flex items-center gap-1">👤 當前盤點操作人員 (必填)：</div>
+      <input type="text" id="operatorInput" onchange="saveOperatorName()" placeholder="請輸入您的名字 (必填)" 
+             class="p-2 rounded-lg border border-red-200 text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-64 font-bold text-slate-700 bg-red-50/30 placeholder-red-400">
     </div>
 
     <div class="flex gap-2 mb-6">
@@ -27,46 +27,52 @@
 
     <div id="page-inventory">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1">➕ 添加全新物品</h2>
-          <form id="addForm" onsubmit="submitNewItem(event)" class="space-y-2">
-            <div class="grid grid-cols-2 gap-2">
-              <input type="text" id="newName" placeholder="物品名稱" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
-              <input type="text" id="newCabinet" placeholder="所屬櫃號 (如: 櫃A-1)" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div class="flex items-center justify-between pt-1">
-              <label class="flex items-center gap-1 text-sm text-slate-600 cursor-pointer">
-                <input type="checkbox" id="newIsConsumable" class="w-4 h-4 text-blue-600 rounded border-slate-300"> 屬於耗材
-              </label>
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-slate-400">初始數量:</span>
-                <input type="number" id="newQty" value="0" min="0" class="w-16 p-1 rounded-lg border border-slate-200 text-sm text-center focus:ring-2 focus:ring-blue-500">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1">➕ 添加全新物品</h2>
+            <form id="addForm" onsubmit="submitNewItem(event)" class="space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="newName" placeholder="物品名稱" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="newCabinet" placeholder="所屬櫃號 (如: 16)" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
               </div>
-            </div>
-            <button type="submit" id="addBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-sm mt-2">確認加入庫存</button>
-          </form>
+              <input type="text" id="newNotes" placeholder="添加初使備註 (選填)" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+              <div class="flex items-center justify-between pt-1">
+                <label class="flex items-center gap-1 text-sm text-slate-600 cursor-pointer">
+                  <input type="checkbox" id="newIsConsumable" class="w-4 h-4 text-blue-600 rounded border-slate-300"> 屬於耗材
+                </label>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-slate-400">初始數量:</span>
+                  <input type="number" id="newQty" value="0" min="0" class="w-16 p-1 rounded-lg border border-slate-200 text-sm text-center focus:ring-2 focus:ring-blue-500">
+                </div>
+              </div>
+              <button type="submit" id="addBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-sm mt-2">確認加入庫存</button>
+            </form>
+          </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <h2 class="text-sm font-bold text-purple-700 mb-3 flex items-center gap-1">📝 變更物品狀態 (輸入制)</h2>
-          <form id="updateForm" onsubmit="submitUpdateItem(event)" class="space-y-2">
-            <div>
-              <select id="updateItemId" required onchange="onUpdateItemSelect()" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500 bg-white">
-                <option value="">-- 請選擇要修改的物品 --</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-purple-700 mb-3 flex items-center gap-1">📝 變更物品狀態 / 增減零純盤點</h2>
+            <form id="updateForm" onsubmit="submitUpdateItem(event)" class="space-y-2">
               <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-0.5">修正後數量</label>
-                <input type="number" id="updateQty" required min="0" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+                <select id="updateItemId" required onchange="onUpdateItemSelect()" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500 bg-white">
+                  <option value="">-- 請選擇要修改的物品 --</option>
+                </select>
               </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-0.5">調動至櫃號</label>
-                <input type="text" id="updateCabinet" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-400 mb-0.5">修正後數量</label>
+                  <input type="number" id="updateQty" required min="0" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-400 mb-0.5">調動至櫃號</label>
+                  <input type="text" id="updateCabinet" required class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+                </div>
               </div>
-            </div>
-            <button type="submit" id="updateBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-sm">確認變更狀態</button>
-          </form>
+              <input type="text" id="updateNotes" placeholder="本次變更備註 / 盤點紀錄 (選填)" class="w-full p-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-purple-500">
+              <button type="submit" id="updateBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-sm">確認變更狀態 (含無變動盤點)</button>
+            </form>
+          </div>
         </div>
       </div>
 
@@ -90,17 +96,18 @@
   </div>
 
   <script>
-    // 你的專屬已部署 GAS 網址
-    const API_URL = "https://script.google.com/macros/s/AKfycbxBf40rGoyX8BM8EcSoh1r2RZxFqZOz5lGoGFU-ewMviGGQ30lUITfW8sCOu-omkdQ/exec";
+    // 已更新為最新的 API 網址
+    const API_URL = "https://script.google.com/macros/s/AKfycwIJRnnEpIwbQK0ut-tH8Zqa9j9J8QpqJVgQ3t_Lb6257_2XEPmMzLq29el1fgBdvlR/exec";
 
     let allItems = [];
     let currentTab = 'inventory';
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 自動讀取本地記住的操作人員姓名
       const savedName = localStorage.getItem('wms_operator_name');
       if (savedName) {
         document.getElementById('operatorInput').value = savedName;
+        document.getElementById('operatorInput').classList.remove('border-red-200', 'bg-red-50/30');
+        document.getElementById('operatorInput').classList.add('border-slate-200', 'bg-slate-50');
       }
       loadInventoryData();
     });
@@ -108,10 +115,27 @@
     function saveOperatorName() {
       const name = document.getElementById('operatorInput').value.trim();
       localStorage.setItem('wms_operator_name', name);
+      if (name) {
+        document.getElementById('operatorInput').classList.remove('border-red-200', 'bg-red-50/30');
+        document.getElementById('operatorInput').classList.add('border-slate-200', 'bg-slate-50');
+      } else {
+        document.getElementById('operatorInput').classList.remove('border-slate-200', 'bg-slate-50');
+        document.getElementById('operatorInput').classList.add('border-red-200', 'bg-red-50/30');
+      }
     }
 
     function getOperatorName() {
-      return document.getElementById('operatorInput').value.trim() || "未填寫人員";
+      return document.getElementById('operatorInput').value.trim();
+    }
+
+    function validateOperator() {
+      const name = getOperatorName();
+      if (!name) {
+        alert("⚠️ 請先在頂部紅色框內填寫「當前盤點操作人員」的名字，才能進行任何更新！");
+        document.getElementById('operatorInput').focus();
+        return false;
+      }
+      return true;
     }
 
     function refreshCurrentTab() {
@@ -222,9 +246,10 @@
               </div>
             </div>
             <h3 class="text-lg font-bold text-slate-800 mb-1">${item['物品名稱']}</h3>
-            <p class="text-xs text-slate-400 mb-4">更新時間：${item['最後更新時間'] || '無紀錄'}</p>
+            <p class="text-xs text-slate-400">更新時間：${item['最後更新時間'] || '無紀錄'}</p>
+            ${item['備註'] ? `<p class="text-xs bg-purple-50/50 text-purple-700 p-2 rounded-lg mt-2 border border-purple-100/50 font-medium">📝 最新狀態備註：${item['備註']}</p>` : ''}
           </div>
-          <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl">
+          <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl mt-4">
             <span class="text-xs font-bold text-slate-400 tracking-wider">當前庫存量</span>
             <span class="text-2xl font-black text-slate-700">${item['目前數量']}</span>
           </div>
@@ -237,34 +262,38 @@
       const container = document.getElementById('logContainer');
       container.innerHTML = '';
       if (logs.length === 0) {
-        container.innerHTML = '<div class="text-center py-6 text-slate-400">目前尚無任何異動紀錄</div>';
+        container.innerHTML = '<div class="text-center py-6 text-slate-400">目前尚無 any 異動紀錄</div>';
         return;
       }
       logs.forEach(log => {
         const div = document.createElement('div');
-        div.className = "flex flex-col md:flex-row md:items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 text-sm gap-2";
+        div.className = "flex flex-col p-3 rounded-xl border border-slate-100 bg-slate-50 text-sm gap-2";
+        
         let typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-slate-200 text-slate-700">${log['動作類型']}</span>`;
         if (log['動作類型'] === '新增物品') typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">新增物品</span>`;
         if (log['動作類型'] === '刪除物品') typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700">刪除物品</span>`;
         if (log['動作類型'].includes('變更')) typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-700">${log['動作類型']}</span>`;
+        if (log['動作類型'] === '純盤點無變動') typeBadge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-indigo-600 text-white shadow-sm">🔍 純盤點無變動</span>`;
 
         div.innerHTML = `
-          <div class="flex items-center gap-3 flex-wrap">
-            <span class="text-slate-400 font-mono text-xs">${log['操作時間']}</span>
-            ${typeBadge}
-            <span class="font-bold text-slate-700">${log['物品名稱']}</span>
-            <span class="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">${log['所屬櫃號']}</span>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-slate-400 font-mono text-xs">${log['操作時間']}</span>
+              ${typeBadge}
+              <span class="font-bold text-slate-700">${log['物品名稱']}</span>
+              <span class="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">${log['所屬櫃號']}</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs md:text-sm text-slate-500 justify-between md:justify-end">
+              <div>數量變更：<span class="font-mono font-bold text-slate-600">${log['原數量']}</span> ➔ <span class="font-mono font-bold text-blue-600">${log['新數量']}</span></div>
+              <div class="text-slate-400 text-xs font-bold">${log['操作人員']}</div>
+            </div>
           </div>
-          <div class="flex items-center gap-4 text-xs md:text-sm text-slate-500 justify-between md:justify-end">
-            <div>數量變更：<span class="font-mono font-bold text-slate-600">${log['原數量']}</span> ➔ <span class="font-mono font-bold text-blue-600">${log['新數量']}</span></div>
-            <div class="text-slate-400 text-xs truncate max-w-[120px] font-medium" title="${log['操作人員']}">${log['操作人員']}</div>
-          </div>
+          ${log['備註'] ? `<div class="text-xs bg-white text-slate-500 p-2 rounded border border-slate-100 font-medium">💬 盤點備註：${log['備註']}</div>` : ''}
         `;
         container.appendChild(div);
       });
     }
 
-    // 【修正版搜尋】徹底解決純數字櫃號導致錯誤的 Bug
     function filterItems() {
       const query = document.getElementById('searchBar').value.toLowerCase().trim();
       if (!query) { renderItems(allItems); return; }
@@ -278,17 +307,20 @@
 
     function submitUpdateItem(e) {
       e.preventDefault();
+      if(!validateOperator()) return;
+      
       const id = document.getElementById('updateItemId').value;
       const qty = document.getElementById('updateQty').value;
       const cabinet = document.getElementById('updateCabinet').value.trim();
+      const notes = document.getElementById('updateNotes').value.trim();
       const btn = document.getElementById('updateBtn');
       if(!id) return;
       
       btn.innerText = "變更中..."; btn.disabled = true;
-      fetch(`${API_URL}?action=updateItemStatus&itemId=${id}&newQty=${qty}&newCabinet=${encodeURIComponent(cabinet)}&operator=${encodeURIComponent(getOperatorName())}`)
+      fetch(`${API_URL}?action=updateItemStatus&itemId=${id}&newQty=${qty}&newCabinet=${encodeURIComponent(cabinet)}&operator=${encodeURIComponent(getOperatorName())}&notes=${encodeURIComponent(notes)}`)
         .then(res => res.json())
         .then(() => {
-          btn.innerText = "確認變更狀態"; btn.disabled = false;
+          btn.innerText = "確認變更狀態 (含無變動盤點)"; btn.disabled = false;
           document.getElementById('updateForm').reset();
           loadInventoryData();
         }).catch(() => { alert('同步失敗'); btn.disabled = false; });
@@ -296,14 +328,17 @@
 
     function submitNewItem(e) {
       e.preventDefault();
+      if(!validateOperator()) return;
+      
       const name = document.getElementById('newName').value.trim();
       const cabinet = document.getElementById('newCabinet').value.trim();
       const isConsumable = document.getElementById('newIsConsumable').checked;
       const qty = document.getElementById('newQty').value;
+      const notes = document.getElementById('newNotes').value.trim();
       const btn = document.getElementById('addBtn');
       
       btn.innerText = "添加中..."; btn.disabled = true;
-      fetch(`${API_URL}?action=addItem&name=${encodeURIComponent(name)}&cabinet=${encodeURIComponent(cabinet)}&isConsumable=${isConsumable}&qty=${qty}&operator=${encodeURIComponent(getOperatorName())}`)
+      fetch(`${API_URL}?action=addItem&name=${encodeURIComponent(name)}&cabinet=${encodeURIComponent(cabinet)}&isConsumable=${isConsumable}&qty=${qty}&operator=${encodeURIComponent(getOperatorName())}&notes=${encodeURIComponent(notes)}`)
         .then(res => res.json())
         .then(() => {
           btn.innerText = "確認加入庫存"; btn.disabled = false;
@@ -314,13 +349,16 @@
     }
 
     function confirmDelete(itemId, name) {
-      if (confirm(`⚠️ 確定要刪除「${name}」嗎？`)) {
-        document.getElementById('loading-inventory').classList.remove('hidden');
-        document.getElementById('itemGrid').classList.add('hidden');
-        fetch(`${API_URL}?action=deleteItem&itemId=${itemId}&operator=${encodeURIComponent(getOperatorName())}`)
-          .then(res => res.json())
-          .then(() => loadInventoryData());
-      }
+      if(!validateOperator()) return;
+      
+      const notes = prompt(`⚠️ 確定要刪除「${name}」嗎？\n請輸入刪除原因/備註（選填）：`);
+      if (notes === null) return;
+      
+      document.getElementById('loading-inventory').classList.remove('hidden');
+      document.getElementById('itemGrid').classList.add('hidden');
+      fetch(`${API_URL}?action=deleteItem&itemId=${itemId}&operator=${encodeURIComponent(getOperatorName())}&notes=${encodeURIComponent(notes.trim())}`)
+        .then(res => res.json())
+        .then(() => loadInventoryData());
     }
   </script>
 </body>
