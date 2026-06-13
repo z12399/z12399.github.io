@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>輕量倉儲管理系統</title>
+  <title>實驗器材櫃管理系統</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
 
   <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-      <h1 class="text-xl font-bold text-slate-700 flex items-center gap-2"> 實驗器材櫃</h1>
+      <h1 class="text-xl font-bold text-slate-700 flex items-center gap-2">📦 實驗器材櫃管理系統</h1>
       <button onclick="refreshCurrentTab()" id="refreshBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-lg text-sm transition-all">🔄 重新整理</button>
     </div>
 
     <div class="mb-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-      <div class="text-sm font-bold text-red-500 flex items-center gap-1">編輯者 (必填)：</div>
+      <div class="text-sm font-bold text-red-500 flex items-center gap-1">👤 編輯者 (必填)：</div>
       <input type="text" id="operatorInput" onchange="saveOperatorName()" placeholder="請輸入您的名字 (必填)" 
              class="p-2 rounded-lg border border-red-200 text-sm focus:ring-2 focus:ring-blue-500 w-full sm:w-64 font-bold text-slate-700 bg-red-50/30 placeholder-red-400">
     </div>
@@ -96,8 +96,7 @@
   </div>
 
   <script>
-    // 記憶庫鎖定：你最新產出的專屬公開 API 網址
-    const API_URL = "https://script.google.com/macros/s/AKfycwIJRnnEpIwbQK0ut-tH8Zqa9j9J8QpqJVgQ3t_Lb6257_2XEPmMzLq29el1fgBdvlR/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzxl188Z8JBXtPj9K_aC7O0W5P8mP_8mpUExT3LwbzRN7JVsKEvQfadEkqtaGQgFGA/exec";
 
     let allItems = [];
     let currentTab = 'inventory';
@@ -125,11 +124,10 @@
     }
 
     function getOperatorName() { return document.getElementById('operatorInput').value.trim(); }
-
     function validateOperator() {
       const name = getOperatorName();
       if (!name) {
-        alert("⚠️ 請先在頂部紅色框內填寫「當前盤點操作人員」的名字，才能進行任何更新！");
+        alert("⚠️ 請先在頂部紅色框內填寫「編輯者」的名字，才能進行任何更新！");
         document.getElementById('operatorInput').focus();
         return false;
       }
@@ -163,19 +161,25 @@
       }
     }
 
-    // 重構精隨：加入 redirect: "follow" 參數，強迫前端追蹤 Google 的 302 跳轉
-    function callAPI(url, callback) {
-      fetch(url, { method: "GET", redirect: "follow" })
-        .then(res => {
-          if (!res.ok) throw new Error("網路回應不正確");
-          return res.json();
-        })
-        .then(data => callback(data))
-        .catch(err => {
-          console.error("API 錯誤:", err);
-          alert("📡 雲端連線同步完成！請手動刷新網頁查看最新庫存狀態。");
-          loadInventoryData();
-        });
+    // 核心重構：改用 JSONP 技術（動態注入 Script 標籤）完美穿透 CORS
+    function jsonpFetch(url, callbackName, successHandler) {
+      // 移除舊的同名標籤避免殘留
+      const oldScript = document.getElementById(callbackName);
+      if (oldScript) oldScript.remove();
+
+      window[callbackName] = function(data) {
+        successHandler(data);
+        delete window[callbackName];
+        document.getElementById(callbackName).remove();
+      };
+
+      const script = document.createElement('script');
+      script.id = callbackName;
+      script.src = `${url}&callback=${callbackName}&_ts=${new Date().getTime()}`;
+      script.onerror = function() {
+        alert("📡 連線失敗，請檢查網路或 GAS 狀態。");
+      };
+      document.body.appendChild(script);
     }
 
     function loadInventoryData() {
@@ -183,19 +187,14 @@
       document.getElementById('itemGrid').classList.add('hidden');
       document.getElementById('refreshBtn').innerText = "⚡ 讀取中...";
       
-      fetch(`${API_URL}?action=getInventory`, { method: "GET", redirect: "follow" })
-        .then(res => res.json())
-        .then(data => {
-          allItems = data;
-          renderItems(allItems);
-          populateItemDropdown(allItems);
-          document.getElementById('loading-inventory').classList.add('hidden');
-          document.getElementById('itemGrid').classList.remove('hidden');
-          document.getElementById('refreshBtn').innerText = "🔄 重新整理";
-        }).catch(err => {
-          console.error(err);
-          document.getElementById('loading-inventory').innerText = "❌ 讀取失敗，請檢查網路或再按一次重新整理。";
-        });
+      jsonpFetch(`${API_URL}?action=getInventory`, "cb_getInventory", function(data) {
+        allItems = data;
+        renderItems(allItems);
+        populateItemDropdown(allItems);
+        document.getElementById('loading-inventory').classList.add('hidden');
+        document.getElementById('itemGrid').classList.remove('hidden');
+        document.getElementById('refreshBtn').innerText = "🔄 重新整理";
+      });
     }
 
     function populateItemDropdown(items) {
@@ -231,14 +230,12 @@
       document.getElementById('logContainer').classList.add('hidden');
       document.getElementById('refreshBtn').innerText = "⚡ 讀取中...";
 
-      fetch(`${API_URL}?action=getUpdateLogs`, { method: "GET", redirect: "follow" })
-        .then(res => res.json())
-        .then(logs => {
-          renderLogs(logs);
-          document.getElementById('loading-logs').classList.add('hidden');
-          document.getElementById('logContainer').classList.remove('hidden');
-          document.getElementById('refreshBtn').innerText = "🔄 重新整理";
-        });
+      jsonpFetch(`${API_URL}?action=getUpdateLogs`, "cb_getLogs", function(logs) {
+        renderLogs(logs);
+        document.getElementById('loading-logs').classList.add('hidden');
+        document.getElementById('logContainer').classList.remove('hidden');
+        document.getElementById('refreshBtn').innerText = "🔄 重新整理";
+      });
     }
 
     function renderItems(items) {
@@ -335,7 +332,7 @@
       btn.innerText = "變更中..."; btn.disabled = true;
       const url = `${API_URL}?action=updateItemStatus&itemId=${id}&newQty=${qty}&newCabinet=${encodeURIComponent(cabinet)}&operator=${encodeURIComponent(getOperatorName())}&notes=${encodeURIComponent(notes)}`;
       
-      callAPI(url, () => {
+      jsonpFetch(url, "cb_update", function(res) {
         btn.innerText = "確認變更狀態 (含無變動盤點)"; btn.disabled = false;
         document.getElementById('updateForm').reset();
         loadInventoryData();
@@ -356,7 +353,7 @@
       btn.innerText = "添加中..."; btn.disabled = true;
       const url = `${API_URL}?action=addItem&name=${encodeURIComponent(name)}&cabinet=${encodeURIComponent(cabinet)}&isConsumable=${isConsumable}&qty=${qty}&operator=${encodeURIComponent(getOperatorName())}&notes=${encodeURIComponent(notes)}`;
       
-      callAPI(url, () => {
+      jsonpFetch(url, "cb_add", function(res) {
         btn.innerText = "確認加入庫存"; btn.disabled = false;
         document.getElementById('addForm').reset();
         document.getElementById('newQty').value = 0;
@@ -373,7 +370,9 @@
       document.getElementById('itemGrid').classList.add('hidden');
       const url = `${API_URL}?action=deleteItem&itemId=${itemId}&operator=${encodeURIComponent(getOperatorName())}&notes=${encodeURIComponent(notes.trim())}`;
       
-      callAPI(url, () => loadInventoryData());
+      jsonpFetch(url, "cb_delete", function(res) {
+        loadInventoryData();
+      });
     }
   </script>
 </body>
