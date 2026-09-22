@@ -93,11 +93,11 @@
 
   function statusLabel(status) {
     return {
-      READY: '可列入建議',
-      READY_WITH_UNCONFIGURED_PROFILE: '部分能力值尚未設定',
-      UNAVAILABLE: '目前不可用',
+      READY: '可用',
+      READY_WITH_UNCONFIGURED_PROFILE: '目標未設定',
+      UNAVAILABLE: '不可用',
       UNVERIFIED: '資料不足',
-      NO_COMMANDS: '沒有候選行動'
+      NO_COMMANDS: '尚無行動'
     }[status] || status || '資料不足';
   }
 
@@ -115,7 +115,7 @@
   }
 
   function invalidMessage() {
-    kuaFrontendTransientMessage = '資料格式不完整，原本有效狀態未變更；請到進階區檢查 JSON。';
+    kuaFrontendTransientMessage = '資料有誤，已保留原資料。請檢查進階區的 JSON。';
   }
 
   function applySnapshot(input, options = {}) {
@@ -150,7 +150,7 @@
     if (Number(row.scoreBreakdown?.components?.motivation) > 0) gains.push('幹勁');
     if (Number(row.scoreBreakdown?.components?.bond) > 0) gains.push('羈絆');
     if (Number(row.scoreBreakdown?.components?.hint) > 0) gains.push('提示');
-    return [...new Set(gains)].slice(0, 3).join('、') || '沒有可量化的增益';
+    return [...new Set(gains)].slice(0, 3).join('、') || '無可量化增益';
   }
 
   function tradeoffsFor(row) {
@@ -159,8 +159,7 @@
     if (Number(tradeoff.vitalDelta) < 0) tradeoffs.push(`體力${tradeoff.vitalDelta}`);
     if (Number(tradeoff.motivationDelta) < 0) tradeoffs.push(`幹勁${tradeoff.motivationDelta}`);
     if (Number(tradeoff.failureRate) > 0) tradeoffs.push(`風險輸入 ${tradeoff.failureRate}%`);
-    if (tradeoff.unavailable) tradeoffs.push('目前不可用');
-    return tradeoffs.join('、') || '沒有額外犧牲欄位';
+    return tradeoffs.join('、') || '未列出代價';
   }
 
   function compactStateValue(value) {
@@ -182,18 +181,33 @@
 
   function renderBreakdown(row) {
     const breakdown = row.scoreBreakdown || {};
+    const componentLabels = {
+      stats: '能力值',
+      vital: '體力',
+      motivation: '幹勁',
+      bond: '羈絆',
+      hint: '提示',
+      facility: '設施',
+      failurePenalty: '風險扣分',
+      goalRace: '目標賽'
+    };
     const components = Object.entries(breakdown.components || {})
       .filter(([, value]) => value !== null)
-      .map(([key, value]) => `<li><span>${escapeHtml(key)}</span><strong>${Number(value).toFixed(2)}</strong></li>`)
+      .map(([key, value]) => `<li><span>${escapeHtml(componentLabels[key] || key)}</span><strong>${Number(value).toFixed(2)}</strong></li>`)
       .join('');
     const axes = (breakdown.axes || [])
       .filter(axis => axis.gain !== 0 || axis.utility !== null)
       .map(axis => `<li><span>${escapeHtml(axis.label)} ${axis.gain >= 0 ? '+' : ''}${axis.gain}</span><strong>${axis.utility === null ? '未設定' : Number(axis.utility).toFixed(2)}</strong></li>`)
       .join('');
-    return `<details class="kua-frontend-breakdown"><summary>查看分數拆解</summary>
-      <p class="kua-frontend-formula">${escapeHtml(breakdown.formula || '目前無法拆解')}</p>
-      <div class="kua-frontend-breakdown-grid"><div><b>計入項目</b><ul>${components || '<li>無</li>'}</ul></div><div><b>能力值邊際</b><ul>${axes || '<li>尚未設定</li>'}</ul></div></div>
-      <small>敏感假設：${escapeHtml((row.explanation?.sensitiveAssumptions || []).join('；'))}</small>
+    const unconfiguredAxes = (breakdown.unconfiguredAxes || [])
+      .map(axis => statLabels[axis] || axis);
+    const missingTargets = unconfiguredAxes.length
+      ? `<small>${escapeHtml(unconfiguredAxes.join('、'))}未設定目標，不計分。</small>`
+      : '';
+    return `<details class="kua-frontend-breakdown"><summary>分數明細</summary>
+      <p class="kua-frontend-formula">${escapeHtml(breakdown.formula || '無法計算')}</p>
+      <div class="kua-frontend-breakdown-grid"><div><b>計分項目</b><ul>${components || '<li>無</li>'}</ul></div><div><b>能力值計分</b><ul>${axes || '<li>尚未設定</li>'}</ul></div></div>
+      ${missingTargets}
     </details>`;
   }
 
@@ -201,9 +215,7 @@
     const isTop = options.isTop === true;
     const benefit = benefitsFor(row);
     const tradeoff = tradeoffsFor(row);
-    const summary = isTop
-      ? `得到什麼：${escapeHtml(benefit)}。犧牲什麼：${escapeHtml(tradeoff)}。`
-      : `${escapeHtml(benefit)}；${escapeHtml(tradeoff)}`;
+    const summary = `${escapeHtml(benefit)}；${escapeHtml(tradeoff)}`;
     return `<article class="kua-frontend-ranked-row ${isTop ? 'is-top' : ''} ${row.nearTie ? 'is-near-tie' : ''}" data-command-id="${escapeHtml(row.id)}" data-status="${escapeHtml(row.status)}">
       <header><span class="kua-frontend-rank">${isTop ? '首選' : `#${row.rank}`}</span><div><strong>${escapeHtml(row.label)}</strong><small>${escapeHtml(actionTypeLabel(row.type))}・${escapeHtml(statusLabel(row.status))}</small></div><b>${scoreLabel(row.score)}</b></header>
       <p class="kua-frontend-ranked-summary">${summary}</p>
@@ -216,12 +228,12 @@
     if (!output) return;
     const rankedRows = Array.isArray(kuaFrontendRanked) ? kuaFrontendRanked : [];
     if (!rankedRows.length) {
-      output.innerHTML = '<p class="kua-frontend-empty">沒有可顯示的排序結果。</p>';
+      output.innerHTML = '<p class="kua-frontend-empty">尚無行動資料。</p>';
       return;
     }
     const rows = rankedRows.filter(isRecommendationEligible);
     if (!rows.length) {
-      output.innerHTML = '<p class="kua-frontend-empty">目前沒有可推薦的行動。候選皆不可用或缺少有效分數，請先更新行動資料。</p>'
+      output.innerHTML = '<p class="kua-frontend-empty">行動皆不可用或缺少分數，請更新行動資料。</p>'
         + rankedRows.map(row => renderRankedRow(row, { showBreakdown: true })).join('');
       return;
     }
@@ -230,7 +242,7 @@
       row !== top && row.rank !== 1 && (top.id == null || row.id !== top.id));
     const restMarkup = remaining.length
       ? `<details class="kua-ranking-details kua-frontend-section" id="kuaFrontendRankingDetails">
-          <summary>查看其餘 ${remaining.length} 個候選與完整拆解</summary>
+          <summary>其他 ${remaining.length} 個行動</summary>
           <div class="kua-ranking-details-body">${remaining.map(row => renderRankedRow(row, { showBreakdown: true })).join('')}</div>
         </details>`
       : '';
@@ -250,10 +262,16 @@
     };
     setText('kuaFrontendSummaryStatus', '手動快照');
     setText('kuaFrontendStateSummary', stateSummaryText(kuaFrontendState));
-    setText('kuaFrontendSourceStatus', kuaFrontendState.sourceStatus || 'MANUAL_SNAPSHOT');
-    setText('kuaFrontendConnectionStatus', kuaFrontendState.connectionStatus || 'NOT_LIVE_CONNECTED');
-    setText('kuaFrontendEngineStatus', 'ORIGINAL_KUA_NOT_INCLUDED');
-    setText('kuaFrontendProbabilityStatus', `${kuaFrontendState.probabilityStatus || 'NOT_COMPUTED'}／${kuaFrontendState.probabilityClaimStatus || 'NOT_PROBABILITY'}`);
+    const sourceLabels = { MANUAL_SNAPSHOT: '手動輸入', COMMUNITY_TOOL_OBSERVED: '社群工具觀察', USER_RECORDED: '自行記錄' };
+    const sourceStatus = kuaFrontendState.sourceStatus || 'MANUAL_SNAPSHOT';
+    const connectionStatus = kuaFrontendState.connectionStatus || 'NOT_LIVE_CONNECTED';
+    const probabilityLabels = { NOT_COMPUTED: '未計算機率', NOT_PROBABILITY: '分數不代表機率' };
+    const probabilityStatus = kuaFrontendState.probabilityStatus || 'NOT_COMPUTED';
+    const probabilityClaimStatus = kuaFrontendState.probabilityClaimStatus || 'NOT_PROBABILITY';
+    setText('kuaFrontendSourceStatus', sourceLabels[sourceStatus] || sourceStatus);
+    setText('kuaFrontendConnectionStatus', connectionStatus === 'NOT_LIVE_CONNECTED' ? '未連接遊戲' : connectionStatus);
+    setText('kuaFrontendEngineStatus', '未整合原版 Kua 引擎');
+    setText('kuaFrontendProbabilityStatus', `${probabilityLabels[probabilityStatus] || probabilityStatus}；${probabilityLabels[probabilityClaimStatus] || probabilityClaimStatus}`);
     const setValue = (id, value) => {
       const element = byId(id);
       if (element) element.value = value === null || value === undefined ? '' : String(value);
@@ -270,15 +288,24 @@
       const errorText = (kuaFrontendState.errors || []).length > 0;
       const noRecommendation = kuaFrontendRanked.length > 0
         && !kuaFrontendRanked.some(isRecommendationEligible);
+      const unconfigured = kuaFrontendRanked.some(row =>
+        row.status === 'READY_WITH_UNCONFIGURED_PROFILE'
+        || (row.scoreBreakdown?.unconfiguredAxes || []).length > 0);
+      const hideStatus = status === 'READY' && kuaFrontendRanked.status === 'READY'
+        && !kuaFrontendTransientMessage && !errorText && !noRecommendation && !unconfigured;
+      statusOutput.hidden = hideStatus;
+      // The status class sets display:flex, so hide its box as well as its content.
+      if (statusOutput.style) statusOutput.style.display = hideStatus ? 'none' : '';
       const summaryStatus = noRecommendation
         ? '沒有可推薦的行動'
         : statusLabel(kuaFrontendRanked?.status || 'NO_COMMANDS');
       const summaryMessage = noRecommendation
-        ? '候選皆不可用或缺少有效分數；請更新行動資料後再比較。'
-        : `已整理 ${kuaFrontendState.commands.length} 個候選；只比較這一回合，不是勝率。`;
-      statusOutput.innerHTML = errorText
-        ? '<strong>資料不足</strong><span>目前資料未通過檢查，排名維持保守顯示。</span>'
-        : `<strong>${escapeHtml(summaryStatus)}</strong><span>${escapeHtml(kuaFrontendTransientMessage || summaryMessage)}</span>`;
+        ? ''
+        : `${kuaFrontendState.commands.length} 個候選行動`;
+      const message = kuaFrontendTransientMessage || summaryMessage;
+      statusOutput.innerHTML = hideStatus ? '' : errorText
+        ? '<strong>資料不足</strong><span>資料未通過檢查，無法確認排名。</span>'
+        : `<strong>${escapeHtml(summaryStatus)}</strong>${message ? `<span>${escapeHtml(message)}</span>` : ''}`;
     }
   }
 

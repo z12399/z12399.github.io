@@ -150,13 +150,13 @@
     toolStatus[tool] = 'loading';
     setLaunchBusy(true);
     setLaunchStatus(
-      tool === 'kua' ? '正在載入回合助手…' : '正在載入完整規劃器資料…',
+      tool === 'kua' ? '載入回合助手…' : '載入規劃器…',
       'loading'
     );
     const promise = loadManifest(tool)
       .then(() => {
         toolStatus[tool] = 'ready';
-        setLaunchStatus(tool === 'kua' ? '回合助手已就緒。' : '完整規劃器已就緒。', 'ready');
+        setLaunchStatus('', 'ready');
         showTool(tool);
       })
       .catch(error => {

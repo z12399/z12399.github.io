@@ -3069,8 +3069,8 @@ function buildBattleDeckTrainingGuide() {
   if (gapNames.length) skillActionParts.push(`仍有殘餘缺口：${gapNames.join('、')}，不要在本局空等，改由父輩／因子處理`);
   actions.push({
     phase: '技能',
-    title: hintNames.length ? `本場目標提示先檢查：${hintNames.slice(0, 2).join('、')}` : '沒有解析到本場目標的正式提示時，不要亂追提示',
-    reason: `${skillActionParts.join('；') || '目前六卡沒有可確認的本場目標提示／事件路線；介面不會用卡片白技數量假裝成有效技能。'}${hintNames.length ? '；是否立刻點取仍要看當下技能 Pt、提示折扣與該回合訓練收益，這裡只確認它是本場有效取得路線。' : ''}`,
+    title: hintNames.length ? `優先提示：${hintNames.slice(0, 2).join('、')}` : '尚未找到本場需要的提示',
+    reason: `${skillActionParts.join('；') || '目前六卡尚無可確認的目標技能提示或事件路線。'}${hintNames.length ? '；是否點取，請依當下技能 Pt、折扣與訓練收益決定。' : ''}`,
     evidence: coveragePercent === null ? '目標技能來源證據不足' : `賽道綁定取得覆蓋代理 ${coveragePercent}%`,
     confidence: hintNames.length || eventNames.length ? 'CONDITIONAL' : 'UNKNOWN',
     tone: hintNames.length || eventNames.length ? 'skill' : 'warning'
@@ -3079,8 +3079,8 @@ function buildBattleDeckTrainingGuide() {
   if (requiredGoldRecovery <= 0) {
     actions.push({
       phase: '體力',
-      title: '標準方案沒有額外金回硬門，不為重複回復犧牲主訓練',
-      reason: '目前足耐模型的標準層沒有要求金回數；若你手動改低耐力，必須重新計算，不能沿用這句。',
+      title: '標準方案無額外金回需求',
+      reason: '此標準方案未要求額外金回；調整耐力後請重新檢查足耐。',
       evidence: '目前賽道足耐標準層',
       confidence: 'MODEL_BOUND',
       tone: 'recovery'
@@ -3089,7 +3089,7 @@ function buildBattleDeckTrainingGuide() {
     actions.push({
       phase: '體力',
       title: `保留已達標的回復路線；標準需求為 ${requiredGoldRecovery} 個金回槽`,
-      reason: '目前六卡是 optimizer 已算過的完整候選，回復結構門已通過；同家族第二套回復不重複當成第二個槽。',
+      reason: '這副六卡已通過回復需求檢查；同家族回復只計一個槽。',
       evidence: '完整候選的回復結構門',
       confidence: 'KNOWN',
       tone: 'recovery'
@@ -3097,11 +3097,11 @@ function buildBattleDeckTrainingGuide() {
   } else {
     const deficit = Number.isFinite(Number(recoveryGate?.deficit))
       ? `；目前尚缺 ${Number(recoveryGate.deficit).toFixed(2)} 槽`
-      : '；自配不是已完整算過的候選，達成狀態未知';
+      : '；此自配尚未完整計算，回復是否足夠仍待確認';
     actions.push({
       phase: '體力',
-      title: `先守住足耐／回復線：標準需求為 ${requiredGoldRecovery} 個金回槽`,
-      reason: `未確認回復門前，不把「有回復技能」直接當成足耐${deficit}。`,
+      title: `回復需求：${requiredGoldRecovery} 個金回槽`,
+      reason: `需確認回復量是否足夠${deficit}。`,
       evidence: recoveryGate ? '完整候選的回復缺口' : 'UNKNOWN；不得當成 0',
       confidence: recoveryGate ? 'MODEL_BOUND' : 'UNKNOWN',
       tone: 'warning'
@@ -3112,8 +3112,8 @@ function buildBattleDeckTrainingGuide() {
     actions.unshift({
       phase: '全程固定',
       title: `固定保留必要卡：${scenarioCards.map(supportCardComparisonName).join('、')}`,
-      reason: '這張卡是目前劇本的 exact 必要卡，已固定占一格；比較換卡時不能把它誤當成自由卡位。',
-      evidence: '劇本 exact hard slot',
+      reason: '目前劇本必帶，換卡時需保留這一格。',
+      evidence: '劇本必帶卡',
       confidence: 'KNOWN',
       tone: 'constraint'
     });
@@ -3133,9 +3133,9 @@ function buildBattleDeckTrainingGuide() {
         ? '六卡已確認・部分理由未知'
         : '六卡有效・尚未確認',
     summaryTitle: `${targetName}｜${compositionText}`,
-    summaryText: `這份順序依你的實際六卡產生；${guideStatus === 'READY' ? '六卡已確認，且能對應一副完整 optimizer 候選。' : guideStatus === 'PARTIAL' ? '六卡已確認，但不是完整 optimizer 候選；面板／回復未知處不補猜。' : '目前可先預覽，按下確認後才供父輩與因子重算。'}`,
+    summaryText: `依目前六卡安排育成順序。${guideStatus === 'READY' ? '六卡已確認，整副卡組已完成計算。' : guideStatus === 'PARTIAL' ? '六卡已確認；此自配尚未完整計算，面板與回復仍有未知項目。' : '目前為預覽；確認六卡後會重算父輩與因子需求。'}`,
     actions,
-    boundary: '這裡沒有當回合卡片位置、羈絆值、體力、失敗率、目前面板與劇本量表，所以不會假裝知道該點哪一格；它只給「這副卡整場怎麼養」的條件式順序。逐回合決策必須另接即時狀態，UNKNOWN 不會被當成 0。'
+    boundary: '這是整場育成順序。逐回合選擇仍需卡片位置、羈絆、體力、失敗率、目前能力值與劇本量表；缺少的資料保留為未知。'
   };
 }
 
@@ -3657,15 +3657,15 @@ function battleHorseConstructionRecommendations(
       return {
         status: 'NEEDS_BUILD_CONTEXT',
         rows: [],
-        note: '目前自有資料沒有可在既有停止線邏輯下直接列為首選的戰馬；請從完整清單手動選擇。'
+        note: '目前無符合推薦條件的自有戰馬，請從清單手動選擇。'
       };
     }
     return {
       status: 'READY_FOR_CONSTRUCTION',
       rows: [{
         ...kitasan,
-        recommendationLabel: '目前首選・先做完整方案',
-        recommendationReason: '本體同時提供開局、中盤與後期價值；即使後期加速由卡片與因子補到停止線，也不會整包失去收益。',
+        recommendationLabel: '優先規劃',
+        recommendationReason: '本體涵蓋開局、中盤與後期。卡片與因子補足後期加速後，開局與中盤仍有收益。',
         recommendationGap: '若帶速飛鷹卡，下一步必須比較重複金技、保留高價白技池與換卡代價。'
       }],
       note: ''
@@ -3677,9 +3677,9 @@ function battleHorseConstructionRecommendations(
     .slice(0, 2)
     .map((row, index) => ({
       ...row,
-      recommendationLabel: index === 0 ? '優先建立完整方案' : '第二施工候選',
+      recommendationLabel: index === 0 ? '優先規劃' : '備選',
       recommendationReason: row.candidate.reasons?.[0]
-        || '本體包與目前賽道條件有明確交集，值得先建立六卡與因子方案。',
+        || '本體技能適合目前賽道，可繼續規劃六卡與因子。',
       recommendationGap: row.candidate.gaps?.[0]
         || '仍需用完整六卡、父輩與成品數值確認最後收益。'
     }));
@@ -3687,8 +3687,8 @@ function battleHorseConstructionRecommendations(
     status: rows.length ? 'READY_FOR_CONSTRUCTION' : 'NEEDS_BUILD_CONTEXT',
     rows,
     note: rows.length
-      ? '這些候選只代表先做完整建構的順序，不是完成配卡後的最終名次。'
-      : '目前沒有通過證據門檻的施工首選；請從完整清單手動選擇。'
+      ? '此處列出規劃優先順序；最終排名仍需完整配卡與育成結果。'
+      : '目前無資料足以支持的首選，請從清單手動選擇。'
   };
 }
 
@@ -5798,15 +5798,15 @@ function lineageRecordBindingMarkup(step) {
   const stepId = String(step?.id || '');
   const inputId = `lineageRecord-${stepId.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
   return `<div class="lineage-record-binding" data-binding-state="${bound ? 'bound' : 'unbound'}">
-    <label for="${escapeHtml(inputId)}"><strong>本步實際種馬紀錄</strong><span>只有明確綁定到這一步的同衣裝紀錄，才會算作已產出；同衣裝舊紀錄不會自動套用。</span></label>
+    <label for="${escapeHtml(inputId)}"><strong>本輪種馬紀錄</strong><span>請選擇本輪使用或產出的同衣裝紀錄；舊紀錄不會自動套用。</span></label>
     <select id="${escapeHtml(inputId)}" data-lineage-record-select data-lineage-step-id="${escapeHtml(stepId)}">
       <option value="">${records.length ? '尚未綁定紀錄' : '沒有同衣裝紀錄可綁定'}</option>
       ${records.map(record => `<option value="${escapeHtml(record.id)}"${bound?.id === record.id ? ' selected' : ''}>${escapeHtml(record.name || `紀錄 ${record.id}`)}｜${escapeHtml(lineageBreederRecordSummary(record))}</option>`).join('')}
     </select>
     <small>${bound
-      ? `已綁定「${escapeHtml(bound.name || bound.id)}」；這是使用者登錄紀錄，不是外部實戰驗證。`
+      ? `已綁定「${escapeHtml(bound.name || bound.id)}」（使用者紀錄，未經外部驗證）。`
       : records.length
-        ? '請選擇這一次施工實際使用／產出的紀錄。'
+        ? '尚未選擇本輪紀錄。'
         : '請先在「現有種馬庫」新增這個衣裝的實際育成結果。'}</small>
   </div>`;
 }
@@ -5842,8 +5842,8 @@ function lineagePlannedFactorRows(step) {
       ...plannedRows[0].item,
       nameZhTw: '尚未指定藍因子目標',
       note: blueRecommendation?.primary
-        ? `攻略偏好：${blueRecommendation.primary}。這是建議，不是遊戲硬門檻。`
-        : '藍因子目標需由本次成品缺口決定；未指定不等於遊戲禁止開始。'
+        ? `攻略建議：${blueRecommendation.primary}，可依需求調整。`
+        : '藍因子目標可依成品缺口設定；未指定仍可開始育成。'
     };
   }
   return plannedRows;
@@ -5862,13 +5862,13 @@ function lineageFactorFlowParts(step, plan) {
   ].filter(row => !plannedIdentities.has(lineageFactorIdentity(row.item, row.type)));
   return {
     incoming: `<div class="lineage-factor-flow"><section class="lineage-factor-flow-section" data-factor-flow-section="incoming" aria-label="上一代帶入的因子條件">
-      <header><span>1</span><div><strong>上一代帶入的因子條件</strong><small>只看上游已綁定紀錄；硬門未達才阻塞開養，攻略建議未達可以接受。</small></div></header>
+      <header><span>1</span><div><strong>上一代帶入的因子</strong><small>依已綁定紀錄檢查。必要條件須達成，攻略建議可取捨。</small></div></header>
       <div class="lineage-factor-groups">${incomingRows.length
         ? incomingRows.map(row => lineageFactorRowMarkup(row.item, row.type, plan, { gate: 'start' })).join('')
-        : '<p class="lineage-factor-empty">本步沒有已聲明的上游因子門檻，可以直接準備本代育成。</p>'}</div>
+        : '<p class="lineage-factor-empty">本輪未設定上游因子門檻，可開始育成。</p>'}</div>
     </section></div>`,
     outputs: `<div class="lineage-factor-flow"><section class="lineage-factor-flow-section" data-factor-flow-section="outputs" aria-label="本代規劃產出的因子">
-      <header><span>2</span><div><strong>本代要產出的因子</strong><small>先顯示施工目標，再用下方的實際種馬紀錄核對；計畫不等於已抽到。</small></div></header>
+      <header><span>2</span><div><strong>本代因子目標</strong><small>育成後綁定實際紀錄，才能確認哪些目標已達成。</small></div></header>
       ${lineageRecordBindingMarkup(step)}
       <div class="lineage-factor-groups">${[...plannedRows, ...observedRows]
         .map(row => lineageFactorRowMarkup(row.item, row.type, plan, { gate: 'handoff' }))
@@ -6132,7 +6132,7 @@ function lineageContinueTradeoffText(item) {
     ? localizedSkillName(Number(item.skillId))
     : redLabels[item?.key] || item?.key || lineageFactorTypeLabel(item?.type);
   return {
-    RECOMMENDED_OUTPUT_NOT_RECORDED: `建議因子「${factorName}」未產出；仍可交棒，但少一個期望效用加分。`,
+    RECOMMENDED_OUTPUT_NOT_RECORDED: `建議因子「${factorName}」未產出，仍可交棒，但預期收益較低。`,
     RECOMMENDED_G1_NOT_RECORDED: `建議 G1 ${item?.raceIdentity || ''} 未登錄勝場；仍可交棒，但共同 G1 加分較少。`
   }[item?.code] || item?.message || item?.code || '此項是可接受的機率性缺口';
 }
@@ -6174,11 +6174,11 @@ function lineageCompletionMarkup(step, plan, deckResult) {
   ].filter(Boolean);
   const isTarget = step?.stage === 'target' || step?.id === 'target';
   return `<section class="lineage-step-continue" data-factor-flow-section="continue" aria-label="可繼續條件">
-    <header><span>3</span><div><strong>${isTarget ? '完成本育成的條件' : '可繼續往下一代的條件'}</strong><small>硬門仍須有實際紀錄；建議白因子與建議 G1 未全達成時，會標成「保留妥協」而不再假裝整條路線失敗。</small></div></header>
+    <header><span>3</span><div><strong>${isTarget ? '完成條件' : '交棒條件'}</strong><small>必要條件須有實際紀錄。建議白因子或 G1 未齊時，可保留缺口繼續。</small></div></header>
     <div class="lineage-continue-grid">
       <article><strong>開始本代</strong><b data-continue-status="${escapeHtml(startStatus)}">${escapeHtml(lineageContinueStatusLabel(startStatus))}</b><span>${deckValid ? '5+1 配卡已通過' : '先修正本步 5+1 配卡'}；上游因子 ${escapeHtml(lineageContinueStatusLabel(continueWhen.incoming || 'BLOCKED'))}</span></article>
       <article><strong>${isTarget ? '本育成結果' : '交棒下一代'}</strong><b data-continue-status="${escapeHtml(handoffStatus)}">${escapeHtml(lineageContinueStatusLabel(handoffStatus))}</b><span>本代產出 ${escapeHtml(lineageContinueStatusLabel(continueWhen.deliverables || 'MISSING'))}；G1 ${escapeHtml(lineageContinueStatusLabel(continueWhen.g1 || 'NOT_REQUIRED'))}</span></article>
-      <article data-evidence-status="${boundRecord ? 'USER_RECORDED' : 'NONE'}"><strong>實際紀錄</strong><b>${boundRecord ? 'USER_RECORDED・已綁定' : 'NONE・尚未綁定'}</b><span>${boundRecord
+      <article data-evidence-status="${boundRecord ? 'USER_RECORDED' : 'NONE'}"><strong>實際紀錄</strong><b>${boundRecord ? '已綁定使用者紀錄' : '尚未綁定'}</b><span>${boundRecord
         ? `使用者紀錄「${escapeHtml(boundRecord.name || boundRecord.id)}」；不等同外部驗證或官方確認。`
         : '同衣裝紀錄不會自動套用，請在上方選擇本次實際結果。'}</span></article>
     </div>
@@ -6238,14 +6238,14 @@ function lineagePlanWorkflowSummary(plan, orderedSteps) {
 
 function lineageWorkflowNextAction(workflow) {
   const item = workflow?.nextState;
-  if (!item) return '所有世代都已綁定實績，且硬門已通過；可以回頭檢查最終家系。';
+  if (!item) return '各代紀錄與必要條件皆已確認，可檢查最終家系。';
   const candidate = item.step?.candidate || {};
   const name = `${candidate.nameZhTw || item.step?.label || '本代'} ${candidate.outfitTitleZhTw || ''}`.trim();
   if (!item.deckValid) return `先修正「${name}」的 5自有+1借用配卡。`;
-  if (item.startStatus === 'BLOCKED') return `先補齊「${name}」的上游硬條件，再開始本代育成。`;
+  if (item.startStatus === 'BLOCKED') return `需先補齊「${name}」的上游必要條件。`;
   if (!item.boundRecord) return `育成「${name}」，完成後綁定本次實際種馬紀錄。`;
-  if (item.blockers.length) return `「${name}」已有紀錄，但仍須補齊硬條件後才能交棒。`;
-  return `檢查「${name}」的交棒條件；推薦缺口可以明確保留，不必重刷到完美。`;
+  if (item.blockers.length) return `「${name}」已有紀錄，尚有必要條件待補齊。`;
+  return `檢查「${name}」的交棒條件；建議項目未齊仍可繼續。`;
 }
 
 function lineageQuickAffinityText(step) {
@@ -6278,9 +6278,9 @@ function lineageQuickDirtText(dirtDecision) {
 function lineageQuickStartMarkup(plan, workflow) {
   if (!plan || !workflow) {
     return `<div class="breeder-quick-empty">
-      <span class="breeder-quick-eyebrow">還差一步</span>
-      <h3>先回去選好戰馬與六卡</h3>
-      <p>確認後，這裡會直接告訴你現在要養哪隻，不用先讀完整個家系模型。</p>
+      <span class="breeder-quick-eyebrow">尚未完成設定</span>
+      <h3>請先確認戰馬與六卡</h3>
+      <p>確認後會列出種馬育成順序。</p>
       <div class="breeder-quick-actions"><button type="button" class="primary" data-prev="parents">回去選戰馬與六卡</button></div>
     </div>`;
   }
@@ -6288,7 +6288,7 @@ function lineageQuickStartMarkup(plan, workflow) {
     return `<div class="breeder-quick-empty">
       <span class="breeder-quick-eyebrow">家系已完成</span>
       <h3>可以進入最終戰馬育成</h3>
-      <p>所有世代都已綁定實績且通過硬門；需要時再打開完整家系核對。</p>
+      <p>各代已綁定實際紀錄，並通過必要條件檢查。</p>
       <div class="breeder-quick-actions"><button type="button" class="primary" data-breeder-open-step data-step-id="">查看完整家系</button></div>
     </div>`;
   }
@@ -6307,7 +6307,7 @@ function lineageQuickStartMarkup(plan, workflow) {
     ? `家系內有 ${familyRoute.builtInGoalMatchCount} 個固定目標賽命中這條路線`
     : familyRoute?.sharedMatchCount
       ? `已有 ${familyRoute.sharedMatchCount} 個共同 GⅠ 對齊`
-      : '英里＋中距離底座預設優先；不把另一套三冠一起硬塞';
+      : '預設採英里＋中距離路線；另一套三冠另行評估';
   const statusCopy = stateItem.startStatus === 'BLOCKED'
     ? '先補開養條件'
     : '現在可開養';
@@ -6315,23 +6315,23 @@ function lineageQuickStartMarkup(plan, workflow) {
       ${traineePortraitMarkup(candidate, 'breeder-quick-portrait')}
       <div>
         <span class="breeder-quick-eyebrow">下一輪・${Number(step.order) || '?'}／${workflow.states.length}</span>
-        <h3>現在先養：${escapeHtml(candidate.nameZhTw || step.label || '本代')} ${escapeHtml(candidate.outfitTitleZhTw || '')}</h3>
+        <h3>${escapeHtml(candidate.nameZhTw || step.label || '本代')} ${escapeHtml(candidate.outfitTitleZhTw || '')}</h3>
         <p><strong>${escapeHtml(statusCopy)}</strong>・${escapeHtml(lineageStepSupplyText(step))}</p>
       </div>
     </div>
     <div class="breeder-quick-grid">
       <article><span>開養前</span><strong>${escapeHtml(lineageDependencyText(step, plan))}</strong></article>
-      <article><span>這輪主要追</span><strong>${escapeHtml(lineageStepQuickTakeText(step, plan, step.targets || []))}</strong>${lineageQuickRedScope(step) ? `<small>${escapeHtml(lineageQuickRedScope(step))}</small>` : ''}</article>
+      <article><span>本輪目標</span><strong>${escapeHtml(lineageStepQuickTakeText(step, plan, step.targets || []))}</strong>${lineageQuickRedScope(step) ? `<small>${escapeHtml(lineageQuickRedScope(step))}</small>` : ''}</article>
       <article><span>借卡</span><strong>${borrowedLabels ? `${escapeHtml(borrowedLabels.name)}${borrowedLabels.title ? ` ${escapeHtml(borrowedLabels.title)}` : ''}` : '本輪配卡尚未就緒'}</strong></article>
       <article><span>GⅠ 底座</span><strong>${escapeHtml(route?.label || familyRoute?.label || '路線待確認')}：${escapeHtml(routeRaces.join('・') || '賽事資料待確認')}</strong><small>${escapeHtml(routeReason)}</small></article>
       <article><span>是否改泥地</span><strong>${escapeHtml(lineageQuickDirtText(routePlan.dirtDecision))}</strong></article>
       <article><span>基礎相性</span><strong>${escapeHtml(lineageQuickAffinityText(step))}</strong></article>
     </div>
     <div class="breeder-quick-actions">
-      <button type="button" class="primary" data-breeder-open-step data-step-id="${escapeHtml(step.id)}">打開這一輪：賽程、配卡、畢業條件</button>
+      <button type="button" class="primary" data-breeder-open-step data-step-id="${escapeHtml(step.id)}">查看本輪安排</button>
       <button type="button" class="ghost" data-prev="parents">回去改戰馬或六卡</button>
     </div>
-    <p class="breeder-quick-boundary">GⅠ 底座、基礎相性、紅因子成本分開裁決；預計賽程不會被當成已獲勝。</p>`;
+    <p class="breeder-quick-boundary">GⅠ 路線、基礎相性與紅因子成本分開評估；勝場須另登錄實際結果。</p>`;
 }
 
 function bindBreederQuickStart(quickStart, buildSteps, workflow) {
@@ -6388,11 +6388,11 @@ function lineageWorkflowDashboardMarkup(plan, workflow) {
       <small>${next ? escapeHtml(lineageStepSupplyText(next)) : '建議保留所有實際紀錄，之後再依新賽事需求重算。'}</small>
     </button>
     <div class="lineage-workflow-metrics">
-      <article><span>完成交棒</span><strong>${workflow.completeCount}／${total}</strong><small>需綁定實績並通過硬門</small></article>
-      <article data-metric-tone="hard"><span>硬阻塞</span><strong>${workflow.blockerCount}</strong><small>未解決就不能開始或交棒</small></article>
-      <article data-metric-tone="tradeoff"><span>可妥協世代</span><strong>${workflow.tradeoffStepCount}／${total}</strong><small>影響期望值，不判整條失敗</small></article>
+      <article><span>完成交棒</span><strong>${workflow.completeCount}／${total}</strong><small>已綁定實績並通過必要條件</small></article>
+      <article data-metric-tone="hard"><span>必要條件未齊</span><strong>${workflow.blockerCount}</strong><small>開始或交棒前需補齊</small></article>
+      <article data-metric-tone="tradeoff"><span>有建議缺口</span><strong>${workflow.tradeoffStepCount}／${total}</strong><small>影響預期收益，仍可繼續</small></article>
       <article data-metric-tone="evidence"><span>實績綁定</span><strong>${workflow.recordCount}／${total}</strong><small>使用者紀錄，不等同外部驗證</small></article>
-      <article data-metric-tone="execution" data-execution-status="${escapeHtml(execution?.status || 'UNVERIFIED')}"><span>育成可行性</span><strong>${escapeHtml(executionStatusLabel)}</strong><small>${executionConfigured} 項已設門檻・${executionGapCount} 項 target 缺口；不改血統排序</small></article>
+      <article data-metric-tone="execution" data-execution-status="${escapeHtml(execution?.status || 'UNVERIFIED')}"><span>育成可行性</span><strong>${escapeHtml(executionStatusLabel)}</strong><small>${executionConfigured} 項已設門檻・${executionGapCount} 項目標未達；血統排序不受影響</small></article>
     </div>`;
 }
 
@@ -6811,7 +6811,7 @@ function manualLineageRedSummaryMarkup() {
   });
   const ranked = [...rows.values()].sort((left, right) => right.stars - left.stars || right.count - left.count);
   if (!ranked.length) {
-    return '<strong>六親代紅因子尚未配置</strong><span>先用每張卡底部的紅因子按鈕分配類型與星數。</span><small>星數是手動目標，不是繼承或生成保證。</small>';
+    return '<strong>尚未配置紅因子</strong><span>點各槽位的紅因子按鈕，設定類型與星數。</span><small>目前為手動目標；繼承與生成結果仍待實際育成。</small>';
   }
   const top = ranked[0];
   const type = manualLineageRedFactorTypes.find(row => row.key === top.key);
@@ -6821,7 +6821,7 @@ function manualLineageRedSummaryMarkup() {
       const label = manualLineageRedFactorTypes.find(typeRow => typeRow.key === row.key)?.label || row.key;
       return `${label} ${row.count} 格／${row.stars}★`;
     }).join('・') || '目前集中在單一類型'}</span>
-    <small>${referenceReached ? '已達參考站提示的六格同型、合計 12★觀察條件；仍不等於白因子必定生成。' : '參考站提示可觀察六格同型、合計 12★；這裡只追蹤配置，不把它當保證。'}</small>`;
+    <small>${referenceReached ? '已達參考站的六格同型、合計 12★觀察條件；白因子仍需抽選。' : '參考站建議觀察六格同型、合計 12★的配置；白因子仍需抽選。'}</small>`;
 }
 
 function manualLineageRecommendedSlots(plan) {
@@ -6856,7 +6856,7 @@ function renderManualLineagePicker(query = byId('lineageHorseSearch')?.value || 
   if (!results || !manualLineagePickerSlotId) return;
   const matches = manualLineagePickerResults(query);
   const visible = matches.slice(0, 90);
-  if (status) status.textContent = `找到 ${matches.length} 張衣裝${matches.length > visible.length ? `，先顯示 ${visible.length} 張` : ''}。持有快照排在前面。`;
+  if (status) status.textContent = `${matches.length} 張衣裝${matches.length > visible.length ? `，先顯示 ${visible.length} 張` : ''}，已持有優先。`;
   results.innerHTML = visible.length ? visible.map(card => {
     const owned = inventoryTraineeByOutfitId.has(Number(card.id));
     const selected = Number(state.manualLineage?.slots?.[manualLineagePickerSlotId]) === Number(card.id);
@@ -7053,7 +7053,7 @@ function manualLineageScheduleStatusLabel(status) {
     READY: '目前可排',
     READY_WITH_TRADEOFFS: '可排，但有取捨',
     READY_WITH_WARNINGS: '可排，資料待確認',
-    BLOCKED: '有硬衝突',
+    BLOCKED: '賽程衝突',
     UNVERIFIED: '資料未齊',
     EMPTY: '未選角色'
   }[status] || '等待分析';
@@ -7077,11 +7077,11 @@ function manualLineageRedProjectionSummaryMarkup(projection) {
     .filter(Boolean))];
   const sourceText = sourceSlotIds.length
     ? `來源：${sourceSlotIds.map(slotId => manualLineageSlotDefinition(slotId).shortLabel).join('＋')}`
-    : '沒有上游槽輸出';
+    : '上游尚未設定紅因子';
   return `<article data-red-projection-status="PROJECTED">
-    <span>PROJECTED incoming red</span>
+    <span>預計繼承的紅因子</span>
     <strong>${escapeHtml(factorText)}</strong>
-    <small>${escapeHtml(sourceText)}；UNVERIFIED，僅作適性／GⅠ排程投影，不代表已繼承或勝率。</small>
+    <small>${escapeHtml(sourceText)}；尚未確認繼承，僅供適性與 GⅠ排程估算，不計勝率。</small>
   </article>`;
 }
 
@@ -7106,7 +7106,7 @@ function renderManualLineageSchedule() {
   badge.textContent = manualLineageScheduleStatusLabel(analysis?.status || 'UNVERIFIED');
   [...form.elements].forEach(element => { element.disabled = !card; });
   if (!card || !analysis) {
-    summary.innerHTML = '<p class="empty-state">先在左側選一張衣裝，再按「分析賽程」。</p>';
+    summary.innerHTML = '<p class="empty-state">選擇衣裝後，點該槽位的「分析賽程」。</p>';
     timeline.innerHTML = '';
     windows.innerHTML = '';
     decision.innerHTML = '';
@@ -7118,8 +7118,8 @@ function renderManualLineageSchedule() {
   const slotFoundation = analysis.g1FoundationRoutePlan || null;
   const foundationRouteId = familyFoundation?.recommendedRoute?.id || slotFoundation?.recommendedRoute?.id || '';
   const foundationRoute = slotFoundation?.routes?.[foundationRouteId] || slotFoundation?.recommendedRoute || null;
-  summary.innerHTML = `<article><span>硬衝突</span><strong>${analysis.blockers.length}</strong><small>同回合兩場才會阻塞</small></article>
-    <article><span>可妥協成本</span><strong>${analysis.tradeoffs.length}</strong><small>連戰或原生適性低於 B</small></article>
+  summary.innerHTML = `<article><span>賽程衝突</span><strong>${analysis.blockers.length}</strong><small>同回合安排了兩場比賽</small></article>
+    <article><span>需取捨</span><strong>${analysis.tradeoffs.length}</strong><small>連戰或原生適性低於 B</small></article>
     <article><span>資料缺口</span><strong>${analysis.warnings.length}</strong><small>目標賽對應或適性未知</small></article>
     <article><span>共同 GⅠ 草稿</span><strong>${sharedG1.length}</strong><small>至少兩個親代槽手動排入</small></article>
     <article><span>GⅠ 底座主線</span><strong>${escapeHtml(foundationRoute?.label || familyFoundation?.recommendedRoute?.label || '待確認')}</strong><small>${foundationRoute ? escapeHtml((foundationRoute.races || []).map(row => row.nameZhTw).filter(Boolean).join('・')) : '選滿六個親代槽後才能對齊'}</small></article>
@@ -7133,7 +7133,7 @@ function renderManualLineageSchedule() {
         aptitude.distanceRank ? `距離 ${aptitude.distanceRank}` : ''
       ].filter(Boolean).join('・') || '適性未知';
       const plannedRed = factorType && aptitude.requiredRedKeys?.includes(factorType.key)
-        ? `｜本槽 outgoing red：${factorType.label} ${factor.stars}★；不作本槽 incoming`
+        ? `｜本代產出目標：${factorType.label} ${factor.stars}★，供下代使用`
         : '';
       return `<li data-race-kind="${row.isGoalRace ? 'goal' : 'optional'}" data-race-status="${escapeHtml(aptitude.status || 'UNVERIFIED')}">
         <b>第 ${row.turn} 回合</b>
@@ -7143,10 +7143,10 @@ function renderManualLineageSchedule() {
       </li>`;
     }).join('');
   const unplacedRaceMarkup = (analysis.unplacedRows || []).map(row => `<li data-race-kind="unplaced" data-race-status="UNVERIFIED">
-    <b>回合未知</b><span><strong>${escapeHtml(row.nameZhTw || row.nameJp || '未命名賽事')}</strong><small>${row.isGoalRace ? '社群育成目標' : '手動加賽'}・不參與衝突、連戰或窗口計算</small></span><em>UNVERIFIED</em>
+    <b>回合未知</b><span><strong>${escapeHtml(row.nameZhTw || row.nameJp || '未命名賽事')}</strong><small>${row.isGoalRace ? '社群育成目標' : '手動加賽'}・不參與衝突、連戰或窗口計算</small></span><em>待確認</em>
   </li>`).join('');
   const terminalMarkup = (analysis.terminalBoundaries || []).length
-    ? `<p class="lineage-terminal-boundaries"><strong>育成終端邊界</strong><span>${analysis.terminalBoundaries.map(row => `第 ${row.turn} 回合`).join('・')}</span><small>只作顯示，不是賽事，也不進密度計算。</small></p>`
+    ? `<p class="lineage-terminal-boundaries"><strong>育成結束回合</strong><span>${analysis.terminalBoundaries.map(row => `第 ${row.turn} 回合`).join('・')}</span><small>僅標示結束時間，不計入賽事密度。</small></p>`
     : '';
   timeline.innerHTML = placedRaceMarkup || unplacedRaceMarkup
     ? `<h6>回合時間線</h6><ol>${placedRaceMarkup}${unplacedRaceMarkup}</ol>${terminalMarkup}`
@@ -7160,20 +7160,20 @@ function renderManualLineageSchedule() {
     };
   });
   const usefulWindows = analysis.planningWindows.filter(row => row.length >= 2).slice(0, 4);
-  windows.innerHTML = `<h6>低密度回合窗口</h6>${usefulWindows.length
-    ? `<div>${usefulWindows.map(row => `<article><strong>第 ${row.from}–${row.to} 回合</strong><span>${row.length} 個低密度回合</span><small>只按目前時間線前後各留 1 回合；仍需你確認賽事實際可選日期。</small></article>`).join('')}</div>`
-    : '<p>目前沒有長度至少 2 回合的低密度窗口；先移動可選賽或取消不重要的加賽。</p>'}`;
-  const primaryGain = `${analysis.goals.length} 個育成目標已列入、${analysis.optionalRaces.length} 場 GⅠ由你明確加排`;
+  windows.innerHTML = `<h6>可安排加賽的空檔</h6>${usefulWindows.length
+    ? `<div>${usefulWindows.map(row => `<article><strong>第 ${row.from} 至 ${row.to} 回合</strong><span>${row.length} 個低密度回合</span><small>已在現有賽程前後各留 1 回合；比賽是否開放仍需確認。</small></article>`).join('')}</div>`
+    : '<p>目前沒有至少 2 回合的空檔，可調整手動加賽。</p>'}`;
+  const primaryGain = `${analysis.goals.length} 個育成目標、${analysis.optionalRaces.length} 場手動 GⅠ`;
   const sacrifice = analysis.blockers[0]?.message
     || analysis.tradeoffs[0]?.message
     || analysis.warnings[0]?.message
-    || '目前沒有已辨識的硬衝突或軟成本；這不等於勝率或因子結果已確認。';
-  decision.innerHTML = `<h6>這個排法代表什麼</h6><div>
+    || '目前未發現賽程衝突或其他代價；勝率與因子結果尚未確認。';
+  decision.innerHTML = `<h6>賽程評估</h6><div>
     <article data-decision-kind="foundation"><span>GⅠ 底座</span><strong>${escapeHtml(foundationRoute?.label || '路線待確認')}：${escapeHtml((foundationRoute?.races || []).map(row => row.nameZhTw).filter(Boolean).join('・') || '賽事資料待確認')}</strong><small>${foundationRoute?.builtInGoalMatches?.length ? `這一格有 ${foundationRoute.builtInGoalMatches.length} 場固定目標賽對齊。` : '這一格沒有對齊的三冠固定目標賽；主線來自全家系裁決。'}</small></article>
     <article data-decision-kind="dirt"><span>泥地分支</span><strong>${escapeHtml(lineageQuickDirtText(slotFoundation?.dirtDecision))}</strong><small>只在固定目標賽或兩格以上共同泥地 GⅠ 時考慮付紅因子成本。</small></article>
-    <article data-decision-kind="gain"><span>得到什麼</span><strong>${escapeHtml(primaryGain)}</strong><small>${sharedG1.length ? `六親代目前有 ${sharedG1.length} 場共同 GⅠ 草稿。` : '共同 GⅠ 需在其他親代槽也手動加入同場賽事後才會出現。'}</small></article>
-    <article data-decision-kind="sacrifice"><span>犧牲什麼</span><strong>${escapeHtml(sacrifice)}</strong><small>推薦缺口可以妥協；同回合衝突不可以。</small></article>
-    <article data-decision-kind="sensitive"><span>最敏感假設</span><strong>${escapeHtml(analysis.sensitivity.label)}</strong><small>${escapeHtml(analysis.sensitivity.detail)}</small></article>
+    <article data-decision-kind="gain"><span>已排賽事</span><strong>${escapeHtml(primaryGain)}</strong><small>${sharedG1.length ? `六親代目前有 ${sharedG1.length} 場共同 GⅠ 草稿。` : '在其他親代槽加入相同賽事，便會列為共同 GⅠ 草稿。'}</small></article>
+    <article data-decision-kind="sacrifice"><span>待處理</span><strong>${escapeHtml(sacrifice)}</strong><small>建議項目可取捨；同回合衝突須排除。</small></article>
+    <article data-decision-kind="sensitive"><span>影響評估的條件</span><strong>${escapeHtml(analysis.sensitivity.label)}</strong><small>${escapeHtml(analysis.sensitivity.detail)}</small></article>
   </div>`;
 }
 
@@ -8223,9 +8223,9 @@ function renderDeckOptimizationPlans() {
     comfortSummary.textContent = !theoreticalPackage
       ? '目前沒有合法的理論 5＋1，無法建立比較基準。'
       : !deckDelta.customPackage.valid
-        ? '你的自配還沒選滿有效的 5＋1；先完成右欄，這裡才會顯示差異。'
+      ? '請先選滿五張自有卡與一張借卡。'
         : deckDelta.sameDeck
-          ? '你的自配和理論最優完全相同；目前沒有換卡差異。'
+          ? '自配與推薦卡組相同。'
           : coverageKnown
             ? `你換了 ${deckDelta.removedCards.length} 張卡；目前技能取得覆蓋代理由 ${Math.round(deckDelta.theoreticalCoveragePercent)}% 變成 ${Math.round(deckDelta.customCoveragePercent)}%。`
             : `你換了 ${deckDelta.removedCards.length} 張卡；六卡結構可比較，但技能取得覆蓋證據尚未完整。`;
@@ -8254,12 +8254,12 @@ function renderDeckOptimizationPlans() {
         ? '六卡結構已確認；父輩與因子會依這副自配重算。'
         : '六卡結構有效，但你還沒按下確認。';
     const modelBoundary = knownOptimizerPackage
-      ? '這副自配也是模型已算過的候選，可以沿用完整卡組代理比較。'
-      : '自配若不是模型候選，這裡只比較精確卡片／技能取得路線；面板與技能 Pt 差異不硬填。';
+      ? '此自配已完成卡組計算，可比較各項估計值。'
+      : '此自配僅比較卡片與技能取得路線；面板、技能 Pt 差異待完整計算。';
     comfortList.innerHTML = `<li class="deck-delta-card" data-deck-delta-state="${deckDelta.customPackage.valid ? deckDelta.sameDeck ? 'same' : 'changed' : 'incomplete'}">
-      <article data-delta-kind="loss"><span>少了什麼</span><strong>${deckDelta.sameDeck ? '沒有換卡差異' : '理論方案中被你拿掉的部分'}</strong><p>${escapeHtml(lossLines.join('；') || '目前可確認的技能取得路線沒有變少。')}</p></article>
-      <article data-delta-kind="gain"><span>換來什麼</span><strong>${deckDelta.sameDeck ? '與理論方案相同' : '你的自配新增的部分'}</strong><p>${escapeHtml(gainLines.join('；') || '目前可確認的技能取得路線沒有增加。')}</p></article>
-      <article data-delta-kind="validity"><span>還能不能用</span><strong>${deckDelta.customPackage.valid ? '六卡結構可用' : '尚未完成'}</strong><p>${escapeHtml(validityText)}<br>${escapeHtml(modelBoundary)}</p></article>
+      <article data-delta-kind="loss"><span>換出與損失</span><p>${escapeHtml(lossLines.join('；') || '已確認的技能取得路線沒有減少。')}</p></article>
+      <article data-delta-kind="gain"><span>換入與增加</span><p>${escapeHtml(gainLines.join('；') || '已確認的技能取得路線沒有增加。')}</p></article>
+      <article data-delta-kind="validity"><span>卡組檢查</span><strong>${deckDelta.customPackage.valid ? '六卡結構可用' : '尚未完成'}</strong><p>${escapeHtml(validityText)}<br>${escapeHtml(modelBoundary)}</p></article>
     </li>`;
   }
   const visiblePackageGroups = theoreticalGroup ? [theoreticalGroup] : [];
@@ -8596,7 +8596,7 @@ function renderGuidedAccelerationFlow(options = {}) {
     };
   }
   if (noResidualNote) {
-    noResidualNote.textContent = '這只是本次施工決策；不是宣告這些技能無效，也不會限制你之後改選。';
+    noResidualNote.textContent = '僅套用本輪，之後可重新勾選。';
   }
 
   [remainingList, residualList].filter(Boolean).forEach(container => container.querySelectorAll('input[type="checkbox"]').forEach(input => {
@@ -8776,23 +8776,23 @@ function renderGuidedWorkbench(context = {}) {
     }
   }
   const plan = byId('guidedCurrentPlan');
-  if (plan && currentPlan) plan.textContent = currentPlan;
+  if (plan && currentPlan !== undefined) plan.textContent = currentPlan;
 }
 
 function renderGuidedDeckPending() {
   const status = byId('guidedDeckPackageStatus');
   const list = byId('guidedDeckPackageList');
   const shortage = byId('guidedDeckShortage');
-  const pendingMarkup = '<li class="guided-empty">先分析完整六卡，再計算這匹戰馬的剩餘技能缺口。</li>';
+  const pendingMarkup = '<li class="guided-empty">分析六卡後顯示剩餘技能需求。</li>';
   if (status) {
     status.dataset.state = 'pending';
     status.textContent = selectedBattleUmaCard()
-      ? '已選戰馬；打開「配卡與養法」後才整理理論六卡。'
+      ? '已選戰馬，請開啟「配卡與養法」。'
       : '先選戰馬。';
   }
   if (list) {
     list.innerHTML = selectedBattleUmaCard()
-      ? '<li class="guided-deck-lazy-placeholder"><strong>配卡尚未載入</strong><span>需要時再執行六卡模型，不阻塞選戰馬。</span><button type="button" class="primary" data-run-guided-deck-analysis>開始分析配卡</button></li>'
+      ? '<li class="guided-deck-lazy-placeholder"><strong>尚未分析配卡</strong><button type="button" class="primary" data-run-guided-deck-analysis>開始分析配卡</button></li>'
       : '<li class="guided-empty" role="listitem">請先選擇戰馬，才能比較 5＋1 卡組方案。</li>';
     list.querySelector('[data-run-guided-deck-analysis]')?.addEventListener('click', requestGuidedDeckStageRender);
   }
@@ -8804,7 +8804,7 @@ function renderGuidedDeckPending() {
   const accelerationStatus = byId('guidedAccelerationStatus');
   if (accelerationStatus) accelerationStatus.textContent = '等待配卡分析';
   const comfortSummary = byId('guidedDeckComfortSummary');
-  if (comfortSummary) comfortSummary.textContent = '分析配卡後，這裡才比較理論最優與你的自配。';
+  if (comfortSummary) comfortSummary.textContent = '分析配卡後顯示推薦卡組與自配的差異。';
   const comfortList = byId('guidedDeckComfortList');
   if (comfortList) comfortList.innerHTML = '';
 }
@@ -8907,7 +8907,7 @@ function renderGuidedProgress() {
   }
 
   if (parentsComplete && !packageComplete && byId('guidedParentsStatus')) {
-    byId('guidedParentsStatus').textContent = '目前為父輩預覽；套用卡組後才作最終確認';
+    byId('guidedParentsStatus').textContent = '父輩預覽；確認卡組後需再確認父輩';
   }
 
   if (byId('guidedOwnedCardsStatus')) {
@@ -8932,10 +8932,10 @@ function renderGuidedProgress() {
   const progressText = byId('guidedProgressText');
   const nextLabels = [
     '選擇戰馬',
-    '比較並確認 5+1 卡組',
-    '完成父輩確認',
-    '檢視剩餘技能／因子',
-    '確認完整六卡並完成'
+    '確認 5+1 卡組',
+    '確認父輩',
+    '選擇追加因子',
+    '完成方案'
   ];
   if (progressText) {
     progressText.textContent = borrowComplete
@@ -8953,11 +8953,11 @@ function renderGuidedProgress() {
   const summary = byId('guidedReadySummary');
   if (summary) {
     summary.textContent = borrowComplete
-      ? `戰馬六卡方案已完成：5 張自有卡＋1 張借卡。可進入種馬路線。`
+      ? `已確認 5 張自有卡＋1 張借卡，可進入種馬路線。`
       : !umaComplete
-        ? '先選擇要養的戰馬，系統才會扣除本體加速。'
+        ? '選擇戰馬後，會扣除本體已有的加速。'
         : !packageComplete
-          ? '先從四組 5+1 方案中明確選擇並套用一組；父輩目前只作預覽。'
+          ? '請確認一副 5+1 卡組；父輩目前為預覽。'
           : !parentsComplete
             ? '請各選一名主親代與副親代；兩名必須不同角色且不能是目標戰馬。'
           : !accelerationComplete
@@ -8986,7 +8986,7 @@ function renderGuidedProgress() {
       uma: target ? `${targetName}${scenarioName ? `・${scenarioName}` : ''}` : '尚未選擇',
       acceleration: packageComplete
         ? '完整 5+1 已確認'
-        : umaComplete ? '選擇競技主方案' : '等待戰馬',
+        : umaComplete ? '選擇 5+1 卡組' : '等待戰馬',
       parents: finalParentsComplete
         ? '主／副親代已確認'
         : packageComplete ? '確認主／副親代' : '等待配卡',
@@ -9003,7 +9003,7 @@ function renderGuidedProgress() {
         : packageComplete
           ? '・你的自配 5+1'
           : '・待確認 5+1'}`
-      : '先由你選戰馬；完整建構未齊前不產生強弱排行'
+      : ''
   });
   return { ready: borrowComplete, completed };
 }
@@ -9906,7 +9906,7 @@ function initStrategyControls() {
     if (!preview) return;
     const card = selectedBattleUmaCard();
     if (!card) {
-      preview.innerHTML = '<p>選定後會在這裡顯示實際衣裝；原版與換裝版不再只靠文字辨識。</p>';
+      preview.innerHTML = '';
       preview.dataset.state = 'empty';
       return;
     }
@@ -9937,7 +9937,7 @@ function initStrategyControls() {
     }
     if (scoreBoundary) {
       scoreBoundary.textContent = evaluation?.boundary
-        || '所有可行候選的六卡、因子、繼承與技能值未齊前，不產生 finalRank。';
+        || '需補齊候選的六卡、因子、繼承與技能值，才能比較最終排名。';
     }
     const ranking = analysis.status === 'ready' ? activeBattleHorseRanking() : null;
     const construction = ranking
@@ -9954,16 +9954,16 @@ function initStrategyControls() {
       battleHorseAnalysisButton.textContent = analysis.status === 'running'
         ? '分析中…'
         : analysis.status === 'ready'
-          ? '重新分析推薦戰馬'
+          ? '重新分析'
           : analysis.stale
-            ? '條件已變更・重新分析'
-            : '開始分析推薦戰馬';
+            ? '條件已變更，重新分析'
+            : '分析推薦';
     }
     if (progressWrap) progressWrap.hidden = analysis.status === 'idle';
     if (progress) progress.value = Math.max(0, Math.min(4, Number(analysis.completedSteps) || 0));
     if (progressLabel) {
       progressLabel.textContent = analysis.status === 'running'
-        ? ['準備分析', '賽道與硬門已固定', '自有戰馬已整理', '本體排行已完成', '完整建構已完成'][analysis.completedSteps] || '分析中'
+        ? ['準備分析', '賽道條件已確認', '自有戰馬已整理', '本體排行已完成', '完整方案已計算'][analysis.completedSteps] || '分析中'
         : analysis.status === 'ready'
           ? `分析完成・已檢查 ${analysis.candidateCount} 匹自有戰馬`
           : analysis.status === 'error'
@@ -9975,8 +9975,8 @@ function initStrategyControls() {
         ? '分析中'
         : analysis.status === 'ready'
           ? construction.rows.length
-            ? `${construction.rows.length} 匹施工候選`
-            : '沒有通過證據門檻的候選'
+            ? `${construction.rows.length} 匹規劃候選`
+            : '目前無可推薦候選'
           : analysis.status === 'error'
             ? '分析未完成'
             : analysis.stale
@@ -9988,11 +9988,11 @@ function initStrategyControls() {
     }
     if (battleHorseRecommendationList) {
       battleHorseRecommendationList.innerHTML = analysis.status === 'running'
-        ? '<p class="guided-empty">正在依目前賽道整理候選；你仍可直接從下方自有清單選馬。</p>'
+        ? ''
         : analysis.status === 'error'
-          ? '<p class="guided-empty">分析沒有完成，因此不顯示半成品推薦。你仍可直接手動選馬。</p>'
+          ? '<p class="guided-empty">分析未完成，可先從自有清單選馬。</p>'
           : analysis.status !== 'ready'
-            ? `<p class="guided-empty">${analysis.stale ? '賽道或卡組條件已變更，請重新分析。' : '尚未分析；此步不影響你手動選馬。'}</p>`
+            ? analysis.stale ? '<p class="guided-empty">賽道或卡組條件已變更，請重新分析。</p>' : ''
             : construction.rows.length
         ? construction.rows.map(({ entry, recommendationLabel, recommendationReason, recommendationGap }) => {
           const { card, distanceAptitude, groundAptitude, styleAptitude } = entry;
@@ -10010,7 +10010,7 @@ function initStrategyControls() {
             <span class="battle-horse-recommendation-action">${selected ? '已選擇' : '選這匹'}</span>
           </label>`;
         }).join('') + (construction.note ? `<p class="battle-horse-recommendation-note">${escapeHtml(construction.note)}</p>` : '')
-        : `<p class="guided-empty">${escapeHtml(construction.note || '目前沒有通過證據門檻的施工候選；請直接從自有清單選擇。')}</p>`;
+        : `<p class="guided-empty">${escapeHtml(construction.note || '目前無可推薦候選，請從自有清單選擇。')}</p>`;
     }
     const displayRows = battleOptions.map(entry => ({ entry }));
     if (!displayRows.length) {
@@ -10022,10 +10022,10 @@ function initStrategyControls() {
       const title = japaneseTextPattern.test(rawTitle) ? '' : rawTitle;
       const fullName = `${card.nameZhTw || localizedUmaName(card.name)}${title ? ` ${title}` : ''}`;
       const reason = needsAptitudeWork
-        ? '需要先確認紅因子修復，再建立完整建構'
-        : '原生適性可施工；仍要靠完整六卡、因子與繼承判斷';
+        ? '需先以紅因子補足適性'
+        : '原生適性符合條件；配卡、因子與繼承尚待確認';
       const selected = Number(card.id) === Number(state.battleUmaOutfitId);
-      const gateLabel = needsAptitudeWork ? '需補適性・手動候選' : '適性可施工・手動候選';
+      const gateLabel = needsAptitudeWork ? '需補適性' : '適性符合';
       return `<label class="battle-horse-choice${selected ? ' is-selected' : ''}" data-evaluation-state="NEEDS_BUILD_CONTEXT">
         <input type="radio" name="guidedBattleHorseChoice" value="${card.id}"${selected ? ' checked' : ''}>
         <span class="battle-horse-choice-rank">${escapeHtml(gateLabel)}</span>
@@ -10039,7 +10039,7 @@ function initStrategyControls() {
     }
     const note = byId('battleHorseManualNote');
     if (note) {
-      note.textContent = `這裡保留全部 ${battleOptions.length} 隻自有戰馬；清單順序只按適性與名稱整理，不是強度名次。`;
+      note.textContent = `共 ${battleOptions.length} 匹自有戰馬，依適性與名稱排列，非強度排名。`;
     }
     renderBattleBuildEvaluation();
   };
@@ -12064,7 +12064,7 @@ function initRaceBuilders() {
   const customDistance = byId('customDistance');
   const customMeters = byId('customMeters');
   const goalIntro = document.querySelector('#goal .panel-heading > p');
-  if (goalIntro) goalIntro.textContent = '選擇一場目標賽事；技能、足耐與配卡都依這場賽事規劃。';
+  if (goalIntro) goalIntro.textContent = '每次規劃一場。';
   const profileKicker = document.querySelector('#currentRaceProfile .profile-heading .kicker');
   if (profileKicker) profileKicker.textContent = '目前目標賽事';
   const libraryTitle = document.querySelector('.race-library > summary strong');
@@ -12189,11 +12189,11 @@ function updateGoalHint() {
   const hasConditions = Boolean(gameCatalog && skillCore && race?.context);
   const hasCurrent = Boolean(race?.current);
   const deckHint = hasCurrent
-    ? `；戰馬骨架為${expectedBattleDeckTypes()
+    ? `；預期配卡：${expectedBattleDeckTypes()
       .map(type => supportTypeLabels[type] || type).join('／')}`
     : '';
   byId('goalHint').textContent = race
-    ? `目前目標：${race.name || race.nameZhTw}。固定只計算${STRATEGY}；先判定足耐，再排有效加速與速度／接續${hasConditions ? '；技能條件資料已就緒' : ''}${deckHint}`
+    ? `${race.name || race.nameZhTw}・${STRATEGY}${hasConditions ? '；技能資料已就緒' : ''}${deckHint}`
     : '請選擇一場目標賽事';
 }
 
@@ -12243,10 +12243,10 @@ function renderCurrentRaceProfile() {
     : race.scheduleStatus === 'PROJECTED_FROM_JP_VERSION'
     ? '日服同版本預排，繁中服日期與條件待官方確認。'
     : race.current ? '預設規劃範本，尚未確認為繁中服當期活動。' : '';
-  byId('currentRaceStatus').textContent =
-    `${scheduleNote}資料快照：${snapshotDate}。固定作戰：${STRATEGY}。已先建立 ${context.course_distance || '自訂'}m 賽道時間軸，`
-    + `再用${sourceLabel}排序有效加速`
-    + `${topImpact ? `；目前最高為「${topImpact.name}」約 ${topImpact.expectedBashin.toFixed(2)} 馬身` : ''}。`;
+  byId('currentRaceStatus').textContent = `${scheduleNote}資料日期：${snapshotDate}。`;
+  const estimate = byId('currentRaceEstimate');
+  if (estimate) estimate.textContent = `僅計算${STRATEGY}；加速採${sourceLabel}`
+    + `${topImpact ? `；最高估計為「${topImpact.name}」約 ${topImpact.expectedBashin.toFixed(2)} 馬身` : ''}。`;
   if (race.scheduleStatus === 'OFFICIAL_TW_CONFIRMED' && race.officialEvidence?.sourceUrl) {
     const link = document.createElement('a');
     link.href = race.officialEvidence.sourceUrl;
@@ -12513,7 +12513,7 @@ function renderBreederRoute(result) {
     ['硬條件', '至少 1 張速度支援卡'],
     ['距離方向', distancePanel],
     ['穩定取得技能', '以智慧或團體卡補技能點、體力與育成穩定度'],
-    ['模型界線', '此處的種馬配卡仍用卡型、稀有度、等級與突破代理面板；未宣稱完整數值最優']
+    ['估算方式', '依卡型、稀有度、等級與突破估計能力值，尚未完整計算最佳數值']
   ].map(([label, text]) => `
     <article class="route-target">
       <span>${label}</span>
