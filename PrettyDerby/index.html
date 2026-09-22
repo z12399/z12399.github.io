@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>因子育成計畫器｜賽馬娘</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css?v=03b308e95e1d1288" />
+    <link rel="stylesheet" href="affinity.css?v=03b308e95e1d1288" />
+    <link rel="stylesheet" href="current-race.css?v=03b308e95e1d1288" />
+    <link rel="stylesheet" href="skill-plan.css?v=03b308e95e1d1288" />
+    <link rel="stylesheet" href="advanced-tools.css?v=03b308e95e1d1288" />
+    <link rel="stylesheet" href="usability.css?v=03b308e95e1d1288" />
+    <link rel="stylesheet" href="design-system.css?v=03b308e95e1d1288" />
+  </head>
+  <body>
+    <section class="launch-shell" id="launchShell" aria-labelledby="launchTitle">
+      <div class="launch-shell__inner">
+        <div class="launch-brand"><span class="brand-mark" aria-hidden="true">P<span>〃</span></span><div><strong>因子育成計畫器</strong><span>賽馬娘・育成工作台</span></div><span class="launch-brand__note">讓每一步都有方向</span></div>
+        <div class="launch-copy">
+          <p class="eyebrow">YOUR NEXT RACE STARTS HERE</p>
+          <h1 id="launchTitle">把育成的每一步，<br /><span>安排得更清楚。</span></h1>
+          <p>從目標賽事到配卡、因子與家系，把下一場比賽的準備整理在一起。</p>
+        </div>
+        <div class="launch-options" aria-label="選擇工具">
+          <button type="button" class="launch-card launch-card--planner" id="launchPlanner" data-tool="planner" aria-label="開啟完整育成規劃器">
+            <span class="launch-card__eyebrow">01 / 從一場目標賽事開始</span>
+            <strong>育成規劃</strong>
+            <span class="launch-card__description">選定賽道與戰馬，整理六張支援卡，<br class="desktop-break" />再一步步補齊父輩與因子缺口。</span>
+            <span class="launch-route" aria-hidden="true"><span><i></i>目標賽事</span><b>→</b><span><i></i>戰馬配卡</span><b>→</b><span><i></i>種馬路線</span></span>
+            <span class="launch-card__action">開始規劃 <span aria-hidden="true">↗</span></span>
+            <span class="launch-track" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
+          </button>
+          <button type="button" class="launch-card launch-card--lineage" id="launchLineage" data-tool="planner" data-planner-entry="manual-lineage">
+            <span class="launch-card__eyebrow">02 / 已經有家系想法</span>
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 8v8M7 23v-7h18v7"/><rect x="12" y="2" width="8" height="7" rx="2"/><rect x="3" y="23" width="8" height="7" rx="2"/><rect x="21" y="23" width="8" height="7" rx="2"/></svg></span>
+            <strong>族譜與賽程工作台</strong>
+            <span class="launch-card__description">自由安排七格家系，逐格檢查目標賽與加賽。</span>
+            <span class="launch-card__action">開始手動組譜 <span aria-hidden="true">↗</span></span>
+          </button>
+          <button type="button" class="launch-card launch-card--kua" id="launchKua" data-tool="kua">
+            <span class="launch-card__eyebrow">03 / 專注眼前這一回合</span>
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M18 2 6 18h9l-1 12 12-17h-9l1-11Z"/></svg></span>
+            <strong>Kua 回合助手</strong>
+            <span class="launch-card__description">輸入目前狀態，比較下一步行動；不載入完整規劃資料。</span>
+            <span class="launch-card__action">查看回合建議 <span aria-hidden="true">↗</span></span>
+          </button>
+        </div>
+        <div class="launch-footer"><span>工作區按需載入・規劃保存在此瀏覽器 · <a href="SOURCES.html">資料來源與使用說明</a></span><output class="launch-status" id="launchStatus" aria-live="polite">尚未載入任何工具。</output></div>
+      </div>
+    </section>
+
+    <main class="app-shell" id="plannerWorkspace" hidden>
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">育成工作台 / PLANNER</p>
+          <h1>因子育成計畫器</h1>
+          <p class="intro">先確定目標，再把戰馬、配卡與因子一步步安排好。</p>
+          <div class="data-row">
+            <span id="saveStatus" data-state="ready">本機資料準備中…</span>
+            <details class="data-menu">
+              <summary>資料管理</summary>
+              <div class="data-toolbar" aria-label="本機資料">
+                <button type="button" class="text-button" id="exportPlannerData">匯出備份</button>
+                <label class="text-button file-button">匯入備份<input id="importPlannerData" type="file" accept=".json,application/json" /></label>
+                <button type="button" class="text-button danger-button" id="clearPlannerData">清除本機資料</button>
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="ghost" data-tool-home>切換工具</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <aside class="steps" aria-label="設定步驟">
+          <div class="steps-heading"><span>YOUR PLAN</span><strong>育成規劃</strong></div>
+          <button class="step active" data-step="goal"><b>01</b><span>目標賽事<small>決定要跑哪一場</small></span></button>
+          <button class="step" data-step="parents"><b>02</b><span>戰馬與配卡<small>戰馬、父輩、六卡</small></span></button>
+          <button class="step" data-step="deck"><b>03</b><span>種馬路線<small>加速、三綠、面板</small></span></button>
+        </aside>
+
+        <div class="panels">
+          <section class="panel shown" id="goal">
+            <div class="panel-heading"><div><p class="kicker">步驟 1</p><h2 tabindex="-1">先選你要準備的比賽</h2></div><p>每次只分析一場；切換賽事時，賽制與賽道條件會一起更新。</p></div>
+            <section class="current-race-profile" id="currentRaceProfile">
+              <div class="profile-heading"><div><p class="kicker">主要分析賽事</p><h3 id="currentRaceTitle">載入主要分析賽事…</h3></div><span id="currentRaceConditions"></span></div>
+              <small id="currentRaceStatus"></small>
+              <details class="race-profile-details">
+                <summary>查看賽道計算條件</summary>
+                <div class="profile-row"><strong>固定作戰</strong><div class="profile-chips profile-chips--strategy"><span>領頭</span><small>此工具目前只計算領頭</small></div></div>
+                <div class="profile-row"><strong>預期戰馬配卡</strong><div class="profile-chips" id="battleDeckTypeChips"></div></div>
+                <div class="profile-row"><strong>固定綠技（補強）</strong><div class="profile-chips" id="staticCourseSkillChips"></div></div>
+              </details>
+            </section>
+            <div class="race-list-heading">
+              <div><p class="kicker">快速切換</p><h3>目標賽事與規劃範本</h3></div>
+              <p>已確認賽事依繁中服官方公告；其他 CM 為日服同版本預排。</p>
+            </div>
+            <div class="race-grid" id="raceGrid"></div>
+            <details class="race-library secondary-disclosure">
+              <summary>
+                <span><strong>加入其他正式賽事</strong><small>從 GameTora 資料庫帶入完整賽道條件</small></span>
+              </summary>
+              <div class="race-library-controls">
+                <select id="catalogRace" aria-label="選擇正式賽事"></select>
+                <button type="button" class="text-button" id="addCatalogRace">加入正式賽事</button>
+              </div>
+            </details>
+            <details class="custom-race-builder">
+              <summary>進階：建立自訂賽事條件</summary>
+              <div class="custom-race">
+                <label>名稱<input id="customRaceName" type="text" value="自訂賽事" /></label>
+                <label>賽場<select id="customTrack"></select></label>
+                <label>場地<select id="customSurface"><option value="草地">草地</option><option value="泥地">泥地</option></select></label>
+                <label>距離分類<select id="customDistance"><option value="短距離">短距離</option><option value="一哩">一哩</option><option value="中距離" selected>中距離</option><option value="長距離">長距離</option></select></label>
+                <label>距離（m）<input id="customMeters" type="number" min="1000" max="4000" step="100" value="2000" /></label>
+                <label>方向<select id="customRotation"><option value="1">順時針</option><option value="2">逆時針</option><option value="0">直線</option></select></label>
+                <label>季節<select id="customSeason"><option value="1">春</option><option value="2">夏</option><option value="3">秋</option><option value="4">冬</option></select></label>
+                <label>場況<select id="customGroundCondition"><option value="1">良</option><option value="2">稍重</option><option value="3">重</option><option value="4">不良</option></select></label>
+                <label>天氣<select id="customWeather"><option value="1">晴</option><option value="2">陰</option><option value="3">雨</option><option value="4">雪</option></select></label>
+                <label>作戰<select id="customStyle" disabled aria-label="作戰固定為領頭"><option value="領頭" selected>領頭（固定）</option></select></label>
+                <button type="button" class="text-button" id="addCustom">＋ 加入自訂賽事</button>
+              </div>
+            </details>
+            <div class="panel-footer"><span id="goalHint">請先選擇至少一場目標賽事</span><button class="primary" data-next="parents">下一步：選戰馬與加速 <span>→</span></button></div>
+          </section>
+
+          <section class="panel" id="parents">
+            <div class="panel-heading"><div><p class="kicker">步驟 2 · 戰馬與配卡</p><h2 tabindex="-1">先選戰馬，再選一副完整六卡</h2></div><p>先由你選戰馬；完整建構齊全後才比較。這頁依序完成：戰馬 → 5+1 配卡 → 父輩 → 剩餘缺口。</p></div>
+            <div class="target-summary" id="targetSummary"></div>
+            <details class="step2-secondary-disclosure step2-contract-disclosure" id="step2ContractDisclosure">
+              <summary><span><strong>系統怎麼算（可略過）</strong><small>想查「為什麼推薦這匹馬／這副卡」時再展開</small></span></summary>
+            <section class="goal-contract-panel" id="goalContractPanel" data-status="NEEDS_EVIDENCE" aria-labelledby="goalContractTitle">
+              <header class="goal-contract-heading">
+                <div><p class="kicker">計算依據</p><h3 id="goalContractTitle">從賽道一路扣到剩餘因子缺口</h3><p>賽道、戰馬、六卡和父輩共用同一份目標；已確定取得的技能只扣一次。</p></div>
+                <span id="goalContractStatus">等待賽道與戰馬</span>
+              </header>
+              <ol class="goal-contract-stages" id="goalContractStages" aria-label="賽道到種馬的推導階段"></ol>
+              <div class="goal-contract-ledger" id="goalContractLedger" aria-live="polite"></div>
+              <details class="goal-contract-boundary">
+                <summary>查看演算法與證據界線</summary>
+                <div id="goalContractEvidence"></div>
+              </details>
+            </section>
+            </details>
+            <details class="step2-secondary-disclosure step2-factor-disclosure" id="step2FactorDisclosure">
+              <summary><span><strong>因子施工參考（稍後再看）</strong><small>選好戰馬與六卡後，需要規劃種馬時再展開</small></span></summary>
+            <section class="factor-guide" id="factorGuide" data-status="USER_PLANNED" data-probability-status="COMMUNITY_REFERENCE_NOT_WIN_RATE" aria-labelledby="factorGuideTitle">
+              <header class="factor-guide-heading">
+                <div><p class="kicker">目前因子施工結論</p><h3 id="factorGuideTitle">正月葛城起滾的草／泥・一哩／中／長歷戰線</h3><p>照「先養誰 → 拿什麼 → 何時畢業 → 交給誰」排列；詳細機率與資料界線收在下方。</p></div>
+                <span id="factorGuideEvidenceBadge">使用者規劃＋社群參考</span>
+              </header>
+
+              <div class="factor-guide-conclusion" id="factorGuideSummary" aria-live="polite">正在整理起滾本體與適性缺口…</div>
+              <div class="factor-guide-skill-strip" id="factorGuideSkills"></div>
+              <section class="cm-oaks-white-factor" id="cmOaksWhiteFactorDecision" data-status="UNVERIFIED" data-probability-status="NOT_COMPUTED" aria-labelledby="cmOaksWhiteFactorTitle">
+                <header>
+                  <div><span>CM 奧克斯・東京 2400・領頭</span><strong id="cmOaksWhiteFactorTitle">白因子先追哪一個</strong></div>
+                  <div class="cm-oaks-white-factor-routes" role="group" aria-label="白因子用途">
+                    <button type="button" data-cm-oaks-factor-route="kitasan" aria-pressed="true">北黑用</button>
+                    <button type="button" data-cm-oaks-factor-route="katsuragi" aria-pressed="false">葛城用</button>
+                  </div>
+                </header>
+                <div class="cm-oaks-white-factor-brief" id="cmOaksWhiteFactorBrief" aria-live="polite"></div>
+                <details>
+                  <summary>查看 5 個技能的直接親代／祖輩相對值</summary>
+                  <div class="cm-oaks-white-factor-list" id="cmOaksWhiteFactorList"></div>
+                </details>
+                <p id="cmOaksWhiteFactorEvidence">只比較 CM 第一名線的本地快照；相對值不是勝率、發動率或因子掉落率。</p>
+              </section>
+              <details class="cm-oaks-rental-tool" id="cmOaksRentalTool" data-status="WAITING_FOR_INPUT" data-probability-status="NOT_COMPUTED">
+                <summary><span><strong>比較外部租借馬</strong><small>需要時才展開；貼入候選 JSON，不讀取或冒用自有馬資料</small></span></summary>
+                <div class="cm-oaks-rental-tool-body">
+                  <div class="cm-oaks-rental-tool-controls">
+                    <label>譜系位置<select id="cmOaksRentalStage"><option value="grandparent" selected>祖輩</option><option value="direct_parent">直接親代</option></select></label>
+                    <label class="cm-oaks-rental-recovery"><input type="checkbox" id="cmOaksRentalRecovery" checked> 戰馬配卡有前／中盤回復</label>
+                  </div>
+                  <details class="rental-screenshot-import" id="rentalScreenshotImport" data-status="IDLE">
+                    <summary><span><strong id="rentalScreenshotTitle">從截圖整理候選</strong><small>需要時才展開；辨識資源只在按下辨識後載入</small></span></summary>
+                    <div class="rental-screenshot-import-body">
+                    <p class="rental-screenshot-boundary">圖片只在瀏覽器內辨識；OCR 是待確認草稿，不會直接成為已登錄種馬。</p>
+                    <div class="rental-screenshot-dropzone" id="rentalScreenshotDropzone" tabindex="0" role="group" aria-label="貼上或選擇同一匹候選的因子截圖">
+                      <div><strong>點這裡後按 Ctrl+V</strong><small>也可以一次選擇同一匹馬的上、下段截圖</small></div>
+                      <button type="button" id="rentalScreenshotPick">選擇截圖</button>
+                      <input id="rentalScreenshotFile" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+                    </div>
+                    <div class="rental-screenshot-preview" id="rentalScreenshotPreview" aria-live="polite"></div>
+                    <label class="rental-screenshot-group-confirm" id="rentalScreenshotGroupConfirmWrap" hidden><input type="checkbox" id="rentalScreenshotGroupConfirm"> 我確認這批圖片屬於同一匹候選</label>
+                    <div class="rental-screenshot-actions">
+                      <button type="button" id="rentalScreenshotClear" disabled>清除此批</button>
+                      <button type="button" class="primary" id="rentalScreenshotRecognize" disabled>辨識並整理</button>
+                    </div>
+                    <p class="rental-screenshot-status" id="rentalScreenshotStatus" role="status">尚未加入截圖。</p>
+                    <section class="rental-screenshot-review" id="rentalScreenshotReview" hidden aria-labelledby="rentalScreenshotReviewTitle">
+                      <header><strong id="rentalScreenshotReviewTitle">逐列確認</strong><small>星數與文字均是建議值；選「採用」才會進 JSON</small></header>
+                      <div class="rental-screenshot-identity">
+                        <label>租借／候選 ID<input id="rentalScreenshotCandidateId" type="text" inputmode="numeric" autocomplete="off" placeholder="截圖通常沒有，請手動填入"></label>
+                        <label>候選名稱<input id="rentalScreenshotCandidateName" type="text" autocomplete="off" placeholder="請確認 OCR 名稱"></label>
+                      </div>
+                      <div class="rental-screenshot-review-actions"><button type="button" id="rentalScreenshotConfirmAll">將全部列標成採用</button><small>辨識錯的列可改成「排除」；不確定則保留「待確認」。</small></div>
+                      <div class="rental-screenshot-rows" id="rentalScreenshotRows"></div>
+                      <div class="rental-screenshot-actions"><button type="button" class="primary" id="rentalScreenshotAddCandidate">加入候選 JSON</button></div>
+                    </section>
+                    <section class="rental-screenshot-candidates" id="rentalScreenshotCandidates" hidden>
+                      <header><strong>已整理候選</strong><small>會同步到下方 JSON；仍可手動補父母紅因子與共同 G1</small></header>
+                      <div id="rentalScreenshotCandidateList"></div>
+                    </section>
+                    </div>
+                  </details>
+                  <label class="cm-oaks-rental-json">候選資料（prettyderby-rental-candidates.v1）<textarea id="cmOaksRentalInput" rows="8" spellcheck="false" autocomplete="off" placeholder="貼上候選 JSON；缺少白因子數量、G1 或固有效果時會保留 UNKNOWN。"></textarea></label>
+                  <div class="cm-oaks-rental-actions"><button type="button" id="cmOaksRentalExample">載入格式範例</button><button type="button" class="primary" id="cmOaksRentalCompare">比較候選</button></div>
+                  <div class="cm-oaks-rental-result" id="cmOaksRentalResult" aria-live="polite"><p>尚未匯入候選。只有按下「比較候選」後才會解析。</p></div>
+                  <p class="cm-oaks-rental-boundary">固定 CM 奧克斯・東京 2400・領頭・第一名線；結果只做候選排序，不計算勝率、發動率或繼承率。</p>
+                </div>
+              </details>
+              <ol class="factor-guide-steps" id="factorGuideSteps" aria-label="正月葛城因子施工順序"></ol>
+
+              <div class="factor-guide-disclosures">
+                <details class="factor-guide-detail">
+                  <summary><span><strong>適性與 G1 勝鞍池</strong><small>紅因子要補幾星、每個適性的實際修正，以及本地 G1 候選數</small></span></summary>
+                  <div class="factor-guide-detail-body">
+                    <p class="factor-guide-warning" id="factorGuideWinRateNote"></p>
+                    <div class="factor-guide-route-grid" id="factorGuideAptitudeSummary"></div>
+                    <div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideAptitudeTable"></table></div>
+                    <div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideG1Catalog"></table></div>
+                  </div>
+                </details>
+
+                <details class="factor-guide-detail">
+                  <summary><span><strong>連戰事故率</strong><small>分開任何體力與體力 0；這不是比賽勝率</small></span></summary>
+                  <div class="factor-guide-detail-body">
+                    <div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideStreakTable"></table></div>
+                    <p class="factor-guide-note" id="factorGuideStreakNote"></p>
+                  </div>
+                </details>
+
+                <details class="factor-guide-detail">
+                  <summary><span><strong>因子機率速查</strong><small>繼承基礎率、藍因子星數、技能白因子與畢業線</small></span></summary>
+                  <div class="factor-guide-detail-body factor-guide-probability-grid">
+                    <section><h4>繼承基礎率</h4><div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideInheritanceTable"></table></div><p class="factor-guide-note" id="factorGuideInheritanceNote"></p></section>
+                    <section><h4>藍因子星數</h4><div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideBlueTable"></table></div><p class="factor-guide-note" id="factorGuideBlueNote"></p></section>
+                    <section><h4>技能白因子</h4><div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideSkillWhiteTable"></table></div><p class="factor-guide-note" id="factorGuideSkillWhiteNote"></p></section>
+                    <section><h4>白因子星數</h4><div class="factor-guide-table-scroll"><table class="factor-guide-table" id="factorGuideWhiteStarTable"></table></div><p class="factor-guide-note" id="factorGuideRedSelectionNote"></p></section>
+                  </div>
+                  <div class="factor-guide-graduation" id="factorGuideGraduation"></div>
+                </details>
+
+                <details class="factor-guide-detail">
+                  <summary><span><strong>根性鈴鹿與來源</strong><small>繁中服時程分開；可直接開啟原網站核對</small></span></summary>
+                  <div class="factor-guide-detail-body">
+                    <div class="factor-guide-future" id="factorGuideFutureSupport"></div>
+                    <div class="factor-guide-sources" id="factorGuideSources"></div>
+                  </div>
+                </details>
+              </div>
+              <p class="factor-guide-disclaimer">勝鞍、適性繼承與因子結果在實跑前都不是已確認成果；介面不把能力修正、社群事故率或基礎因子率轉寫成比賽勝率。</p>
+            </section>
+            </details>
+            <section class="guided-planner" id="guidedPlanner" aria-label="戰馬方案引導流程">
+              <header class="guided-planner-heading">
+                <div><span>現在只做一件事</span><strong id="guidedProgressText" aria-live="polite">1／5　選擇要養的戰馬</strong><small id="guidedCurrentPlan" aria-live="polite">先看施工推薦，也可以直接改選自己的戰馬</small></div>
+                <progress id="guidedProgress" max="5" value="1" aria-label="戰馬方案完成進度，共五步">1／5</progress>
+              </header>
+
+              <div class="guided-workbench-layout">
+                <nav class="guided-stage-dock" aria-label="五步工作區階段">
+                  <span class="guided-stage-dock-label">五步完成</span>
+                  <button type="button" data-guided-stage-open="uma" aria-controls="guidedStageUmaContent"><b>1</b><span>選戰馬</span><small id="guidedDockUmaStatus">尚未選擇</small></button>
+                  <button type="button" data-guided-stage-open="acceleration" aria-controls="guidedStageAccelerationContent"><b>2</b><span>配卡與養法</span><small id="guidedDockAccelerationStatus">等待戰馬</small></button>
+                  <button type="button" data-guided-stage-open="parents" aria-controls="guidedStageParentsContent"><b>3</b><span>選父輩</span><small id="guidedDockParentsStatus">等待配卡</small></button>
+                  <button type="button" data-guided-stage-open="owned" aria-controls="guidedStageOwnedCardsContent"><b>4</b><span>看缺口</span><small id="guidedDockOwnedStatus">等待父輩</small></button>
+                  <button type="button" data-guided-stage-open="borrow" aria-controls="guidedStageBorrowContent"><b>5</b><span>完成</span><small id="guidedDockBorrowStatus">等待確認</small></button>
+                </nav>
+                <div class="guided-workbench-canvas">
+              <section class="guided-stage guided-stage--source" id="guidedStageCourse" data-guided-stage="course" aria-label="第一頁賽道計算依據">
+                <div class="guided-stage-number">賽</div>
+                <button type="button" class="guided-stage-summary" data-guided-stage-open="course" aria-controls="guidedStageCourseContent"><span><strong>賽道與有效加速</strong><small>賽道價值已先行計算</small></span><b id="guidedCourseStageSummary">查看明細</b></button>
+                <div class="guided-stage-body" id="guidedStageCourseContent">
+                  <div class="guided-stage-heading"><div><h3>先看賽道，再排有效加速</h3><p>這一步只計算賽道價值，還不看戰馬與配卡。</p></div><span id="guidedCourseAccelerationStatus"></span></div>
+                  <div class="course-timeline-card" id="guidedCourseTimeline" aria-label="目前賽道時間軸"></div>
+                  <div class="course-analysis-facts" id="guidedCourseFacts"></div>
+                  <div class="guided-choice-list" id="guidedCourseAccelerationList"></div>
+                  <p class="course-model-note" id="guidedCourseModelNote"></p>
+                </div>
+              </section>
+
+              <section class="guided-stage" id="guidedStageUma" data-guided-stage="uma">
+                <div class="guided-stage-number">1</div>
+                <button type="button" class="guided-stage-summary" data-guided-stage-open="uma" aria-controls="guidedStageUmaContent"><span><strong>目標戰馬與育成條件</strong><small>選擇本體後才展開配卡</small></span><b id="guidedUmaStageSummary">尚未選擇</b></button>
+                <div class="guided-stage-body" id="guidedStageUmaContent">
+                  <div class="guided-stage-heading"><div><h3>1. 先看推薦，再由你決定戰馬</h3><p>推薦只回答「現在最值得先做哪一匹的完整方案」；六卡、父輩、白因子與成品數值補齊後，才判定最後用誰。</p></div><span id="guidedBattleUmaStatus">尚未選擇</span></div>
+                  <section class="battle-horse-recommendations" id="battleHorseRecommendations" data-analysis-state="idle" aria-labelledby="battleHorseRecommendationHeading">
+                    <header><div><p class="kicker">推薦戰馬</p><h4 id="battleHorseRecommendationHeading">需要推薦時再分析</h4></div><b id="battleHorseRecommendationStatus">尚未分析</b></header>
+                    <p>你可以直接從自有清單選馬；只有按下按鈕時，才會依目前賽道整理施工候選。</p>
+                    <div class="battle-horse-analysis-controls">
+                      <button type="button" class="primary" id="battleHorseAnalysisButton">開始分析推薦戰馬</button>
+                      <div class="battle-horse-analysis-progress" id="battleHorseAnalysisProgressWrap" hidden>
+                        <progress id="battleHorseAnalysisProgress" max="4" value="0" aria-label="推薦戰馬分析進度"></progress>
+                        <span id="battleHorseAnalysisProgressLabel" role="status" aria-live="polite">等待開始</span>
+                      </div>
+                    </div>
+                    <div class="battle-horse-recommendation-list" id="battleHorseRecommendationList" role="radiogroup" aria-label="推薦戰馬施工清單"><p class="guided-empty">尚未分析；此步不影響你手動選馬。</p></div>
+                  </section>
+                  <details class="battle-horse-manual-picker" id="battleHorseManualPicker">
+                    <summary><span><strong>我想自己選其他戰馬</strong><small>完整自有清單與適性都保留，不受推薦限制</small></span></summary>
+                    <div class="battle-horse-manual-picker-body">
+                      <div class="guided-control-row">
+                        <label>全部自有戰馬<select id="guidedBattleUma"><option value="">請選擇持有戰馬</option></select></label>
+                        <label>賽制（由第一頁目標賽事帶入）<select id="guidedEventMode"><option value="loh" selected>英雄聯盟（12 人）</option><option value="cm">月賽／冠軍盃（9 人）</option></select></label>
+                      </div>
+                      <p class="battle-horse-manual-note" id="battleHorseManualNote">這裡只列持有與適性，不把順序當成強度名次。</p>
+                      <div class="battle-horse-choice-list" id="battleHorseChoiceList" role="radiogroup" aria-label="全部自有戰馬候選"><p>正在整理持有戰馬…</p></div>
+                    </div>
+                  </details>
+                  <div class="selected-uma-preview" id="guidedBattleUmaPreview"></div>
+                  <div class="guided-scenario-control">
+                    <label>育成劇本（只套必要卡條件）<select id="battleScenario" aria-describedby="guidedScenarioRequirement"></select></label>
+                    <div class="guided-scenario-requirement" id="guidedScenarioRequirement" role="status" aria-live="polite"></div>
+                  </div>
+                  <details class="battle-evidence-details">
+                    <summary><span><strong>進階：評價順序與證據狀態</strong><small>需要追算分或查停止原因時再展開</small></span></summary>
+                    <details class="battle-score-disclosure" id="battleHorseScoreDisclosure">
+                      <summary><span><strong>完整評價體系與算分順序</strong><small>十一層逐關計算；缺資料就停，不拿本體分數補位</small></span></summary>
+                      <ol id="battleHorseScoreOrder"></ol>
+                      <p id="battleHorseScoreBoundary">正在讀取目前排序規則…</p>
+                    </details>
+                    <section class="battle-build-evaluation" id="battleBuildEvaluation" data-status="NEEDS_BUILD_CONTEXT" aria-labelledby="battleBuildEvaluationTitle">
+                      <header><div><span>完整建構評價</span><h4 id="battleBuildEvaluationTitle">尚未產生最終排行</h4></div><b id="battleBuildEvaluationStatus">等待戰馬與六卡</b></header>
+                      <div class="battle-build-evaluation-grid" id="battleBuildEvaluationSummary"></div>
+                      <details><summary>查看覆蓋、邊際與機會成本明細</summary><div id="battleBuildEvaluationLedger"><p>先選戰馬；確認六卡、父輩與白因子後才會建立可比較方案。</p></div></details>
+                    </section>
+                  </details>
+                </div>
+              </section>
+
+              <section class="guided-stage is-locked" id="guidedStageAcceleration" data-guided-stage="acceleration" aria-disabled="true">
+                <div class="guided-stage-number">2</div>
+                <button type="button" class="guided-stage-summary" data-guided-stage-open="acceleration" aria-controls="guidedStageAccelerationContent"><span><strong>配卡與這副的養法</strong><small>5 張自有卡＋1 張借卡 → 育成順序</small></span><b id="guidedAccelerationStageSummary">等待戰馬</b></button>
+                <div class="guided-stage-body" id="guidedStageAccelerationContent">
+                  <div class="guided-stage-heading"><div><h3>配好六卡，直接看這副怎麼養</h3><p>自由選擇 5 張自有卡與 1 張借卡。左側是系統推薦，右側是你的實際配卡；下方只列少了什麼、換來什麼等具體差異，再整理成前期、中後期、提示與回復的做法。</p></div><span id="guidedAccelerationStatus">先選戰馬</span></div>
+                  <button type="button" class="guided-change-uma" data-guided-stage-open="uma" aria-controls="guidedStageUmaContent">← 更換戰馬</button>
+                  <div class="guided-deck-package-status" id="guidedDeckPackageStatus" role="status" aria-live="polite" tabindex="-1"></div>
+                  <section class="guided-deck-primary" aria-labelledby="guidedDeckPrimaryHeading">
+                    <div class="guided-deck-section-heading"><div><h4 id="guidedDeckPrimaryHeading">完整六卡比較</h4><p>左側提供一副推薦方案；右側保留你的實際配卡，換卡後下方差異會同步更新。</p></div><span id="guidedDeckShortage" role="status" aria-live="polite"></span></div>
+                    <div class="deck-comparison-workbench">
+                      <section class="deck-theoretical-panel" id="guidedDeckTheoretical" aria-labelledby="guidedDeckTheoreticalHeading">
+                        <header><div><p class="kicker">推薦方案</p><h5 id="guidedDeckTheoreticalHeading">系統建議的 5＋1</h5></div><small>依劇本機制、目標面板、技能與回復綜合選擇；借卡以滿突滿等基準計。</small></header>
+                        <ol class="guided-deck-package-list" id="guidedDeckPackageList"></ol>
+                      </section>
+                      <section class="deck-custom-panel" id="guidedDeckCustom" aria-labelledby="guidedDeckCustomHeading">
+                        <header><div><p class="kicker">你的自配</p><h5 id="guidedDeckCustomHeading">你實際想帶的 5＋1</h5></div><small>直接選擇 5 張自有卡與第 6 張借卡。</small></header>
+                        <div class="guided-custom-deck-scroll" tabindex="0" aria-label="你的自配六卡，可左右捲動">
+                          <div class="guided-custom-deck-grid">
+                            <div class="guided-owned-slots" id="guidedBattleOwnedSlots"></div>
+                            <article class="battle-deck-slot battle-deck-slot--borrowed" id="guidedManualBorrowSlot">
+                              <header><strong>第 6 張・借卡</strong><span>滿突基準</span></header>
+                              <div class="support-card-tile" id="guidedManualBorrowPreview"></div>
+                              <div class="guided-manual-borrow"><span>選擇借卡</span>
+                                <button type="button" class="support-card-picker-trigger" id="guidedManualBorrowPickerButton" data-support-picker-role="borrowed">用圖像選擇借卡</button>
+                                <select class="support-card-native-select" id="guidedManualBorrowSelect" aria-label="你的自配借卡"></select>
+                              </div>
+                            </article>
+                          </div>
+                        </div>
+                        <div class="battle-deck-validation" id="guidedBattleDeckValidation" role="status" aria-live="polite"></div>
+                        <div class="guided-confirm-owned">
+                          <p>選滿後可以直接確認；更換任一張卡時，下方的實際差異會同步更新。</p>
+                          <button type="button" class="primary" id="guidedConfirmOwnedCards">確認我的自配六卡</button>
+                        </div>
+                      </section>
+                    </div>
+                    <section class="deck-delta-panel" id="guidedDeckDelta" aria-labelledby="guidedDeckComfortHeading">
+                      <header><div><p class="kicker">白話差異</p><h5 id="guidedDeckComfortHeading">跟理論最優差在哪？</h5></div><small>只說能由目前卡片與技能路線確認的差異，不把代理值說成勝率。</small></header>
+                      <output id="guidedDeckComfortSummary" role="status" aria-live="polite">選好戰馬後，這裡會直接比較理論方案與你的自配。</output>
+                      <ol id="guidedDeckComfortList" class="deck-delta-list" aria-label="你的自配與理論最優差異"></ol>
+                    </section>
+                    <section class="guided-training-plan" id="guidedTrainingPlan" data-status="WAITING_FOR_DECK" aria-labelledby="guidedTrainingPlanHeading">
+                      <header>
+                        <div><p class="kicker">這副卡怎麼養</p><h5 id="guidedTrainingPlanHeading">先守住硬條件，再依局內狀態套用</h5><p>只使用目前戰馬、六卡、賽道目標與已解析技能來源；不把代理值寫成保證。</p></div>
+                        <b id="guidedTrainingPlanStatus">等待完整六卡</b>
+                      </header>
+                      <div class="guided-training-plan-summary" id="guidedTrainingPlanSummary"><strong>先選戰馬與完整 5＋1</strong><span>選完後會顯示這副卡的實際育成主線。</span></div>
+                      <ol class="guided-training-plan-steps" id="guidedTrainingPlanSteps" aria-label="目前六卡的育成順序"></ol>
+                      <details class="guided-training-loadout-details"><summary>查看仍需由父輩／因子補的加速權重</summary><div id="guidedLoadoutWeights"><p class="guided-empty">確認剩餘加速後才會顯示。</p></div></details>
+                      <details class="guided-training-plan-boundary"><summary>這份養法不能替你判斷什麼？</summary><p id="guidedTrainingPlanBoundary">沒有當回合卡片位置、羈絆、體力與失敗率時，不會假裝知道該點哪一格。</p></details>
+                    </section>
+                  </section>
+                  <details class="guided-deck-advanced">
+                    <summary><span><strong>進階：其他卡片候選與模型限制</strong><small>主流程不需要看；缺卡或追原始依據時再展開</small></span></summary>
+                    <p class="model-limit-note guided-deck-identity" id="guidedDeckIdentity" role="status" aria-live="polite"></p>
+                    <details class="guided-deck-alternatives" id="guidedDeckAlternatives">
+                      <summary>查看單卡比較參考／資料排除</summary>
+                      <p class="guided-deck-alternative-note">競技來源、已持有且有 exact curve 的卡都會進入完整六卡搜尋。這裡只解釋單卡低於參考、來源不符或資料不完整，不代表低凸卡先被淘汰。</p>
+                      <div id="guidedDeckAlternativeList" role="list"></div>
+                    </details>
+                    <details class="guided-deck-frontier" id="guidedDeckFrontier">
+                      <summary>查看完整手動候選池</summary>
+                      <div id="guidedDeckFrontierList" role="list" aria-label="競技可用手動候選"></div>
+                    </details>
+                    <details class="guided-deck-model-details">
+                      <summary>查看配卡模型與資料限制</summary>
+                      <p class="model-limit-note" id="guidedDeckModelNote">這是可解釋的配卡規劃代理模型：自有卡顯示實際等級／突破；借卡固定滿突滿等。尚未有完整等級曲線的卡會標示降階統計模型，不等同完整育成模擬。</p>
+                    </details>
+                  </details>
+                </div>
+              </section>
+
+              <section class="guided-stage is-locked" id="guidedStageParents" data-guided-stage="parents" aria-disabled="true">
+                <div class="guided-stage-number">3</div>
+                <button type="button" class="guided-stage-summary" data-guided-stage-open="parents" aria-controls="guidedStageParentsContent"><span><strong>最終父輩</strong><small>依配卡後的缺口確認</small></span><b id="guidedParentsStageSummary">等待配卡</b></button>
+                <div class="guided-stage-body" id="guidedStageParentsContent">
+                  <div class="guided-stage-heading"><div><h3>確認最終父輩</h3><p>戰馬階段只看繼承版固有預覽；卡組確認後，才依卡組剩餘缺口完成主親代與副親代最終確認。</p></div><span id="guidedParentsStatus">先選戰馬</span></div>
+                  <div id="guidedParentAvailability" class="guided-parent-availability" role="status" aria-live="polite"></div>
+                  <div class="guided-parent-columns">
+                    <fieldset class="guided-parent-slot">
+                      <legend>主親代 <small>可自行改選</small></legend>
+                      <div id="guidedMainParents"></div>
+                    </fieldset>
+                    <fieldset class="guided-parent-slot">
+                      <legend>副親代 <small>必須不同角色</small></legend>
+                      <div id="guidedSubParents"></div>
+                    </fieldset>
+                  </div>
+                  <output id="guidedParentChoiceStatus" class="guided-parent-choice-status" aria-live="polite">目前只作父輩預覽；套用卡組後才會解鎖最終確認。</output>
+                </div>
+              </section>
+
+              <section class="guided-stage is-locked" id="guidedStageOwnedCards" data-guided-stage="owned" aria-disabled="true">
+                <div class="guided-stage-number">4</div>
+                <button type="button" class="guided-stage-summary" data-guided-stage-open="owned" aria-controls="guidedStageOwnedCardsContent"><span><strong>剩餘技能／因子缺口</strong><small>父輩與卡組完成後重算</small></span><b id="guidedOwnedStageSummary">等待父輩</b></button>
+                <div class="guided-stage-body" id="guidedStageOwnedCardsContent">
+                  <div class="guided-stage-heading"><div><h3>檢視卡組剩餘技能／因子缺口</h3><p>這一頁只回答已確認六卡與父輩之後還缺什麼；如果要換卡，回到第 2 步直接改你的自配。</p></div><span id="guidedOwnedCardsStatus">先確認父輩</span></div>
+                   <div class="guided-residual-factor-summary" id="guidedResidualFactorSummary" role="status" aria-live="polite"></div>
+                   <h4>你要不要把剩餘白因子列為本輪目標？</h4>
+                   <div class="guided-choice-list guided-choice-list--selectable" id="guidedRemainingAccelerationList"></div>
+                   <div class="guided-residual-decision">
+                     <button type="button" class="ghost" id="guidedConfirmNoResidual">這輪不額外指定白因子</button>
+                     <small id="guidedResidualDecisionNote">這只是本次施工決策；不是宣告這些技能無效，也不會限制你之後改選。</small>
+                   </div>
+                   <div class="guided-return-to-deck"><p>卡片選擇集中在第 2 步，這裡不再重複放第二套選卡介面。</p><button type="button" class="text-button" data-guided-stage-open="acceleration" aria-controls="guidedStageAccelerationContent">回到理論最優與我的自配</button></div>
+                </div>
+              </section>
+
+              <section class="guided-stage guided-stage--completion is-locked" id="guidedStageBorrow" data-guided-stage="borrow" aria-disabled="true">
+                <div class="guided-stage-number">5</div>
+                <button type="button" class="guided-stage-summary" data-guided-stage-open="borrow" aria-controls="guidedStageBorrowContent"><span><strong>完成摘要</strong><small>完整六卡與下一步路線</small></span><b id="guidedBorrowStageSummary">等待確認</b></button>
+                <div class="guided-stage-body" id="guidedStageBorrowContent">
+                  <div class="guided-stage-heading"><div><h3>方案完成／進入種馬路線</h3><p>這裡只摘要已確認的完整六卡、借卡與回復槽；切換卡組請回到第 2 步重新比較。</p></div><span id="guidedBorrowStatus" aria-live="polite">等待方案完成</span></div>
+                  <div id="guidedBorrowRecommendation"></div>
+                  <p class="model-limit-note" id="guidedBorrowModelNote">借卡已在第 2 步納入整副方案比較；此處顯示滿突滿等借卡與足耐／金回結構槽摘要。這仍是可解釋規劃代理模型，不是完整育成回合模擬。</p>
+                  <div class="guided-next-action guided-completion-cta">
+                    <p id="guidedReadySummary" aria-live="polite">請依序完成戰馬、5+1 卡組、父輩與卡組後剩餘缺口。</p>
+                    <button class="primary" id="guidedToRoute" data-next="deck" disabled>下一步：看我現在要養哪一隻 <span>→</span></button>
+                  </div>
+                </div>
+              </section>
+
+                </div>
+              </div>
+            </section>
+
+            <details class="advanced-planner-tools" id="advancedAnalysisDatabase">
+              <summary><span><strong>進階分析與資料庫</strong><small>足耐試算、完整技能表、固有方向、現有種馬與家系</small></span></summary>
+              <div class="advanced-planner-tools-body">
+            <nav class="parent-subflow" role="tablist" aria-label="種馬方案工作區">
+              <button type="button" role="tab" id="parentTabStrategy" aria-controls="parentViewStrategy" data-parent-view-target="strategy">
+                <span>重點結果</span><small id="parentNavStrategyStatus">核心技能與因子缺口</small>
+              </button>
+              <button type="button" role="tab" id="parentTabBattle" aria-controls="parentViewBattle" data-parent-view-target="battle">
+                <span>進階六卡調整</span><small id="parentNavBattleStatus">必要時才手動覆寫</small>
+              </button>
+              <button type="button" role="tab" id="parentTabParents" aria-controls="parentViewParents" data-parent-view-target="parents">
+                <span>固有技能方向</span><small id="parentNavParentsStatus">推薦角色與祖代</small>
+              </button>
+              <button type="button" role="tab" id="parentTabLibrary" aria-controls="parentViewLibrary" data-parent-view-target="library">
+                <span>現有種馬與家系</span><small id="parentNavLibraryStatus">選填・本機資料庫</small>
+              </button>
+            </nav>
+
+            <section class="parent-subview" id="parentViewBattle" role="tabpanel" aria-labelledby="parentTabBattle" data-parent-view="battle" hidden>
+              <div class="subview-heading"><div><span>進階調整</span><h3>手動覆寫戰馬與實際六卡</h3></div><p>上方五步流程才是主要入口；這裡只供需要逐卡修改時使用，內容會與主流程同步。</p></div>
+            <section class="strategy-controls" aria-label="賽道策略條件">
+              <label>與主流程同步的戰馬
+                <select id="battleUma"><option value="">未指定（一般領頭）</option></select>
+              </label>
+              <label>賽制
+                <select id="eventMode">
+                  <option value="loh" selected>英雄聯盟（12 人）</option>
+                  <option value="cm">月賽／冠軍盃（9 人）</option>
+                </select>
+              </label>
+              <label>繼承方案
+                <select id="inheritanceMode"></select>
+              </label>
+              <label class="strategy-toggle"><input id="applyBattleDeckCoverage" type="checkbox" checked /> 扣除已指定戰馬六卡可取得技能</label>
+            </section>
+            <div class="battle-coverage-summary" id="battleCoverageSummary"></div>
+            <section class="battle-deck-editor" aria-labelledby="battleDeckEditorTitle">
+              <div class="section-heading-inline">
+                <div>
+                  <p class="kicker">戰馬配卡</p>
+                  <h3 id="battleDeckEditorTitle">進階手動調整戰馬六卡</h3>
+                </div>
+                <button type="button" class="text-button" id="resetBattleDeck">重設手動卡組</button>
+              </div>
+              <p>主流程已在第 3 步確認完整 5+1 卡組；這裡只供進階手動調整，修改後必須重新確認整副卡組。</p>
+              <div class="battle-deck-slots" id="battleDeckSlots"></div>
+              <div class="battle-deck-validation" id="battleDeckValidation"></div>
+            </section>
+              <div class="subflow-actions"><button type="button" class="primary" data-parent-view-target="strategy">查看重點結果 <span>→</span></button></div>
+            </section>
+
+            <section class="parent-subview" id="parentViewStrategy" role="tabpanel" aria-labelledby="parentTabStrategy" data-parent-view="strategy">
+            <section class="skill-plan" id="skillPlan">
+              <div class="skill-plan-heading">
+                <div><p class="kicker" id="skillPlanKicker">目前賽道動態分析</p><h3 id="raceStrategyTitle">領頭作戰門檻</h3></div>
+                <small id="skillPlanStatus">正在整理技能取得來源…</small>
+              </div>
+              <p class="skill-plan-intro" id="skillPlanIntro">依主要賽事重新計算「距離／場地適性 → 全程足耐 → 有效終盤加速 → 序盤搶位 → 中盤保位 → 高效率補強」。</p>
+              <div class="core-skill-summary" id="coreSkillSummary" aria-label="本場主要技能摘要"></div>
+              <section class="priority-skill-sources" aria-labelledby="prioritySkillSourcesTitle">
+                <div class="priority-skill-sources-heading">
+                  <strong id="prioritySkillSourcesTitle">優先技能與主要取得來源</strong>
+                  <small id="prioritySkillSourcesStatus">已依戰馬本體、六卡與現有家系扣除覆蓋</small>
+                </div>
+                <ol id="prioritySkillSources"></ol>
+              </section>
+              <div class="skill-plan-advice"><strong>現在應該先刷什麼</strong><p id="skillPlanAdvice"></p></div>
+              <section class="stamina-gate" aria-labelledby="staminaGateTitle">
+                <div class="stamina-gate-heading">
+                  <div>
+                    <p class="kicker">足耐結果</p>
+                    <h4 id="staminaGateTitle">這組能力能不能跑完全程？</h4>
+                  </div>
+                  <small>這是全程 HP 近似，不是勝率或對手 AI 模擬。</small>
+                </div>
+                <output class="stamina-estimate" id="staminaEstimate" data-state="unknown">
+                  <span>足耐判定</span>
+                  <strong id="staminaMargin">等待輸入耐力</strong>
+                  <small id="staminaBreakdown">依能力、回復與賽道分段計算。</small>
+                </output>
+                <details class="planner-disclosure stamina-detail-controls">
+                  <summary><span><strong>調整足耐試算</strong><small>能力值、回復、風險情境與分段表</small></span></summary>
+                  <div class="planner-disclosure-body">
+                <div class="stamina-input-grid">
+                  <label>預期速度
+                    <input id="expectedSpeed" type="number" min="0" max="2500" step="10" inputmode="numeric" value="1700" />
+                  </label>
+                  <label>預期耐力
+                    <input id="expectedStamina" type="number" min="0" max="2500" step="10" inputmode="numeric" value="1200" />
+                  </label>
+                  <label>預期力量
+                    <input id="expectedPower" type="number" min="0" max="2500" step="10" inputmode="numeric" value="1200" />
+                  </label>
+                  <label>預期根性
+                    <input id="expectedGuts" type="number" min="0" max="2500" step="10" inputmode="numeric" value="1200" />
+                  </label>
+                  <label>預期賢能
+                    <input id="expectedWisdom" type="number" min="0" max="2500" step="10" inputmode="numeric" value="1200" />
+                  </label>
+                  <label>心情
+                    <select id="simMood">
+                      <option value="2" selected>絕佳</option>
+                      <option value="1">良好</option>
+                      <option value="0">普通</option>
+                      <option value="-1">不佳</option>
+                      <option value="-2">極差</option>
+                    </select>
+                  </label>
+                  <label>距離適性
+                    <select id="simDistanceAptitude">
+                      <option value="S" selected>S</option>
+                      <option value="A">A</option>
+                      <option value="B">B</option>
+                    </select>
+                  </label>
+                  <label>足耐基準
+                    <select id="staminaReference"></select>
+                  </label>
+                  <label>可靠 5.5% 金回數
+                    <select id="reliableGoldRecoveryCount">
+                      <option value="0">0 個</option>
+                      <option value="1">1 個</option>
+                      <option value="2">2 個</option>
+                      <option value="3">3 個</option>
+                      <option value="4">4 個</option>
+                    </select>
+                  </label>
+                  <label>3.5% 繼承回復數
+                    <select id="inheritedRecoveryCount">
+                      <option value="0">0 個</option>
+                      <option value="1">1 個</option>
+                      <option value="2">2 個</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="stamina-options">
+                  <label><input id="hasKyotoGreen" type="checkbox" /> <span id="trackGreenLabel">目前賽場○（耐力＋40）</span></label>
+                  <label><input id="hasBasisGreen" type="checkbox" /> <span id="basisGreenLabel">根幹／非根幹距離○（耐力＋40）</span></label>
+                </div>
+                <details class="simulation-risk-options">
+                  <summary>風險情境與額外消耗</summary>
+                  <div class="stamina-input-grid">
+                    <label>焦躁秒數<input id="simKakariSeconds" type="number" min="0" max="40" step="1" value="0" /></label>
+                    <label>搶位競爭（Spot Struggle）秒數<input id="simSpotSeconds" type="number" min="0" max="40" step="1" value="0" /></label>
+                    <label>下坡模式占比（%）<input id="simDownhillPercent" type="number" min="0" max="100" step="1" value="0" /></label>
+                    <label>耐力削減（% 最大 HP）<input id="simDebuffPercent" type="number" min="0" max="30" step="0.5" value="0" /></label>
+                    <label>平均速度技增益（m/s）<input id="simSpeedBonus" type="number" min="0" max="3" step="0.05" value="0" /></label>
+                  </div>
+                </details>
+                <p class="guts-warning" id="gutsWarning"></p>
+                <div class="stamina-simulation-results">
+                  <div class="scenario-cards" id="staminaScenarioCards"></div>
+                  <div class="table-scroll"><table class="stamina-stage-table">
+                    <thead><tr><th>階段</th><th>距離</th><th>估計速度</th><th>耗時</th><th>HP 消耗</th><th>回復</th><th>剩餘 HP</th></tr></thead>
+                    <tbody id="staminaStageRows"></tbody>
+                  </table></div>
+                  <small id="staminaModelNote"></small>
+                </div>
+                  </div>
+                </details>
+              </section>
+              <section class="factor-strategy" aria-labelledby="factorStrategyTitle">
+                <div class="factor-strategy-heading">
+                  <div><p class="kicker">因子缺口</p><h4 id="factorStrategyTitle">種馬真正要刷的因子</h4></div>
+                  <small>因子必要度＝賽道價值 × 戰馬未覆蓋 × 取得難度 × 發動穩定度</small>
+                </div>
+                <section class="factor-decision-workbench" id="factorDecisionWorkbench" aria-labelledby="factorDecisionTitle" data-status="UNVERIFIED" data-probability-status="NOT_COMPUTED">
+                  <header class="factor-decision-heading">
+                    <div><p class="kicker">可妥協決策</p><h5 id="factorDecisionTitle">血統價值與育成可行性分開看</h5></div>
+                    <span id="factorDecisionEvidenceBadge">資料待確認</span>
+                  </header>
+                  <div class="factor-decision-controls">
+                    <label>目標模板
+                      <select id="factorTargetTemplate" aria-describedby="factorDecisionDisclaimer"></select>
+                    </label>
+                    <label>取捨模式
+                      <select id="factorRiskProfile" aria-describedby="factorDecisionDisclaimer"></select>
+                    </label>
+                    <label>近似方案容忍度
+                      <span class="factor-budget-input"><input id="factorTradeoffBudgetPercent" type="number" min="0" max="30" step="1" inputmode="numeric" />%</span>
+                    </label>
+                  </div>
+                  <output class="factor-decision-status" id="factorDecisionStatus" aria-live="polite"></output>
+                  <div class="factor-decision-layers" aria-label="因子決策三層摘要">
+                    <article data-layer="lineage"><span>血統價值</span><strong id="factorLineageLayer">等待候選</strong><small>固有、因子、相性與共同 GⅠ</small></article>
+                    <article data-layer="execution"><span>育成可行性</span><strong id="factorExecutionLayer">等待預期能力</strong><small>屬性缺口、必跑賽程與卡組供給</small></article>
+                    <article data-layer="evidence"><span>資料可信度</span><strong id="factorEvidenceLayer">尚未評估</strong><small>社群參考不會升格成官方機率</small></article>
+                  </div>
+                  <details class="factor-target-editor">
+                    <summary><span><strong>調整五維 minimum／target／surplus</strong><small>預估值直接使用上方足耐試算；minimum 留白就不作硬門</small></span></summary>
+                    <div class="factor-target-table" id="factorTargetRows"></div>
+                  </details>
+                  <div class="factor-decision-insights">
+                    <section aria-labelledby="factorBlueMarginalTitle"><h6 id="factorBlueMarginalTitle">藍因子邊際價值</h6><div id="factorBlueMarginal"></div></section>
+                    <section aria-labelledby="factorGoalScheduleTitle"><h6 id="factorGoalScheduleTitle">角色必跑賽程</h6><div id="factorGoalSchedule"></div></section>
+                    <section aria-labelledby="factorNearTieTitle"><h6 id="factorNearTieTitle">近似候選</h6><div id="factorNearTie"></div></section>
+                  </div>
+                  <p class="factor-decision-disclaimer" id="factorDecisionDisclaimer">P0 只做分段效用與敏感度區間；不計勝率、因子掉落率或 Monte Carlo 信賴區間。</p>
+                </section>
+                <div class="factor-foundation" id="factorFoundation"></div>
+                <div class="factor-categories" id="factorCategoryList"></div>
+              </section>
+              <details class="race-skill-details" id="battleSkillDetails">
+                <summary class="race-skill-heading">
+                  <span><span class="kicker">進階資料</span><strong>戰馬技能邏輯與取得來源</strong></span>
+                  <small>需要查「技能是什麼、從哪裡拿」時再展開；種馬配卡不直接使用整張表。</small>
+                </summary>
+                <div class="skill-categories" id="skillCategoryList"></div>
+              </details>
+              <details class="research-sources">
+                <summary><strong id="researchSourceTitle">資料與攻略來源</strong><span>查看來源</span></summary>
+                <div id="researchSources"></div>
+              </details>
+            </section>
+              <div class="subflow-actions split"><button type="button" class="ghost" data-parent-view-target="battle">調整戰馬六卡</button><button type="button" class="primary" data-parent-view-target="parents">選擇親代 <span>→</span></button></div>
+            </section>
+
+            <section class="parent-subview" id="parentViewParents" role="tabpanel" aria-labelledby="parentTabParents" data-parent-view="parents" hidden>
+              <div class="subview-heading"><div><span>推薦方向</span><h3>先決定要繼承的角色固有</h3></div><p>這裡選的是推薦角色與固有方向，不是你已養好的現有種馬；祖代技能只視為抽選方向。</p></div>
+            <div class="parent-columns"><div><h3>主固有方向 <small>育成開始時由實際親代確定取得</small></h3><div class="parent-list" id="mainParents"></div></div><div><h3>副固有方向 <small>依賽制補中盤、回復或副加速</small></h3><div class="parent-list" id="subParents"></div></div></div>
+            <section class="ancestor-plan"><div><p class="kicker">祖代方向</p><h3>祖代補充方向</h3></div><div id="ancestorPlan"></div></section>
+            <div class="recommendation" id="parentAdvice"></div>
+              <div class="subflow-actions split"><button type="button" class="ghost" data-parent-view-target="strategy">回到重點結果</button><button type="button" class="primary" data-parent-view-target="library">使用現有種馬組家系 <span>→</span></button></div>
+            </section>
+
+            <section class="parent-subview" id="parentViewLibrary" role="tabpanel" aria-labelledby="parentTabLibrary" data-parent-view="library" hidden>
+              <div class="subview-heading"><div><span>選填工具</span><h3>現有種馬與完整家系</h3></div><p>沒有建檔也能使用前面的推薦；有現成種馬時，這裡會進一步扣除已覆蓋因子。</p></div>
+            <section class="breeder-registry" aria-labelledby="breederRegistryTitle">
+              <div class="section-heading-inline">
+                <div><p class="kicker">我的種馬</p><h3 id="breederRegistryTitle">自有資產與下一代打造路線</h3></div>
+                <span id="breederRegistryStatus">讀取中</span>
+              </div>
+              <div class="breeder-registry-summary" id="breederRegistrySummary"></div>
+              <section class="breeder-registry-group" aria-labelledby="breederRegistryOwnedTitle">
+                <div class="breeder-registry-group-heading">
+                  <h4 id="breederRegistryOwnedTitle">可用自有種馬</h4>
+                  <small>S1／M1 等是你的規劃編號，不是借馬 ID</small>
+                </div>
+                <div class="breeder-registry-owned-list" id="breederRegistryOwned"></div>
+              </section>
+              <details class="breeder-registry-plan" open>
+                <summary><span><strong>準備自己養出的下一代</strong><small>未完成前不計入可用資產</small></span></summary>
+                <div class="breeder-registry-plan-list" id="breederRegistryPlanned"></div>
+              </details>
+              <details class="breeder-registry-history">
+                <summary><span><strong>外部借馬施工來源（不算我的種馬）</strong><small>只在需要施工時展開；使用前仍要回遊戲重查</small></span></summary>
+                <div class="breeder-registry-history-list" id="breederRegistryHistorical"></div>
+              </details>
+              <p class="breeder-registry-boundary">上方清單只收你已確認持有的種馬；K1／H1 明列為待自養。只有下方本機資料庫的 record ID 是可自動綁進族譜的 USER_RECORDED；外借 ID 永遠不算你的資產。</p>
+            </section>
+            <section class="breeder-database" aria-labelledby="breederDatabaseTitle">
+              <div class="section-heading-inline">
+                <div><p class="kicker">本機資料庫</p><h3 id="breederDatabaseTitle">現有種馬資料庫</h3></div>
+                <button type="button" class="text-button" id="newBreeder">＋ 新增種馬</button>
+              </div>
+              <p>資料只保存在這台裝置；請定期使用頁首的「匯出備份」。星數、白因子、兩名親代與共同 G1 都會納入家系計算。</p>
+              <div class="breeder-list" id="breederList"></div>
+              <form class="breeder-form" id="breederForm" hidden>
+                <input id="breederId" type="hidden" />
+                <div class="form-grid">
+                  <label>種馬名稱<input id="breederName" type="text" required placeholder="例如：長距離祖代 A" /></label>
+                  <label>育成衣裝<select id="breederOutfit" required></select></label>
+                  <label>評價分<input id="breederRating" type="number" min="0" step="1" value="0" /></label>
+                  <label>固有因子星數<select id="breederGreenStars"><option value="1">★1</option><option value="2">★2</option><option value="3" selected>★3</option></select></label>
+                  <label>藍因子<select id="breederBlueType"><option>速度</option><option>耐力</option><option>力量</option><option>根性</option><option>賢能</option></select></label>
+                  <label>藍星<select id="breederBlueStars"><option>1</option><option>2</option><option selected>3</option></select></label>
+                  <label>紅因子<select id="breederRedType"><option>草地</option><option>泥地</option><option>短距離</option><option>一哩</option><option>中距離</option><option selected>長距離</option><option>領頭</option></select></label>
+                  <label>紅星<select id="breederRedStars"><option>1</option><option>2</option><option selected>3</option></select></label>
+                  <label>親代 A<select id="breederParentA"></select></label>
+                  <label>親代 B<select id="breederParentB"></select></label>
+                </div>
+                <div class="factor-entry-row">
+                  <label>新增白因子<select id="breederWhiteSkill"></select></label>
+                  <label>星數<select id="breederWhiteStars"><option>1</option><option>2</option><option selected>3</option></select></label>
+                  <button type="button" class="text-button" id="addWhiteFactor">加入白因子</button>
+                </div>
+                <div class="chip-editor" id="breederWhiteFactors"></div>
+                <div class="factor-entry-row">
+                  <label>新增共同 G1<select id="breederG1Race"></select></label>
+                  <button type="button" class="text-button" id="addG1Win">加入勝場</button>
+                </div>
+                <div class="chip-editor" id="breederG1Wins"></div>
+                <label>備註<textarea id="breederNotes" rows="3" placeholder="可記錄劇本、用途或尚缺的因子"></textarea></label>
+                <div class="form-actions">
+                  <button type="button" class="ghost" id="cancelBreeder">取消</button>
+                  <button type="submit" class="primary">儲存種馬</button>
+                </div>
+              </form>
+            </section>
+            <section class="family-planner" aria-labelledby="familyPlannerTitle">
+              <div class="section-heading-inline">
+                <div><p class="kicker">家系相性</p><h3 id="familyPlannerTitle">兩親代＋四祖代家系相性近似</h3></div>
+              </div>
+              <div id="breederRecommendations" class="breeder-recommendations"></div>
+              <div class="family-controls">
+                <label>育成目標<select id="familyTargetUma"></select></label>
+                <label>實際種馬 A<select id="familyParentA"></select></label>
+                <label>實際種馬 B<select id="familyParentB"></select></label>
+              </div>
+              <div id="familyTree" class="family-tree"></div>
+              <div id="familyAffinityResult" class="family-affinity-result"></div>
+            </section>
+            <details class="compatibility-lab secondary-disclosure">
+              <summary><span><strong>進階：單一角色基礎相性查詢</strong><small id="affinityStatus">載入相性資料中…</small></span></summary>
+              <div class="compatibility-body">
+                <div class="affinity-controls"><label>育成目標<select id="targetUma"></select></label><label>候選親代<select id="candidateUma"></select></label></div>
+                <div class="affinity-output"><div><span>雙方基礎相性值</span><strong id="affinityValue">--</strong><small id="affinityNote">請選擇角色</small></div><div class="top-matches"><span>與目標相性較高的候選</span><ol id="topMatches"></ol></div></div>
+                <p class="affinity-footnote">此處保留快速兩兩查詢；上方家系近似會合併兩親代、四祖代的七組雙角色相性，以及五組共同 G1 加成。</p>
+              </div>
+            </details>
+            </section>
+              </div>
+            </details>
+            <div class="panel-footer"><button class="ghost" data-prev="goal">← 回到賽事</button><span>完成上方五步後即可查看種馬路線。</span></div>
+          </section>
+
+          <section class="panel" id="deck">
+            <div class="panel-heading"><div><p class="kicker">步驟 3</p><h2 tabindex="-1">現在先養哪一隻</h2></div><p>先照最上方的一輪行動；完整家系與模型需要時再展開。</p></div>
+            <section class="breeder-quick-start" id="breederQuickStart" data-status="LOADING" aria-live="polite">
+              <div id="breederQuickContent">
+                <span class="breeder-quick-eyebrow">正在整理下一輪</span>
+                <h3>把戰馬、六卡與家系接起來</h3>
+                <p>完成計算後，這裡只會留下現在要養的馬、前置來源、因子目標與 GⅠ 底座。</p>
+              </div>
+            </section>
+            <details class="breeder-priority-details">
+              <summary><span><strong>為什麼先做這些因子</strong><small>查看加速、綠技與面板的優先順序</small></span></summary>
+              <section class="breeder-route" aria-label="種馬育成優先路線">
+              <article class="breeder-route-step breeder-route-step--acceleration">
+                <span class="route-rank">優先 1</span>
+                <div><h3>有效加速</h3><p>先確保選定的加速能由白因子、親代固有或育成卡取得。</p></div>
+                <div class="route-target-list" id="routeAccelerationTargets"></div>
+              </article>
+              <article class="breeder-route-step breeder-route-step--green">
+                <span class="route-rank">優先 2</span>
+                <div><h3>三種固定綠技</h3><p>湊滿三個不同技能家族；○與◎只算同一種。</p></div>
+                <div class="route-target-list" id="routeGreenTargets"></div>
+              </article>
+              <article class="breeder-route-step breeder-route-step--panel">
+                <span class="route-rank">優先 3</span>
+                <div><h3>面板與育成穩定度</h3><p>前兩層完成後，再用卡型與高等卡確保能把技能拿完。</p></div>
+                <div class="route-target-list" id="routePanelTargets"></div>
+              </article>
+              </section>
+            </details>
+            <details class="lineage-workbench-details" id="lineageWorkbenchDetails">
+              <summary><span><strong>查看完整家系與每一輪做法</strong><small>七格、賽程、借卡與畢業條件</small></span></summary>
+              <section class="reverse-lineage-planner" id="factorRoute" aria-labelledby="reverseLineageTitle">
+              <div class="reverse-lineage-heading">
+                <div>
+                  <p class="kicker">由終點往回推</p>
+                  <h3 id="reverseLineageTitle">兩親代、四祖代與最先要養的素材</h3>
+                  <p>最終只計兩親代＋四祖代；更早世代是為了把因子送進這六個位置的施工順序。</p>
+                </div>
+                <div class="lineage-assumption-controls">
+                  <label>育成方式
+                    <select id="breedingAutomationMode">
+                      <option value="autonomous">自主育成優先</option>
+                      <option value="omakase">自動育成優先</option>
+                    </select>
+                  </label>
+                  <label class="strategy-toggle"><input id="factorSpecificationEnabled" type="checkbox" checked /> 使用自選因子</label>
+                </div>
+              </div>
+              <section class="manual-lineage-workbench" id="manualLineageWorkbench" aria-labelledby="manualLineageTitle" data-status="UNVERIFIED" data-probability-status="NOT_COMPUTED">
+                <header class="manual-lineage-heading">
+                  <div>
+                    <p class="kicker">手動組譜＋自分析</p>
+                    <h4 id="manualLineageTitle">七格家系先手動排，再逐格檢查賽程</h4>
+                    <p>點卡片換衣裝、點紅因子設定 1–3★；賽程分析只標硬衝突、可妥協成本與資料缺口，不替你假裝算成功率。</p>
+                  </div>
+                  <span id="manualLineageEvidenceBadge">本地角色資料＋社群目標賽</span>
+                </header>
+                <div class="manual-lineage-toolbar">
+                  <label class="strategy-toggle"><input id="manualLineageIncludeGoals" type="checkbox" checked /> 納入角色育成目標賽</label>
+                  <div class="manual-lineage-toolbar-actions">
+                    <button type="button" class="text-button" id="manualLineageUseRecommended">套用目前推薦</button>
+                    <button type="button" class="text-button" id="manualLineageUseBattleTarget">同步目前戰馬</button>
+                    <button type="button" class="text-button danger-button" id="manualLineageReset">重設七格</button>
+                  </div>
+                </div>
+                <div class="manual-lineage-red-summary" id="manualLineageRedSummary" aria-live="polite"></div>
+                <div class="manual-lineage-layout">
+                  <div class="manual-lineage-tree" id="manualLineageTree" aria-label="本命、兩親代與四祖代手動族譜"></div>
+                  <aside class="lineage-schedule-analyzer" id="lineageScheduleAnalyzer" aria-labelledby="lineageScheduleAnalyzerTitle">
+                    <header>
+                      <div><p class="kicker">賽程自分析</p><h5 id="lineageScheduleAnalyzerTitle">先選一格查看</h5></div>
+                      <span id="lineageScheduleStatusBadge">等待角色</span>
+                    </header>
+                    <div id="lineageScheduleSummary" class="lineage-schedule-summary" aria-live="polite"></div>
+                    <form id="lineageOptionalRaceForm" class="lineage-optional-race-form">
+                      <label>回合<input id="lineageOptionalRaceTurn" type="number" min="1" max="99" step="1" inputmode="numeric" placeholder="例如 32" /></label>
+                      <label>可選 GⅠ<select id="lineageOptionalRaceCatalog"></select></label>
+                      <button type="submit" class="text-button">加入加賽</button>
+                    </form>
+                    <div id="lineageScheduleTimeline" class="lineage-schedule-timeline"></div>
+                    <div id="lineageScheduleWindows" class="lineage-schedule-windows"></div>
+                    <div id="lineageScheduleDecision" class="lineage-schedule-decision"></div>
+                    <p class="lineage-schedule-evidence" id="lineageScheduleEvidence">回合由社群目標賽或你的手動輸入而來；本介面不推測實際出賽日曆、勝率或因子掉落率。</p>
+                  </aside>
+                </div>
+              </section>
+              <section class="lineage-process" aria-labelledby="lineageProcessTitle">
+                <header>
+                  <div><p class="kicker">施工原則</p><h4 id="lineageProcessTitle">不追求每一格完美，只守住會讓路線失效的硬門</h4></div>
+                  <span>機率均衡</span>
+                </header>
+                <ol class="lineage-process-guide">
+                  <li><span>01</span><div><strong>鎖定核心價值</strong><small>先確認有效加速、必要綠技與本次指定因子。</small></div></li>
+                  <li><span>02</span><div><strong>挑選加分項</strong><small>相性、共同 GⅠ與賽程用來提高機率，不必同時滿分。</small></div></li>
+                  <li><span>03</span><div><strong>按世代施工</strong><small>每代分成開始前、育成中、育成後三個檢查點。</small></div></li>
+                  <li><span>04</span><div><strong>用實績交棒</strong><small>綁定本次紀錄；硬門通過即可接受推薦缺口。</small></div></li>
+                </ol>
+                <div class="lineage-workflow-dashboard" id="lineageWorkflowDashboard" aria-live="polite"></div>
+              </section>
+              <div class="lineage-plan-summary" id="lineagePlanSummary"></div>
+              <div class="lineage-build-order">
+                <div class="section-heading-inline">
+                  <div><p class="kicker">實際施工</p><h4>應該從誰開始養</h4></div>
+                  <div class="lineage-view-options">
+                    <div class="lineage-view-controls" role="group" aria-label="施工步驟顯示範圍">
+                      <button type="button" data-lineage-view-mode="next" aria-pressed="true">只看下一步</button>
+                      <button type="button" data-lineage-view-mode="issues" aria-pressed="false">只看缺口</button>
+                      <button type="button" data-lineage-view-mode="all" aria-pressed="false">全部步驟</button>
+                    </div>
+                    <small id="lineageStepFilterStatus">按步驟編號施工；同一前置素材可跨槽共用。</small>
+                  </div>
+                </div>
+                <div class="lineage-build-steps" id="lineageBuildSteps"></div>
+              </div>
+              <section class="lineage-tree-review" aria-labelledby="lineageTreeReviewTitle">
+                <div class="section-heading-inline">
+                  <div><p class="kicker">查閱家系</p><h4 id="lineageTreeReviewTitle">完整兩親代、四祖代與前置素材</h4></div>
+                  <small>施工以「唯一下一步」為準；家系圖用來理解支系與供應關係。</small>
+                </div>
+                <div class="reverse-lineage-tree" id="reverseLineageTree"></div>
+              </section>
+              <aside class="scenario-recommendation" id="factorScenarioRecommendation"></aside>
+              <details class="lineage-model-notes">
+                <summary>這份家系推薦算了什麼？</summary>
+                <div id="lineageModelNotes"></div>
+              </details>
+              </section>
+            </details>
+            <details class="route-deck-details" id="routeDeckDetails">
+              <summary><span><strong>進階：查看種馬育成六卡總表</strong><small>每一輪仍以上方「現在先養」的配卡為準</small></span></summary>
+              <div class="route-deck-details-body">
+                <div class="route-deck-heading"><div><p class="kicker">種馬育成配卡</p><h3>依上述路線反推 5 張自有卡＋1 張借卡</h3></div><small>此處是養種馬的卡組，不是戰馬出賽六卡。</small></div>
+                <div class="deck-result-summary" aria-label="配卡結果摘要">
+              <article><span>規則</span><strong id="deckSummaryValidity">計算中</strong></article>
+              <article><span>卡位</span><strong id="deckSummaryOwnership">5 自有＋1 借用</strong></article>
+              <article><span>速度卡</span><strong id="deckSummarySpeed">至少 1 張</strong></article>
+              <article><span>缺口覆蓋</span><strong id="deckSummaryCoverage">--</strong></article>
+                </div>
+                <div class="deck-layout"><div class="deck-cards" id="deckCards"></div><aside class="training-note"><p class="kicker">育成重點</p><h3 id="trainingTitle"></h3><ul id="trainingNotes"></ul><div class="score-box"><span>可配卡因子覆蓋率</span><strong id="planScore">--</strong><small>只計可由一般支援卡取得、且未被戰馬本體、已指定六卡或現有家系充分覆蓋的白因子</small></div></aside></div>
+                <details class="route-checklist"><summary>出發前檢查</summary><div class="checklist"><label id="deckRuleCheck"><input type="checkbox" disabled /> 配卡規則檢查中</label><label><input id="factorReadyCheck" type="checkbox" /> 種馬已各有 3 個以上可繼承因子</label><label><input id="skillPointCheck" type="checkbox" /> 保留足夠技能點取得關鍵技能</label></div></details>
+              </div>
+            </details>
+            <div class="panel-footer"><button class="ghost" data-prev="parents">← 回到種馬</button><button class="primary" id="reset">建立新的計畫 <span>↻</span></button></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <section class="kua-workspace" id="kuaFrontendWorkspace" hidden aria-labelledby="kuaFrontendTitle">
+      <header class="kua-workspace-header">
+        <div>
+          <p class="eyebrow">快速回合助手</p>
+          <h1 id="kuaFrontendTitle" tabindex="-1">Kua 回合助手</h1>
+          <p class="kua-workspace-intro">用目前回合的快照整理下一步；先看建議，再按需要補資料。</p>
+          <div class="kua-badges" aria-label="Kua 使用邊界">
+            <span>未連接遊戲</span>
+            <span>相對評分，不是勝率</span>
+          </div>
+        </div>
+        <button type="button" class="ghost" data-tool-home>返回工具選單</button>
+      </header>
+
+      <div class="kua-frontend-lab" id="kuaFrontendLab" data-status="UNVERIFIED" data-probability-status="NOT_COMPUTED">
+        <section class="kua-frontend-section" aria-labelledby="kuaFrontendStateTitle">
+          <header class="kua-frontend-section-heading">
+            <div><p class="kicker">目前狀態</p><h2 id="kuaFrontendStateTitle">這一回合的基本資料</h2></div>
+            <span class="kua-frontend-summary-status" id="kuaFrontendSummaryStatus">手動快照・未連線</span>
+          </header>
+          <p class="kua-frontend-state-summary" id="kuaFrontendStateSummary" aria-live="polite">回合 未填・體力 未填・幹勁 未填・速度 未填・耐力 未填・力量 未填・根性 未填・智力 未填・技能點 未填</p>
+          <details class="kua-frontend-state-editor" id="kuaFrontendStateEditor">
+            <summary>修改這一回合資料</summary>
+            <div class="kua-frontend-input-grid">
+              <label>回合<input id="kuaFrontendTurn" type="number" min="0" step="1" inputmode="numeric" /></label>
+              <label>體力<input id="kuaFrontendVital" type="number" step="1" inputmode="numeric" /></label>
+              <label>幹勁<input id="kuaFrontendMotivation" type="number" step="1" inputmode="numeric" /></label>
+            </div>
+            <fieldset class="kua-frontend-stats-fieldset">
+              <legend>目前能力值</legend>
+              <div class="kua-frontend-stats-grid">
+                <label>速度<input id="kuaStatSpeed" data-kua-stat-axis="speed" type="number" min="0" step="1" inputmode="numeric" /></label>
+                <label>耐力<input id="kuaStatStamina" data-kua-stat-axis="stamina" type="number" min="0" step="1" inputmode="numeric" /></label>
+                <label>力量<input id="kuaStatPower" data-kua-stat-axis="power" type="number" min="0" step="1" inputmode="numeric" /></label>
+                <label>根性<input id="kuaStatGuts" data-kua-stat-axis="guts" type="number" min="0" step="1" inputmode="numeric" /></label>
+                <label>智力<input id="kuaStatWisdom" data-kua-stat-axis="wisdom" type="number" min="0" step="1" inputmode="numeric" /></label>
+                <label>技能點<input id="kuaStatSkillPt" data-kua-stat-axis="skillPt" type="number" min="0" step="1" inputmode="numeric" /></label>
+              </div>
+            </fieldset>
+          </details>
+        </section>
+
+        <section class="kua-frontend-section kua-frontend-ranking" aria-labelledby="kuaFrontendRankingTitle">
+          <header class="kua-frontend-section-heading">
+            <div><p class="kicker">建議行動</p><h2 id="kuaFrontendRankingTitle">先看首選，再決定要做什麼</h2></div>
+            <small>完整排名與拆解預設收合；只比較這一回合，不是勝率</small>
+          </header>
+          <output class="kua-frontend-status" id="kuaFrontendStatus" aria-live="polite"></output>
+          <div id="kuaFrontendRankedCommands"></div>
+        </section>
+
+        <details class="kua-frontend-advanced" id="kuaFrontendAdvanced">
+          <summary>進階輸入／模型說明</summary>
+          <div class="kua-frontend-advanced-body">
+            <section class="kua-frontend-json-tools" aria-labelledby="kuaFrontendJsonTitle">
+              <div class="kua-frontend-section-heading"><div><h3 id="kuaFrontendJsonTitle">貼上或匯出 JSON</h3><small>接受 NORMALIZED_TURN_STATE schema v1。</small></div></div>
+              <textarea id="kuaFrontendJsonInput" rows="8" spellcheck="false" aria-label="NORMALIZED_TURN_STATE JSON" placeholder="貼上 NORMALIZED_TURN_STATE schema v1 JSON"></textarea>
+              <div class="kua-frontend-actions">
+                <button type="button" class="ghost" id="kuaFrontendLoadSample">載入範例</button>
+                <button type="button" class="ghost" id="kuaFrontendApplyJson">套用 JSON</button>
+                <button type="button" class="primary" id="kuaFrontendExportJson">匯出目前快照</button>
+              </div>
+            </section>
+            <section class="kua-frontend-model-notes" aria-labelledby="kuaFrontendModelTitle">
+              <h3 id="kuaFrontendModelTitle">資料與模型界線</h3>
+              <dl class="kua-frontend-evidence-list">
+                <div><dt>連線</dt><dd id="kuaFrontendConnectionStatus">NOT_LIVE_CONNECTED</dd></div>
+                <div><dt>引擎</dt><dd id="kuaFrontendEngineStatus">ORIGINAL_KUA_NOT_INCLUDED</dd></div>
+                <div><dt>機率</dt><dd id="kuaFrontendProbabilityStatus">NOT_COMPUTED／NOT_PROBABILITY</dd></div>
+                <div><dt>資料來源</dt><dd id="kuaFrontendSourceStatus">MANUAL_SNAPSHOT</dd></div>
+              </dl>
+              <p>這是 clean-room 的快照排序；不讀取遊戲程序、封包、代理或憑證。若要由外部送入資料，只接受 <code>window.PRETTY_DERBY_KUA_FRONTEND.ingestSnapshot(snapshot)</code> 或 <code>prettyderby:kua-snapshot</code>。</p>
+            </section>
+          </div>
+        </details>
+      </div>
+    </section>
+    <dialog class="support-card-picker-dialog" id="supportCardPickerDialog" aria-labelledby="supportCardPickerTitle">
+      <div class="support-card-picker-shell">
+        <header>
+          <div><p class="kicker">配卡選擇</p><h2 id="supportCardPickerTitle">選擇支援卡</h2><p id="supportCardPickerSubtitle">用屬性與名稱快速找到卡片。</p></div>
+          <button type="button" class="ghost" id="supportCardPickerClose" aria-label="關閉支援卡選擇器">關閉</button>
+        </header>
+        <label class="support-card-picker-search"><span>搜尋角色、卡名或編號</span><input id="supportCardPickerSearch" type="search" autocomplete="off" placeholder="例如：美浦波旁、賢能、30141" /></label>
+        <nav class="support-card-picker-types" id="supportCardPickerTypes" aria-label="依支援卡屬性篩選"></nav>
+        <output class="support-card-picker-status" id="supportCardPickerStatus" aria-live="polite"></output>
+        <div class="support-card-picker-results" id="supportCardPickerResults"></div>
+      </div>
+    </dialog>
+    <dialog class="lineage-horse-dialog" id="lineageHorseDialog" aria-labelledby="lineageHorseDialogTitle">
+      <div class="lineage-horse-dialog-shell">
+        <header>
+          <div><p class="kicker">選擇衣裝</p><h2 id="lineageHorseDialogTitle">替族譜槽位換馬</h2></div>
+          <div class="lineage-horse-dialog-actions">
+            <button type="button" class="ghost" id="lineageHorseClearSlot">清空此格</button>
+            <button type="button" class="ghost" id="lineageHorseDialogClose" aria-label="關閉選擇視窗">關閉</button>
+          </div>
+        </header>
+        <label class="lineage-horse-search">搜尋角色、衣裝或編號<input id="lineageHorseSearch" type="search" autocomplete="off" placeholder="例如：小栗帽、正月、100701" /></label>
+        <output id="lineageHorseSearchStatus" aria-live="polite"></output>
+        <div class="lineage-horse-results" id="lineageHorseResults"></div>
+      </div>
+    </dialog>
+    <template id="raceTemplate">
+      <button type="button" class="race-card">
+        <span class="race-card-header"><span class="race-icon"></span><span class="race-name"></span></span>
+        <span class="race-meta"></span>
+        <span class="race-tags"></span>
+      </button>
+    </template>
+    <!-- Lazy planner order: data/factor-execution-profile.js -> data/goal-race-schedules.js -> factor-execution-core.js -> g1-schedule-core.js -> manual-lineage-red-projection-core.js -> app.js. -->
+    <script src="app-bootstrap.js?v=03b308e95e1d1288" defer></script>
+  </body>
+</html>

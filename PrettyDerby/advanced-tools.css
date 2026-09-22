@@ -1,0 +1,528 @@
+.data-toolbar,
+.race-library,
+.section-heading-inline,
+.battle-deck-validation,
+.factor-entry-row,
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.data-toolbar {
+  margin-top: 16px;
+}
+
+.data-toolbar > span {
+  padding: 7px 11px;
+  border: 1px solid #ded5f4;
+  border-radius: 999px;
+  color: #665d76;
+  background: #fff;
+  font-size: 12px;
+}
+
+.data-toolbar > span[data-state="saved"] {
+  color: #287452;
+  border-color: #a8dfc4;
+  background: #f1fff8;
+}
+
+.data-toolbar > span[data-state="error"] {
+  color: #a13d3d;
+  border-color: #efb7b7;
+  background: #fff5f5;
+}
+
+.file-button {
+  cursor: pointer;
+}
+
+.file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.danger-button {
+  color: #a13d3d;
+}
+
+.race-library,
+.custom-race-builder,
+.battle-deck-editor,
+.breeder-database,
+.family-planner {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #ddd4ef;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.race-card.primary-target {
+  outline: 3px solid rgba(111, 70, 213, 0.22);
+  box-shadow: 0 10px 28px rgba(87, 55, 158, 0.16);
+}
+
+.race-library {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.9fr) minmax(260px, 1.4fr) auto;
+}
+
+.race-library div {
+  display: grid;
+  gap: 4px;
+}
+
+.race-library small,
+.battle-deck-editor > p,
+.breeder-database > p {
+  color: #746b82;
+  line-height: 1.55;
+}
+
+.custom-race-builder summary,
+.simulation-risk-options summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: #5135a5;
+}
+
+.custom-race {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.custom-race label,
+.form-grid label,
+.factor-entry-row label,
+.family-controls label {
+  display: grid;
+  gap: 6px;
+  color: #5e566b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.custom-race button {
+  align-self: end;
+  min-height: 42px;
+}
+
+.section-heading-inline {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-heading-inline h3,
+.section-heading-inline p {
+  margin: 0;
+}
+
+.battle-deck-slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.battle-deck-slot {
+  display: grid;
+  gap: 7px;
+  padding: 13px;
+  border: 1px solid #e2dcef;
+  border-radius: 14px;
+  background: #faf8ff;
+}
+
+.battle-deck-slot header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.battle-deck-slot header strong {
+  color: #392d50;
+}
+
+.battle-deck-slot label {
+  font-size: 12px;
+  color: #6e657b;
+}
+
+.battle-deck-validation {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f7f3ff;
+  color: #5f5472;
+}
+
+.battle-deck-validation[data-state="valid"] {
+  color: #287452;
+  background: #effcf5;
+}
+
+.battle-deck-validation[data-state="invalid"] {
+  color: #a13d3d;
+  background: #fff3f3;
+}
+
+.simulation-risk-options {
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 1px dashed #d8ccec;
+  border-radius: 14px;
+}
+
+.stamina-simulation-results {
+  margin-top: 16px;
+}
+
+.scenario-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.scenario-card {
+  display: grid;
+  gap: 3px;
+  padding: 12px;
+  border: 1px solid #e1daed;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.scenario-card strong {
+  font-size: 20px;
+}
+
+.scenario-card[data-risk="safe"] strong {
+  color: #24724e;
+}
+
+.scenario-card[data-risk="tight"] strong,
+.scenario-card[data-risk="critical"] strong {
+  color: #b46b16;
+}
+
+.scenario-card[data-risk="insufficient"] strong {
+  color: #b33d3d;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.stamina-stage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.stamina-stage-table th,
+.stamina-stage-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid #eee8f6;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.stamina-stage-table th:first-child,
+.stamina-stage-table td:first-child {
+  text-align: left;
+}
+
+.stamina-stage-table td small {
+  display: block;
+  margin-top: 2px;
+  color: #81778c;
+  font-size: 10px;
+}
+
+.breeder-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.breeder-record {
+  padding: 14px;
+  border: 1px solid #e1daed;
+  border-radius: 15px;
+  background: #faf9fd;
+}
+
+.breeder-record header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.breeder-record h4,
+.breeder-record p {
+  margin: 0;
+}
+
+.breeder-record p {
+  margin-top: 8px;
+  color: #6e657b;
+  line-height: 1.5;
+}
+
+.record-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.record-actions button {
+  border: 0;
+  background: transparent;
+  color: #6046ad;
+  cursor: pointer;
+}
+
+.breeder-form {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #f7f4fc;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.factor-entry-row {
+  align-items: end;
+  margin-top: 14px;
+}
+
+.factor-entry-row label:first-child {
+  flex: 1 1 300px;
+}
+
+.chip-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 20px;
+  margin-top: 9px;
+}
+
+.editor-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #eae2fb;
+  color: #503a86;
+  font-size: 12px;
+}
+
+.editor-chip button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.breeder-form textarea {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.form-actions {
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.family-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.breeder-recommendations {
+  margin: 14px 0;
+}
+
+.recommendation-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.breeder-recommendation-list {
+  display: grid;
+  gap: 7px;
+}
+
+.breeder-recommendation-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  gap: 9px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #e3dcef;
+  border-radius: 12px;
+  background: #fbfafd;
+}
+
+.breeder-recommendation-list article > span,
+.breeder-recommendation-list article > b {
+  color: #6543bd;
+}
+
+.breeder-recommendation-list article small {
+  display: block;
+  margin-top: 3px;
+  color: #756d80;
+}
+
+.breeder-recommendation-list button {
+  padding: 6px 8px;
+  border: 1px solid #d9ceef;
+  border-radius: 8px;
+  background: #fff;
+  color: #6046ad;
+  cursor: pointer;
+}
+
+.family-tree {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.family-branch {
+  padding: 13px;
+  border: 1px solid #e3dcef;
+  border-radius: 14px;
+}
+
+.family-branch > strong {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.family-grandparents {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.family-grandparents span {
+  padding: 7px;
+  border-radius: 9px;
+  background: #f4f0fa;
+  font-size: 12px;
+}
+
+.family-affinity-result {
+  margin-top: 14px;
+}
+
+.affinity-total {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 14px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 15px;
+  background: #4f36ad;
+  color: #fff;
+}
+
+.affinity-total strong {
+  grid-row: span 2;
+  font-size: 36px;
+}
+
+.affinity-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.affinity-breakdown article {
+  padding: 10px;
+  border: 1px solid #e3dcef;
+  border-radius: 11px;
+}
+
+.record-white-factors {
+  font-size: 12px;
+}
+
+.family-factor-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f5f1fb;
+}
+
+.family-factor-summary strong {
+  flex-basis: 100%;
+}
+
+.family-factor-summary span,
+.family-factor-summary small {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #fff;
+  color: #5d477d;
+}
+
+@media (max-width: 900px) {
+  .race-library,
+  .battle-deck-slots,
+  .form-grid,
+  .family-controls,
+  .breeder-recommendation-list article {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-race {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scenario-cards,
+  .breeder-list,
+  .family-tree,
+  .affinity-breakdown {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .custom-race,
+  .scenario-cards,
+  .breeder-list,
+  .family-tree,
+  .affinity-breakdown {
+    grid-template-columns: 1fr;
+  }
+}
