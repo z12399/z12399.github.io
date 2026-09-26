@@ -3649,7 +3649,8 @@ function battleHorseConstructionRecommendations(
       candidate: rankingById.get(Number(entry.card.id)) || null
     }))
     .filter(row => row.candidate?.ownership === 'USER_OWNED'
-      && row.candidate?.recommendationTier !== 'UNKNOWN');
+      && row.candidate?.recommendationTier !== 'UNKNOWN')
+    .sort((left, right) => Number(left.candidate.rank) - Number(right.candidate.rank));
 
   if (isCmOaksRunnerTarget(target)) {
     const kitasan = eligible.find(row => Number(row.entry.card.id) === 106802);
@@ -6362,6 +6363,269 @@ function bindBreederQuickStart(quickStart, buildSteps, workflow) {
   });
 }
 
+function lazyLineageName(candidate) {
+  if (!candidate) return '尚無候選';
+  return `${candidate.nameZhTw || candidate.name || '未知角色'} ${candidate.outfitTitleZhTw || candidate.titleZhTw || ''}`.trim();
+}
+
+function lazyLineageCardName(card) {
+  const labels = localizedSupportLabels(card);
+  return `${labels.name}${labels.title ? ` ${labels.title}` : ''}`;
+}
+
+function lazyLineageDeckCardsMarkup(cards) {
+  return `<div class="lazy-lineage__cards">${cards.map((card, index) => {
+    const labels = localizedSupportLabels(card);
+    const type = supportTypeLabels[normalizeSupportType(card.supportType)] || '支援';
+    return `<figure title="${escapeHtml(lazyLineageCardName(card))}"><span class="lazy-lineage__card-type">${escapeHtml(card.rarity || '—')}・${escapeHtml(type.slice(0, 1))}</span>${index === 5 ? '<span class="lazy-lineage__borrow">借用</span>' : ''}${supportCardImageMarkup(card)}<figcaption><b>${escapeHtml(labels.name)}</b><span>${escapeHtml(supportCardOwnershipDetail(card, { borrowed: index === 5 }))}</span></figcaption></figure>`;
+  }).join('')}</div><details class="lazy-lineage__disclosure"><summary>卡片名稱與衣裝</summary><ul>${cards.map((card, index) => `<li>${index === 5 ? '借用・' : ''}${escapeHtml(lazyLineageCardName(card))}</li>`).join('')}</ul></details>`;
+}
+
+function lazyLineageIdentityMarkup(candidate, role = '') {
+  if (!candidate) return '<span class="lazy-lineage__missing">候選不足</span>';
+  const name = candidate.nameZhTw || candidate.name || '未知角色';
+  const outfit = String(candidate.outfitTitleZhTw || candidate.titleZhTw || '').replace(/^\[|\]$/g, '');
+  return `${traineePortraitMarkup(candidate)}<div class="lazy-lineage__identity">${role ? `<span class="lazy-lineage__role">${escapeHtml(role)}</span>` : ''}<strong>${escapeHtml(name)}</strong>${outfit ? `<span class="lazy-lineage__outfit">${escapeHtml(outfit)}</span>` : ''}</div>`;
+}
+
+function lazyLineageFactorNames(step, plan, hard) {
+  const names = [...new Set(lineagePlannedFactorRows(step)
+    .filter(row => row.item?.status !== 'UNSPECIFIED')
+    .filter(row => lineageRequirementIsHard(row.item?.requirementLevel, plan) === hard)
+    .map(row => lineageMissionLabel(row).replace(/因子・/g, ' ')))];
+  return hard ? names : names.slice(0, 2);
+}
+
+function lazyLineageGuideMarkup(plan, workflow) {
+  const race = primaryRace();
+  const raceKey = race ? racePersistKey(race) : '';
+  const raceOptions = allRaces().map(item => `<option value="${escapeHtml(racePersistKey(item))}"${racePersistKey(item) === raceKey ? ' selected' : ''}>${escapeHtml(item.name || item.nameZhTw || '自訂賽事')}</option>`).join('');
+  const owned = ownedRunnerBattleCards();
+  const horseOptions = owned.map(({ card, needsAptitudeWork }) => `<option value="${Number(card.id)}"${Number(card.id) === Number(state.battleUmaOutfitId) ? ' selected' : ''}>${needsAptitudeWork ? '需補適性｜' : ''}${escapeHtml(lazyLineageName(card))}</option>`).join('');
+  const analysis = currentBattleHorseAnalysisState();
+  const ranking = analysis.status === 'ready' ? activeBattleHorseRanking() : null;
+  const construction = analysis.status === 'ready'
+    ? battleHorseConstructionRecommendations(owned, ranking)
+    : null;
+  const selectedHorse = owned.find(({ card }) => Number(card.id) === Number(state.battleUmaOutfitId));
+  const conditional = !construction?.rows?.length
+    ? ranking?.candidates?.find(candidate => candidate.ownership === 'USER_OWNED'
+      && candidate.recommendationTier === 'CONDITIONAL'
+      && owned.some(entry => entry.needsAptitudeWork && Number(entry.card.id) === Number(candidate.outfitId)))
+    : null;
+  const conditionalEntry = conditional
+    ? owned.find(entry => Number(entry.card.id) === Number(conditional.outfitId))
+    : null;
+  const shownRecommendations = construction?.rows?.length
+    ? construction.rows
+    : conditionalEntry ? [{ entry: conditionalEntry, recommendationLabel: '需補適性・暫定候選' }] : [];
+  const recommendations = shownRecommendations.map(({ entry, recommendationLabel }) => {
+    const card = entry.card;
+    return `<button type="button" class="lazy-lineage__recommendation" data-lazy-pick-uma="${Number(card.id)}" aria-label="選用${escapeHtml(lazyLineageName(card))}">${traineePortraitMarkup(card)}<span><b>${escapeHtml(card.nameZhTw || card.name)}</b><small>${escapeHtml(recommendationLabel)}</small></span><span aria-hidden="true">↗</span></button>`;
+  }).join('');
+  const raceStatus = race?.scheduleStatus === 'PROJECTED_FROM_JP_VERSION'
+    ? '・同版本預排，繁中賽期未確認'
+    : '';
+  const analysisLabel = analysis.status === 'running'
+    ? '正在分析持有馬…'
+    : analysis.status === 'ready'
+      ? recommendations ? '這場可先考慮' : '目前沒有可確認首選'
+      : '還沒分析持有馬';
+  const noRecommendation = owned.length && owned.every(item => item.needsAptitudeWork)
+    ? '本地持有馬都需補適性；請從清單選馬，再核對紅因子。'
+    : construction?.note || '目前沒有足夠資料排出首選；可從清單自行選馬。';
+  const setup = `<div class="lazy-lineage__setup">
+      <label class="lazy-lineage__field"><span>目標賽事</span><select id="lazyRaceSelect" aria-label="快速路線賽事">${raceOptions}</select>${raceStatus ? `<small>${escapeHtml(raceStatus.slice(1))}</small>` : ''}</label>
+      <div class="lazy-lineage__field"><div class="lazy-lineage__field-title"><label for="lazyBattleUmaSelect">育成戰馬</label><button type="button" class="lazy-lineage__analyze" data-lazy-analyze-uma${analysis.status === 'running' ? ' disabled' : ''}>${analysis.status === 'running' ? '分析中…' : '幫我選馬'}<span aria-hidden="true">↗</span></button></div><select id="lazyBattleUmaSelect" aria-label="快速路線戰馬"><option value="">從持有馬選擇</option>${horseOptions}</select></div>
+    </div>
+    ${analysis.status === 'ready' ? `<div class="lazy-lineage__recommendations"><span>${analysisLabel}</span>${recommendations}${conditionalEntry ? '<small>需補賽道適性，先核對紅因子。</small>' : ''}${!recommendations ? `<small>${escapeHtml(noRecommendation)}</small>` : ''}</div>` : ''}`;
+  if (!plan?.target) {
+    return `${setup}<div class="lazy-lineage__empty-state"><div class="lazy-lineage__empty-tree" aria-hidden="true"><span>戰馬</span><i></i><div><span>親代 A</span><span>親代 B</span></div><div><b></b><b></b><b></b><b></b></div></div><h3>從一匹馬，排好整個家系</h3><p>選擇戰馬，就能查看親祖代、配卡與育成順序。</p><button type="button" data-lazy-open-stage="uma">管理持有馬 <span aria-hidden="true">→</span></button></div>`;
+  }
+
+  const deckConfirmed = deckPackageSelectionComplete();
+  const parentsConfirmed = deckConfirmed && parentSelectionConfirmedForPackage();
+  const battleDeck = battleDeckValidation();
+  const previewPackage = !deckConfirmed ? peekActiveDeckOptimization()?.packages?.find(item => item.valid) : null;
+  const shownBattleCards = deckConfirmed
+    ? (battleDeck.cards || []).filter(Boolean)
+    : [...(previewPackage?.ownedCards || []), previewPackage?.borrowedCard].filter(Boolean);
+  const battleDeckMarkup = shownBattleCards.length === 6
+    ? lazyLineageDeckCardsMarkup(shownBattleCards)
+    : `<div class="lazy-lineage__card-placeholder" aria-hidden="true">${Array.from({ length: 6 }, (_, index) => `<span>${index === 5 ? '借卡' : '+'}</span>`).join('')}</div><p class="lazy-lineage__note">確認六卡後，系統會依技能缺口重算家系。</p>`;
+  const battleTraining = deckConfirmed ? buildBattleDeckTrainingGuide() : null;
+  const trainingAction = battleTraining?.actions?.find(item => item.title)?.title || '';
+  const parentSteps = new Map((plan.workOrder || []).filter(step => step.stage === 'parent').map(step => [step.id, step]));
+  const ancestorSteps = new Map((plan.workOrder || []).filter(step => step.stage === 'grandparent').map(step => [step.id, step]));
+  const branches = ['A', 'B'].map((branch, index) => {
+    const parent = plan.directParents?.[index];
+    const parentStep = parentSteps.get(`parent:${branch}`);
+    const parentGoal = parentStep ? lazyLineageFactorNames(parentStep, plan, true).join('、') : '';
+    const ancestors = (plan.grandparents || []).filter(item => item?.branch === branch);
+    return `<article class="lazy-lineage__branch" data-state="${parent ? 'ready' : 'blocked'}">
+      <div class="lazy-lineage__parent">${lazyLineageIdentityMarkup(parent, branch === 'A' ? '親代 A' : '親代 B')}</div>
+      ${parentGoal ? `<p>本代必要：${escapeHtml(parentGoal)}</p>` : ''}
+      <div class="lazy-lineage__ancestors">${ancestors.map(ancestor => {
+        const step = ancestorSteps.get(`grandparent:${ancestor.slot}`);
+        const required = step ? lazyLineageFactorNames(step, plan, true) : [];
+        const recommended = step ? lazyLineageFactorNames(step, plan, false) : [];
+        const projected = step?.g1ScheduleProjected?.races || [];
+        const existing = step ? lineageMatchingBreederRecords(step).length : 0;
+        return `<div class="lazy-lineage__ancestor"><div class="lazy-lineage__ancestor-id">${lazyLineageIdentityMarkup(ancestor, lineageSlotLabel(ancestor.slot))}</div>
+          <p class="lazy-lineage__factor${required.length ? ' is-required' : ''}">${required.length ? `必要｜${escapeHtml(required.join('、'))}` : recommended.length ? `建議｜${escapeHtml(recommended.join('、'))}` : '無額外指定因子'}</p>${projected.length || existing ? `<span class="lazy-lineage__race-note">${projected.length ? `GⅠ 預排 ${projected.length} 場` : ''}${existing ? `・${existing} 筆紀錄待核對` : ''}</span>` : ''}</div>`;
+      }).join('') || '<p>祖代候選不足，需到完整施工檢查。</p>'}</div>
+    </article>`;
+  }).join('');
+  const next = workflow?.nextState;
+  const nextStep = next?.step;
+  const nextDeck = next?.deckResult || (nextStep ? lineageStepBreedingDeck(nextStep) : null);
+  const nextDeckCards = (nextDeck?.deck || []).filter(Boolean);
+  const nextDeckValid = nextDeck?.validation?.valid === true && nextDeckCards.length === 6;
+  const nextRequiredFactors = nextStep ? lazyLineageFactorNames(nextStep, plan, true) : [];
+  const nextSuggestedFactors = nextStep ? lazyLineageFactorNames(nextStep, plan, false) : [];
+  const nextProjectedRaces = (nextStep?.g1ScheduleProjected?.races || []).map(item => item.nameZhTw).filter(Boolean);
+  const shortcut = ['A', 'B'].map(branch => {
+    const step = parentSteps.get(`parent:${branch}`);
+    if (!step) return `${branch} 親代候選不足`;
+    const incoming = lineageIncomingFactorRows(step)
+      .filter(row => lineageRequirementIsHard(row.item?.requirementLevel, plan))
+      .map(lineageMissionLabel);
+    const start = step.factorFlow?.continueWhen?.startStatus;
+    return `${branch} ${incoming.length ? [...new Set(incoming)].join('、') : '無額外指定'}${start === 'BLOCKED' ? '（入場阻塞）' : ''}`;
+  });
+  const existingAncestorCount = (plan.workOrder || []).filter(step => step.stage === 'grandparent' && lineageMatchingBreederRecords(step).length).length;
+  const parentRecordCount = ['A', 'B'].map(branch => {
+    const step = parentSteps.get(`parent:${branch}`);
+    return step ? lineageMatchingBreederRecords(step).length : 0;
+  });
+  const oneParentBranch = parentRecordCount[0] && !parentRecordCount[1] ? 'B' : 'A';
+  const otherParentBranch = oneParentBranch === 'A' ? 'B' : 'A';
+  const oneParent = plan.directParents?.[oneParentBranch === 'A' ? 0 : 1];
+  const otherRecordCount = parentRecordCount[otherParentBranch === 'A' ? 0 : 1];
+  const oneParentText = `先試養${oneParentBranch === 'A' ? '主' : '副'}親代 ${lazyLineageName(oneParent)}；另一側先找現成種馬。${otherRecordCount ? `有 ${otherRecordCount} 筆同衣裝紀錄待核對。` : '本地未建檔，需自行核對。'}`;
+  const nextAction = nextStep && !parentsConfirmed
+    ? '先確認戰馬六卡與兩親代，再照重算後的順序育成。'
+    : lineageWorkflowNextAction(workflow);
+  const primaryStage = deckConfirmed && !parentsConfirmed ? 'parents' : 'acceleration';
+  const primaryLabel = deckConfirmed ? parentsConfirmed ? '查看戰馬養法' : '確認兩親代' : '確認戰馬六卡';
+  const targetCard = selectedHorse?.card || plan.target;
+  return `${setup}
+    <div class="lazy-lineage__layout">
+      <div class="lazy-lineage__main">
+        <section class="lazy-lineage__family-panel lazy-lineage__surface" aria-label="兩親代與四祖代">
+          <header class="lazy-lineage__section-title"><h3>家系配置</h3><span class="lazy-lineage__badge">${parentsConfirmed ? '已確認配卡' : '初步方案'}</span></header>
+          <div class="lazy-lineage__target">${lazyLineageIdentityMarkup(targetCard, '育成戰馬')}${selectedHorse?.needsAptitudeWork ? '<span class="lazy-lineage__aptitude">需補適性</span>' : ''}</div>
+          <div class="lazy-lineage__family">${branches}</div>
+          <p class="lazy-lineage__note">${parentsConfirmed ? '依已確認六卡與親代計算。' : '六卡與親代確認後會更新。'}GⅠ 場次為預排，非已勝。</p>
+        </section>
+        <section class="lazy-lineage__battle lazy-lineage__surface">
+          <header class="lazy-lineage__section-title"><div><span class="lazy-lineage__eyebrow">戰馬用</span><h3>出賽配卡</h3></div><button type="button" class="lazy-lineage__text-action" data-lazy-open-stage="acceleration">${deckConfirmed ? '調整配卡' : '選擇六卡'} <span aria-hidden="true">→</span></button></header>
+          <p class="lazy-lineage__note">${deckConfirmed ? '5 張自有＋1 張借用' : shownBattleCards.length === 6 ? '理論預覽・尚未採用' : '依你的持有卡，組出 5 自有＋1 借用。'}</p>
+          ${battleDeckMarkup}${trainingAction ? `<p class="lazy-lineage__training">育成先做：${escapeHtml(trainingAction)}</p>` : ''}
+        </section>
+        ${nextStep ? `<section class="lazy-lineage__breeder lazy-lineage__surface" id="lazyLineageNextBreeder">
+          <header class="lazy-lineage__section-title"><div><span class="lazy-lineage__eyebrow">本輪種馬用</span><h3>這一輪怎麼養</h3></div><button type="button" class="lazy-lineage__text-action" data-lazy-open-next>完整步驟 <span aria-hidden="true">→</span></button></header>
+          <div class="lazy-lineage__breeder-name">${lazyLineageIdentityMarkup(nextStep.candidate, nextStep.label || '本輪種馬')}<span class="lazy-lineage__badge">${nextDeckValid ? parentsConfirmed ? '5＋1 配卡' : '初步配卡' : '配卡待修正'}</span></div>
+          ${nextRequiredFactors.length || nextSuggestedFactors.length ? `<p class="lazy-lineage__breeder-goal">${nextRequiredFactors.length ? `本輪必要｜${escapeHtml(nextRequiredFactors.join('、'))}` : `本輪建議｜${escapeHtml(nextSuggestedFactors.join('、'))}`}</p>` : ''}
+          ${nextDeckValid ? lazyLineageDeckCardsMarkup(nextDeckCards) : '<p class="lazy-lineage__note">請打開完整步驟，核對必要卡。</p>'}
+          <details class="lazy-lineage__disclosure"><summary>因子目標與預排賽程</summary><p>${escapeHtml(lineageStepQuickTakeText(nextStep, plan, nextStep.targets || []))}</p>${nextProjectedRaces.length ? `<p>GⅠ 預排：${escapeHtml(nextProjectedRaces.join('、'))}（非已勝）</p>` : ''}</details>
+        </section>` : ''}
+      </div>
+      <aside class="lazy-lineage__rail" aria-label="接下來怎麼做">
+        <section class="lazy-lineage__answer" data-state="${next?.startStatus === 'BLOCKED' ? 'pending' : 'ready'}">
+          <span class="lazy-lineage__eyebrow">下一步</span><h3>${!parentsConfirmed ? primaryLabel : !nextStep ? '家系已完成' : !next?.deckValid ? '先修正本輪配卡' : next?.startStatus === 'BLOCKED' ? '先補必要條件' : '開始這輪育成'}</h3>
+          <p>${escapeHtml(nextAction)}</p>
+          <button type="button" class="primary" ${parentsConfirmed && nextStep ? 'data-lazy-open-next' : `data-lazy-open-stage="${primaryStage}"`}>${parentsConfirmed && nextStep ? '查看本輪步驟' : primaryLabel}<span aria-hidden="true">→</span></button>
+          ${nextStep ? `<div class="lazy-lineage__next-horse"><span>${parentsConfirmed ? '本輪種馬' : '暫定起點'}</span><div>${lazyLineageIdentityMarkup(nextStep.candidate)}</div><button type="button" class="lazy-lineage__text-action" data-lazy-show-breeder>看本輪配卡 <span aria-hidden="true">↓</span></button></div>` : ''}
+        </section>
+        <section class="lazy-lineage__shortcut lazy-lineage__surface" id="lazyLineageShortcut">
+          <span class="lazy-lineage__eyebrow">省時方案</span><h3>來不及養祖代？</h3><p>${escapeHtml(oneParentText)}</p>
+          <div class="lazy-lineage__shortcut-parent">${lazyLineageIdentityMarkup(oneParent, '先試養這側')}</div>
+          <p class="lazy-lineage__note">現成親代滿足必要條件時，可先省自養祖代。</p>
+          <p class="lazy-lineage__shortcut-requirements">必要條件：${escapeHtml(shortcut.join('／'))}</p>
+          <span class="lazy-lineage__badge is-caution">替代組合尚未驗證</span>
+          <details class="lazy-lineage__disclosure"><summary>取捨與現有紀錄</summary><p>可能減少相性、推薦因子與共同 GⅠ。祖代有 ${existingAncestorCount}／4 格同衣裝紀錄待核對。</p></details>
+        </section>
+      </aside>
+    </div>
+    <div class="lazy-lineage__advanced-label"><span>進階調整</span><small>手動七格與自動路線各自獨立</small></div>`;
+}
+
+function renderLazyLineageGuide(plan = null, workflow = null) {
+  const content = byId('lazyLineageContent');
+  if (!content) return;
+  content.innerHTML = lazyLineageGuideMarkup(plan, workflow);
+}
+
+function initLazyLineageGuide() {
+  const root = byId('lazyLineageGuide');
+  if (!root) return;
+  root.addEventListener('change', event => {
+    if (event.target.id === 'lazyRaceSelect') {
+      const index = allRaces().findIndex(race => racePersistKey(race) === event.target.value);
+      if (!selectSingleRace(index)) return;
+      applyRaceEventMode(primaryRace());
+      renderRaces();
+      updateGoalHint();
+      refreshRaceDependentViews();
+      hydrateRaceDependentViews();
+      renderDeck();
+      scheduleSave();
+      requestAnimationFrame(() => byId('lazyRaceSelect')?.focus({ preventScroll: true }));
+    }
+    if (event.target.id === 'lazyBattleUmaSelect') {
+      const picker = byId('guidedBattleUma');
+      if (!picker) return;
+      picker.value = event.target.value;
+      picker.dispatchEvent(new Event('change', { bubbles: true }));
+      requestAnimationFrame(() => byId('lazyBattleUmaSelect')?.focus({ preventScroll: true }));
+    }
+  });
+  root.addEventListener('click', event => {
+    const recommended = event.target.closest('[data-lazy-pick-uma]');
+    if (recommended) {
+      const picker = byId('guidedBattleUma');
+      if (!picker) return;
+      if (Number(state.battleUmaOutfitId) === Number(recommended.dataset.lazyPickUma)) return;
+      picker.value = recommended.dataset.lazyPickUma;
+      picker.dispatchEvent(new Event('change', { bubbles: true }));
+      return;
+    }
+    const analyze = event.target.closest('[data-lazy-analyze-uma]');
+    if (analyze) {
+      analyze.disabled = true;
+      analyze.textContent = '分析中…';
+      byId('battleHorseAnalysisButton')?.click();
+      return;
+    }
+    const openStage = event.target.closest('[data-lazy-open-stage]');
+    if (openStage) {
+      showPanel('parents');
+      const stage = openStage.dataset.lazyOpenStage;
+      openGuidedStage(stage);
+      if (stage === 'acceleration') requestGuidedDeckStageRender();
+      requestAnimationFrame(() => byId(`guidedStage${stage[0].toUpperCase()}${stage.slice(1)}`)?.scrollIntoView({ behavior: preferredScrollBehavior(), block: 'start' }));
+      return;
+    }
+    if (event.target.closest('[data-lazy-show-breeder]')) {
+      byId('lazyLineageNextBreeder')?.scrollIntoView({ behavior: preferredScrollBehavior(), block: 'start' });
+      return;
+    }
+    if (event.target.closest('[data-lazy-open-next]')) {
+      const details = byId('lineageWorkbenchDetails');
+      if (details) details.open = true;
+      const nextId = byId('factorRoute')?.dataset.nextStepId;
+      const next = [...(byId('lineageBuildSteps')?.querySelectorAll('details[data-lineage-step-id]') || [])]
+        .find(item => item.dataset.lineageStepId === nextId);
+      if (next) next.open = true;
+      requestAnimationFrame(() => (next || details)?.scrollIntoView({ behavior: preferredScrollBehavior(), block: 'start' }));
+    }
+    if (event.target.closest('[data-lazy-open-shortcut]')) {
+      byId('lazyLineageShortcut')?.scrollIntoView({ behavior: preferredScrollBehavior(), block: 'start' });
+    }
+  });
+}
+
 function lineageWorkflowDashboardMarkup(plan, workflow) {
   const total = workflow.states.length;
   const next = workflow.nextState?.step;
@@ -7360,6 +7624,7 @@ function renderReverseLineagePlan() {
   renderManualLineageWorkbench(plan);
   const factorTargets = reverseLineageFactorTargets();
   if (!plan) {
+    renderLazyLineageGuide();
     quickStart.dataset.status = 'NEEDS_INPUT';
     quickContent.innerHTML = lineageQuickStartMarkup(null, null);
     bindBreederQuickStart(quickStart, buildSteps, null);
@@ -7421,6 +7686,7 @@ function renderReverseLineagePlan() {
 
   const orderedSteps = [...plan.workOrder].sort((left, right) => Number(left.order) - Number(right.order));
   const workflow = lineagePlanWorkflowSummary(plan, orderedSteps);
+  renderLazyLineageGuide(plan, workflow);
   const workflowNextId = workflow.focusState?.step?.id || '';
   route.dataset.policyId = plan?.decisionPolicy?.id || 'probabilistic-balanced-v1';
   route.dataset.nextStepId = workflow.nextState?.step?.id || '';
@@ -10111,6 +10377,7 @@ function initStrategyControls() {
       }
       renderBattleHorseChoices();
       renderGoalContractChain();
+      if (state.activePanel === 'deck') renderDeck();
     };
   }
 
@@ -12735,6 +13002,7 @@ function showPanel(id, options = {}) {
   if (id === 'deck' && !manualLineageEntry && !renderGuidedProgress().ready) id = 'parents';
   const hydratedRaceDerivedViews = id === 'parents' && hydrateRaceDependentViews();
   state.activePanel = id;
+  byId('plannerWorkspace')?.classList.toggle('lineage-page', id === 'deck');
   document.querySelectorAll('.panel')
     .forEach(panel => panel.classList.toggle('shown', panel.id === id));
   document.querySelectorAll('.step')
@@ -12762,19 +13030,12 @@ function showPanel(id, options = {}) {
     renderGuidedProgress();
   }
   if (id === 'deck') {
-    if (manualLineageEntry) renderManualLineageWorkbench(buildActiveReverseLineagePlan());
-    else renderDeck();
+    if (manualLineageEntry) hydrateRaceDependentViews();
+    renderDeck();
   }
   window.scrollTo({ top: 0, behavior: preferredScrollBehavior() });
   if (manualLineageEntry) {
-    // Direct entry must reveal the workbench even inside collapsed disclosures.
-    for (let ancestor = byId('manualLineageWorkbench')?.parentElement; ancestor; ancestor = ancestor.parentElement) {
-      if (ancestor.tagName === 'DETAILS') ancestor.open = true;
-    }
-    requestAnimationFrame(() => byId('manualLineageWorkbench')?.scrollIntoView({
-      behavior: preferredScrollBehavior(),
-      block: 'start'
-    }));
+    byId('lineageWorkbenchDetails').open = false;
   }
   if (options.focusHeading) {
     requestAnimationFrame(() => byId(id)?.querySelector('.panel-heading h2')?.focus());
@@ -12786,6 +13047,7 @@ window.addEventListener('prettyderby:planner-entry', event => {
   if (event.detail?.entry !== 'manual-lineage') return;
   showPanel('deck', { manualLineageEntry: true, focusHeading: false });
 });
+byId('backToLazyLineage').onclick = () => showPanel('deck', { manualLineageEntry: true });
 
 document.querySelectorAll('[data-next]')
   .forEach(button => button.onclick = () => showPanel(button.dataset.next, { focusHeading: true }));
@@ -12917,6 +13179,7 @@ initBreederDatabase();
 initStrategyControls();
 initReverseLineageControls();
 initManualLineageWorkbench();
+initLazyLineageGuide();
 initParentSubviewNavigation();
 initGuidedWorkbench();
 bindStaminaEstimator();

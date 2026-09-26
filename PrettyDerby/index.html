@@ -5,49 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>因子育成計畫器｜賽馬娘</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="style.css?v=62693ba312fc3650" />
-    <link rel="stylesheet" href="affinity.css?v=62693ba312fc3650" />
-    <link rel="stylesheet" href="current-race.css?v=62693ba312fc3650" />
-    <link rel="stylesheet" href="skill-plan.css?v=62693ba312fc3650" />
-    <link rel="stylesheet" href="advanced-tools.css?v=62693ba312fc3650" />
-    <link rel="stylesheet" href="usability.css?v=62693ba312fc3650" />
-    <link rel="stylesheet" href="design-system.css?v=62693ba312fc3650" />
+    <link rel="stylesheet" href="style.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="affinity.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="current-race.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="skill-plan.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="advanced-tools.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="usability.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="design-system.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="lazy-lineage.css?v=d4741878fc38963f" />
+    <link rel="stylesheet" href="compatibility.css?v=d4741878fc38963f" />
   </head>
   <body>
     <section class="launch-shell" id="launchShell" aria-labelledby="launchTitle">
       <div class="launch-shell__inner">
-        <div class="launch-brand"><span class="brand-mark" aria-hidden="true">P<span>〃</span></span><div><strong>因子育成計畫器</strong><span>賽馬娘・育成工作台</span></div></div>
+        <div class="launch-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 20V5m0 0c4-4 8 4 12 0v9c-4 4-8-4-12 0"/><path d="M6 9c4-4 8 4 12 0"/></svg></span><div><strong>因子育成計畫器</strong></div></div>
         <div class="launch-copy">
           <h1 id="launchTitle">選擇工具</h1>
-
         </div>
         <div class="launch-options" aria-label="選擇工具">
-          <button type="button" class="launch-card launch-card--planner" id="launchPlanner" data-tool="planner" aria-label="開啟完整育成規劃器">
-
-            <strong>育成規劃</strong>
-            <span class="launch-card__description">選賽事、配卡，規劃種馬。</span>
-
-            <span class="launch-card__action" aria-hidden="true">→</span>
-            <span class="launch-track" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
-          </button>
           <button type="button" class="launch-card launch-card--lineage" id="launchLineage" data-tool="planner" data-planner-entry="manual-lineage">
-
-            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 8v8M7 23v-7h18v7"/><rect x="12" y="2" width="8" height="7" rx="2"/><rect x="3" y="23" width="8" height="7" rx="2"/><rect x="21" y="23" width="8" height="7" rx="2"/></svg></span>
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M5 17v-4h14v4"/><rect x="8.5" y="2" width="7" height="6" rx="2"/><rect x="2" y="17" width="6" height="5" rx="1.5"/><rect x="16" y="17" width="6" height="5" rx="1.5"/></svg></span>
             <strong>族譜與賽程</strong>
-            <span class="launch-card__description">安排七格家系，檢查賽程。</span>
+            <span class="launch-card__description">看親代、祖代與育成順序。</span>
+            <span class="launch-card__action" aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="launch-card launch-card--compatibility" id="launchCompatibility" data-tool="compatibility" aria-label="開啟相性計算">
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M10 8H7a4 4 0 0 0 0 8h3m4-8h3a4 4 0 0 1 0 8h-3M8 12h8"/></svg></span>
+            <strong>相性計算</strong>
+            <span class="launch-card__description">選七個角色，計算基礎相性。</span>
+            <span class="launch-card__action" aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="launch-card launch-card--planner" id="launchPlanner" data-tool="planner" aria-label="開啟完整育成規劃器">
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18M8 15l3 3 5-5"/></svg></span>
+            <strong>育成規劃</strong>
+            <span class="launch-card__description">從賽事開始，逐步設定配卡與種馬。</span>
             <span class="launch-card__action" aria-hidden="true">→</span>
           </button>
           <button type="button" class="launch-card launch-card--kua" id="launchKua" data-tool="kua">
-
-            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M18 2 6 18h9l-1 12 12-17h-9l1-11Z"/></svg></span>
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m14 2-9 12h7l-1 8 9-12h-7l1-8Z"/></svg></span>
             <strong>Kua 回合助手</strong>
-            <span class="launch-card__description">比較當回合的訓練與行動。</span>
+            <span class="launch-card__description">比較目前回合的行動。</span>
             <span class="launch-card__action" aria-hidden="true">→</span>
           </button>
         </div>
         <div class="launch-footer"><span>資料儲存在此瀏覽器 · <a href="SOURCES.html">資料來源</a></span><output class="launch-status" id="launchStatus" aria-live="polite"></output></div>
       </div>
     </section>
+
+    <section class="compat-workspace" id="compatibilityWorkspace" hidden aria-labelledby="compatibilityTitle">
+      <header class="compat-header">
+        <div>
+          <span class="compat-brand">因子育成計畫器</span>
+          <h1 id="compatibilityTitle" tabindex="-1">相性計算</h1>
+        </div>
+        <button type="button" class="ghost" data-tool-home>所有工具</button>
+      </header>
+      <div class="compat-main">
+        <div class="compat-toolbar"><span>先選育成目標，再選親代</span><button type="button" id="compatibilityReset">重設</button></div>
+        <div id="compatibilityTree" aria-label="育成戰馬娘與六位親代"></div>
+        <div id="compatibilityResult" aria-live="polite"></div>
+        <details class="compat-method">
+          <summary>計算方式與資料來源</summary>
+          <p>角色相性使用<a href="https://www.umamusumeaisyou.com/table" target="_blank" rel="noopener noreferrer">雙角色相性表</a>。祖代分數採七組雙角色近似；遊戲內的祖代關係公式尚無法由這份資料精確重建。這裡未計共同 GⅠ，也不計因子繼承率。</p>
+        </details>
+      </div>
+    </section>
+    <dialog class="compat-dialog" id="compatibilityDialog" aria-labelledby="compatibilityDialogTitle">
+      <div class="compat-dialog__inner">
+        <header><h2 id="compatibilityDialogTitle">選擇角色</h2><button type="button" data-compat-close aria-label="關閉角色選擇">關閉</button></header>
+        <input id="compatibilitySearch" type="search" autocomplete="off" aria-label="搜尋角色" placeholder="搜尋角色" />
+        <div id="compatibilityChoices"></div>
+      </div>
+    </dialog>
 
     <main class="app-shell" id="plannerWorkspace" hidden>
       <header class="hero">
@@ -81,7 +110,7 @@
 
         <div class="panels">
           <section class="panel shown" id="goal">
-            <div class="panel-heading"><div><h2 tabindex="-1">選擇賽事</h2></div><p>每次規劃一場。</p></div>
+            <div class="panel-heading"><div><h2 tabindex="-1">選擇賽事</h2></div></div>
             <section class="current-race-profile" id="currentRaceProfile">
               <div class="profile-heading"><div><h3 id="currentRaceTitle">載入中…</h3></div><span id="currentRaceConditions"></span></div>
               <small id="currentRaceStatus"></small>
@@ -94,8 +123,7 @@
               </details>
             </section>
             <div class="race-list-heading">
-              <div><h3>其他賽事</h3></div>
-              <p>官方公告與日服預排已分別標示。</p>
+              <div><h3>選擇目標</h3></div>
             </div>
             <div class="race-grid" id="raceGrid"></div>
             <details class="race-library secondary-disclosure">
@@ -127,7 +155,7 @@
           </section>
 
           <section class="panel" id="parents">
-            <div class="panel-heading"><div><h2 tabindex="-1">戰馬與配卡</h2></div><p>自有 5 張＋借卡 1 張。</p></div>
+            <div class="panel-heading"><div><h2 tabindex="-1">戰馬與配卡</h2></div><button type="button" class="text-button" id="backToLazyLineage">← 回快速路線</button></div>
             <div class="target-summary" id="targetSummary"></div>
             <details class="step2-secondary-disclosure step2-contract-disclosure" id="step2ContractDisclosure">
               <summary><span><strong>計算依據</strong></span></summary>
@@ -774,7 +802,12 @@
           </section>
 
           <section class="panel" id="deck">
-            <div class="panel-heading"><div><h2 tabindex="-1">現在先養哪一隻</h2></div></div>
+            <div class="panel-heading"><div><h2 tabindex="-1">族譜與賽程</h2></div></div>
+            <section class="lazy-lineage" id="lazyLineageGuide" aria-label="快速族譜路線" aria-live="polite">
+              <div id="lazyLineageContent"><p class="lazy-lineage__empty">正在整理賽事與持有馬…</p></div>
+            </section>
+            <details class="lazy-lineage-steps-details" id="lazyLineageStepsDetails">
+              <summary>查看本輪檢查與配卡</summary>
             <section class="breeder-quick-start" id="breederQuickStart" data-status="LOADING" aria-live="polite">
               <div id="breederQuickContent">
                 <span class="breeder-quick-eyebrow">正在整理下一輪</span>
@@ -782,6 +815,7 @@
                 <p>先完成戰馬、配卡與父輩選擇。</p>
               </div>
             </section>
+            </details>
             <details class="breeder-priority-details">
               <summary><span><strong>因子優先順序</strong></span></summary>
               <section class="breeder-route" aria-label="種馬育成優先路線">
@@ -803,7 +837,7 @@
               </section>
             </details>
             <details class="lineage-workbench-details" id="lineageWorkbenchDetails">
-              <summary><span><strong>家系與育成步驟</strong></span></summary>
+              <summary><span><strong>完整施工、手動七格與逐格賽程</strong></span></summary>
               <section class="reverse-lineage-planner" id="factorRoute" aria-labelledby="reverseLineageTitle">
               <div class="reverse-lineage-heading">
                 <div>
@@ -823,8 +857,8 @@
               <section class="manual-lineage-workbench" id="manualLineageWorkbench" aria-labelledby="manualLineageTitle" data-status="UNVERIFIED" data-probability-status="NOT_COMPUTED">
                 <header class="manual-lineage-heading">
                   <div>
-                    <h4 id="manualLineageTitle">手動族譜</h4>
-                    <p>點選衣裝、設定紅因子，再查看各格賽程。</p>
+                    <h4 id="manualLineageTitle">自行試排七格</h4>
+                    <p>這裡的手動修改不會改變上方的自動路線。</p>
                   </div>
                   <span id="manualLineageEvidenceBadge">本地角色資料＋社群目標賽</span>
                 </header>
@@ -1029,6 +1063,6 @@
       </button>
     </template>
     <!-- Lazy planner order: data/factor-execution-profile.js -> data/goal-race-schedules.js -> factor-execution-core.js -> g1-schedule-core.js -> manual-lineage-red-projection-core.js -> app.js. -->
-    <script src="app-bootstrap.js?v=62693ba312fc3650" defer></script>
+    <script src="app-bootstrap.js?v=d4741878fc38963f" defer></script>
   </body>
 </html>

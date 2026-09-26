@@ -61,16 +61,23 @@
     'data/kua-frontend-profile.js',
     'kua-frontend-app.js'
   ]);
-  const manifests = Object.freeze({ planner: PLANNER_MANIFEST, kua: KUA_MANIFEST });
+  const COMPATIBILITY_MANIFEST = Object.freeze([
+    'affinity-data.js',
+    'data/gametora-data.js',
+    'breeder-core.js',
+    'compatibility.js'
+  ]);
+  const manifests = Object.freeze({ planner: PLANNER_MANIFEST, kua: KUA_MANIFEST, compatibility: COMPATIBILITY_MANIFEST });
   const scriptPromises = new Map();
   const manifestPromises = new Map();
-  const toolStatus = { planner: 'idle', kua: 'idle' };
+  const toolStatus = { planner: 'idle', kua: 'idle', compatibility: 'idle' };
   let activeLoad = null;
 
   const byId = id => document.getElementById(id);
   const launchShell = byId('launchShell');
   const plannerWorkspace = byId('plannerWorkspace');
   const kuaWorkspace = byId('kuaFrontendWorkspace');
+  const compatibilityWorkspace = byId('compatibilityWorkspace');
   const launchButtons = [...document.querySelectorAll('[data-tool]')];
 
   function setLaunchStatus(message, state = 'idle') {
@@ -93,19 +100,21 @@
   }
 
   function showTool(tool) {
-    if (!launchShell || !plannerWorkspace || !kuaWorkspace) return;
+    if (!launchShell || !plannerWorkspace || !kuaWorkspace || !compatibilityWorkspace) return;
     launchShell.hidden = true;
     plannerWorkspace.hidden = tool !== 'planner';
     kuaWorkspace.hidden = tool !== 'kua';
+    compatibilityWorkspace.hidden = tool !== 'compatibility';
     document.body.dataset.activeTool = tool;
-    focusWorkspace(tool === 'planner' ? plannerWorkspace : kuaWorkspace);
+    focusWorkspace({ planner: plannerWorkspace, kua: kuaWorkspace, compatibility: compatibilityWorkspace }[tool]);
   }
 
   function showLaunch() {
-    if (!launchShell || !plannerWorkspace || !kuaWorkspace) return;
+    if (!launchShell || !plannerWorkspace || !kuaWorkspace || !compatibilityWorkspace) return;
     launchShell.hidden = false;
     plannerWorkspace.hidden = true;
     kuaWorkspace.hidden = true;
+    compatibilityWorkspace.hidden = true;
     delete document.body.dataset.activeTool;
     setLaunchBusy(Boolean(activeLoad));
   }
@@ -150,7 +159,7 @@
     toolStatus[tool] = 'loading';
     setLaunchBusy(true);
     setLaunchStatus(
-      tool === 'kua' ? '載入回合助手…' : '載入規劃器…',
+      { kua: '載入回合助手…', planner: '載入規劃器…', compatibility: '載入相性資料…' }[tool],
       'loading'
     );
     const promise = loadManifest(tool)
