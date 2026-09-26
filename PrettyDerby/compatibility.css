@@ -1,9 +1,12 @@
 #compatibilityWorkspace {
   --compat-ink: var(--ds-ink, #19272d);
-  --compat-muted: var(--ds-muted, #64727a);
+  --compat-muted: var(--ds-muted, #52616b);
   --compat-line: var(--ds-line, #e2e7eb);
   --compat-green: var(--ds-forest, #087f74);
   color: var(--compat-ink);
+  font-family: var(--ds-font-sans, sans-serif);
+  font-size: 16px;
+  line-height: 1.65;
 }
 
 #compatibilityWorkspace.compat-workspace {
@@ -159,13 +162,13 @@
 #compatibilityWorkspace .compat-slot-label {
   color: var(--compat-muted);
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 1.5;
 }
 
 #compatibilityWorkspace .compat-slot-name {
   overflow: hidden;
   font-size: 15px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -196,7 +199,7 @@
 
 .compat-portrait-fallback {
   font-size: 24px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -426,12 +429,12 @@
 /* A quiet canvas leaves the seven choices and their total as the focal points. */
 #compatibilityWorkspace.compat-workspace { width: min(1120px, calc(100% - 48px)); margin: 24px auto; border: 0; border-radius: 18px; background: #fff; box-shadow: var(--shadow, 0 12px 40px rgb(28 45 54 / 5%)); }
 #compatibilityWorkspace .compat-header { gap: 20px; padding: 24px 30px; background: #fff; }
-#compatibilityWorkspace .compat-brand { margin-bottom: 4px; color: var(--compat-muted); font-size: 12px; line-height: 1.4; }
-#compatibilityWorkspace .compat-header h1 { margin: 0; color: var(--compat-ink); font-size: 32px; font-weight: 700; line-height: 1.3; letter-spacing: -.03em; }
-#compatibilityWorkspace .compat-header .ghost { min-height: 40px; padding: 8px 14px; border-radius: 8px; color: #35464f; font-size: 13px; }
+#compatibilityWorkspace .compat-brand { margin-bottom: 5px; color: var(--compat-muted); font-size: 14px; line-height: 1.5; }
+#compatibilityWorkspace .compat-header h1 { margin: 0; color: var(--compat-ink); font-size: 32px; font-weight: 700; line-height: 1.5; letter-spacing: 0; }
+#compatibilityWorkspace .compat-header .ghost { min-height: 40px; padding: 8px 14px; border-radius: 8px; color: var(--compat-ink); font-size: 14px; line-height: 1.5; }
 #compatibilityWorkspace .compat-main { padding: 26px 32px 32px; }
 #compatibilityWorkspace .compat-toolbar { gap: 16px; margin-bottom: 22px; font-size: 14px; }
-#compatibilityWorkspace .compat-toolbar button { min-height: 36px; padding: 6px 12px; border-color: #d9e2e6; color: #53656e; background: #fff; font-size: 13px; }
+#compatibilityWorkspace .compat-toolbar button { min-height: 36px; padding: 6px 12px; border-color: #d9e2e6; color: var(--compat-muted); background: #fff; font-size: 14px; line-height: 1.5; }
 #compatibilityWorkspace .compat-toolbar button:hover { border-color: #a9c1bf; color: var(--compat-green); background: #f2faf7; }
 #compatibilityWorkspace .compat-tree { --compat-tree-gap: 28px; gap: var(--compat-tree-gap); }
 #compatibilityWorkspace .compat-tier { position: relative; gap: 14px; }
@@ -450,35 +453,35 @@
 #compatibilityWorkspace .compat-slot:hover, #compatibilityWorkspace .compat-slot:focus-visible { border-color: #65b5a8; background: #f0faf6; box-shadow: 0 0 0 2px rgb(8 127 116 / 7%); }
 #compatibilityWorkspace .compat-tier--target .compat-slot { border-color: #81cabb; background: #ebf8f3; }
 #compatibilityWorkspace .compat-slot-copy { gap: 5px; }
-#compatibilityWorkspace .compat-slot-label { color: #71818a; font-size: 12px; }
-#compatibilityWorkspace .compat-slot-name { color: var(--compat-ink); font-size: 16px; font-weight: 650; line-height: 1.4; }
+#compatibilityWorkspace .compat-slot-label { color: var(--compat-muted); font-size: 14px; }
+#compatibilityWorkspace .compat-slot-name { color: var(--compat-ink); font-size: 16px; font-weight: 600; line-height: 1.5; }
 .compat-portrait { border: 0; border-radius: 9px; color: #83aaa6; background: #eaf0f2; }
 .compat-portrait-fallback { font-size: 25px; font-weight: 400; }
 #compatibilityWorkspace .compat-slot--invalid, #compatibilityWorkspace .compat-slot--invalid:has(img), #compatibilityWorkspace .compat-tier--target .compat-slot--invalid { border-color: #d59587; background: #fff6f3; }
 #compatibilityWorkspace .compat-score { gap: 8px 15px; margin-top: 28px; padding: 22px; border: 0; border-radius: 14px; background: #eaf7f2; }
-#compatibilityWorkspace .compat-score-heading { color: #4f7f75; font-size: 14px; font-weight: 500; }
-#compatibilityWorkspace .compat-score-value { color: var(--compat-green); font-size: 64px; font-weight: 750; letter-spacing: -.04em; }
-#compatibilityWorkspace .compat-score-count { color: #60857c; font-size: 14px; }
-#compatibilityWorkspace .compat-warning { color: #b65842; font-size: 13px; }
+#compatibilityWorkspace .compat-score-heading { color: var(--compat-muted); font-size: 14px; font-weight: 500; }
+#compatibilityWorkspace .compat-score-value { color: var(--compat-green); font-size: 64px; font-weight: 700; letter-spacing: -.04em; }
+#compatibilityWorkspace .compat-score-count { color: var(--compat-muted); font-size: 14px; }
+#compatibilityWorkspace .compat-warning { color: #b65842; font-size: 14px; line-height: 1.5; }
 #compatibilityWorkspace .compat-details { margin-top: 10px; border: 0; border-radius: 0; background: transparent; }
 #compatibilityWorkspace .compat-details > summary { padding: 12px 0; font-size: 14px; }
 #compatibilityWorkspace .compat-pair-list { padding: 0 0 10px; }
-#compatibilityWorkspace .compat-pair-list li { padding: 11px 0; font-size: 14px; }
-#compatibilityWorkspace .compat-note { color: var(--compat-muted); font-size: 12px; line-height: 1.65; }
-#compatibilityWorkspace .compat-method { margin-top: 22px; color: var(--compat-muted); font-size: 12px; line-height: 1.7; }
-#compatibilityWorkspace .compat-method > summary { padding-top: 15px; font-size: 13px; }
-#compatibilityDialog { width: min(800px, calc(100% - 32px)); padding: 26px; border: 0; border-radius: 18px; color: var(--ds-ink, #19272d); background: #fff; box-shadow: 0 24px 80px rgb(20 41 50 / 22%); }
+#compatibilityWorkspace .compat-pair-list li { padding: 11px 0; font-size: 14px; line-height: 1.5; }
+#compatibilityWorkspace .compat-note { color: var(--compat-muted); font-size: 14px; line-height: 1.65; }
+#compatibilityWorkspace .compat-method { margin-top: 22px; color: var(--compat-muted); font-size: 14px; line-height: 1.65; }
+#compatibilityWorkspace .compat-method > summary { padding-top: 15px; font-size: 14px; }
+#compatibilityDialog { width: min(800px, calc(100% - 32px)); padding: 26px; border: 0; border-radius: 18px; color: var(--ds-ink, #19272d); background: #fff; box-shadow: 0 24px 80px rgb(20 41 50 / 22%); font-family: var(--ds-font-sans, sans-serif); font-size: 16px; line-height: 1.65; }
 #compatibilityDialog::backdrop { background: rgb(24 40 48 / 45%); backdrop-filter: blur(3px); }
-#compatibilityDialogTitle { color: var(--ds-ink, #19272d); font-size: 27px; font-weight: 700; letter-spacing: -.025em; }
+#compatibilityDialogTitle { color: var(--ds-ink, #19272d); font-size: 27px; font-weight: 700; line-height: 1.5; letter-spacing: 0; }
 #compatibilityDialog .compat-dialog__inner > header { margin-bottom: 20px; }
-#compatibilityDialog [data-compat-close] { min-height: 36px; padding: 6px 12px; border-color: #d9e2e6; color: #53656e; background: #fff; font-size: 13px; }
+#compatibilityDialog [data-compat-close] { min-height: 36px; padding: 6px 12px; border-color: #d9e2e6; color: var(--ds-muted, #52616b); background: #fff; font-size: 14px; line-height: 1.5; }
 #compatibilityDialog [data-compat-close]:hover { border-color: #a9c1bf; color: var(--ds-forest, #087f74); background: #f2faf7; }
 #compatibilitySearch { min-height: 48px; margin-bottom: 20px; padding: 11px 14px; border-color: #d9e2e6; border-radius: 10px; background: #f8fafb; font-size: 16px; }
 #compatibilityChoices.compat-choices { gap: 12px; }
 #compatibilityDialog .compat-choice { gap: 9px; padding: 12px 8px; border: 1px solid transparent; border-radius: 11px; color: var(--ds-ink, #19272d); background: #f6f9fa; }
 #compatibilityDialog .compat-choice:hover, #compatibilityDialog .compat-choice:focus-visible { border-color: #6dbcae; background: #ecf8f3; }
 #compatibilityDialog .compat-choice .compat-portrait { width: 62px; height: 76px; }
-#compatibilityDialog .compat-choice-name { display: -webkit-box; min-height: 2.7em; overflow: hidden; font-size: 13px; line-height: 1.35; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+#compatibilityDialog .compat-choice-name { display: -webkit-box; min-height: 3em; overflow: hidden; font-size: 14px; line-height: 1.5; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
 @media (max-width: 700px) {
   #compatibilityWorkspace.compat-workspace { width: 100%; margin: 0; border-radius: 0; box-shadow: none; }
@@ -486,12 +489,12 @@
   #compatibilityWorkspace .compat-header h1 { font-size: 28px; }
   #compatibilityWorkspace .compat-header .ghost { padding-inline: 12px; }
   #compatibilityWorkspace .compat-main { padding: 20px 18px 28px; }
-  #compatibilityWorkspace .compat-toolbar { gap: 10px; margin-bottom: 18px; font-size: 13px; }
+  #compatibilityWorkspace .compat-toolbar { gap: 10px; margin-bottom: 18px; font-size: 14px; }
   #compatibilityWorkspace .compat-tree { --compat-tree-gap: 26px; gap: var(--compat-tree-gap); }
   #compatibilityWorkspace .compat-tier { gap: 10px; }
   #compatibilityWorkspace .compat-tier--grandparents { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
   #compatibilityWorkspace .compat-tier--grandparents .compat-slot { flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; width: calc(100% - 6px); min-height: 124px; padding: 9px 4px; text-align: center; }
-  #compatibilityWorkspace .compat-tier--grandparents .compat-slot-copy { width: 100%; gap: 4px; }
+  #compatibilityWorkspace .compat-tier--grandparents .compat-slot-copy { width: 100%; gap: 5px; }
   #compatibilityWorkspace .compat-tier--grandparents .compat-slot-portrait { width: 43px; height: 53px; }
   #compatibilityWorkspace .compat-tier--grandparents .compat-slot-name { font-size: 13px; }
   #compatibilityWorkspace .compat-tier--parents { width: 100%; gap: 0; }
@@ -500,8 +503,8 @@
   #compatibilityWorkspace .compat-tier--target .compat-slot { width: min(250px, 100%); }
   #compatibilityWorkspace .compat-slot { gap: 8px; min-height: 78px; padding: 9px; border-radius: 10px; }
   #compatibilityWorkspace .compat-slot-portrait { width: 39px; height: 51px; }
-  #compatibilityWorkspace .compat-slot-label { font-size: 12px; }
-  #compatibilityWorkspace .compat-slot-name { overflow: visible; font-size: 14px; line-height: 1.35; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; }
+  #compatibilityWorkspace .compat-slot-label { font-size: 14px; }
+  #compatibilityWorkspace .compat-slot-name { overflow: visible; font-size: 14px; line-height: 1.5; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; }
   #compatibilityWorkspace .compat-score { margin-top: 22px; padding: 18px; border-radius: 12px; }
   #compatibilityWorkspace .compat-score-value { font-size: 52px; }
   #compatibilityWorkspace .compat-method { margin-top: 16px; }
@@ -511,7 +514,7 @@
   #compatibilityChoices.compat-choices { gap: 8px; }
   #compatibilityDialog .compat-choice { padding: 10px 6px; }
   #compatibilityDialog .compat-choice .compat-portrait { width: 53px; height: 65px; }
-  #compatibilityDialog .compat-choice-name { font-size: 12px; }
+  #compatibilityDialog .compat-choice-name { font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
