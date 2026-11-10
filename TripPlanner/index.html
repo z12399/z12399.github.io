@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>約出行・時間統整</title>
+<style>
+  :root{
+    --bg:#f6f7f9;--card:#fff;--ink:#1f2933;--sub:#6b7785;--line:#e3e7ec;--accent:#2f6fed;
+    --c100:#2e9e5b;--c80:#9ccf6b;--c50:#f2b84b;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#14171b;--card:#1d2127;--ink:#e8ecf0;--sub:#98a3af;--line:#2d343c;--accent:#6c9bff;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Microsoft JhengHei','PingFang TC',system-ui,sans-serif;line-height:1.5}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:22px;margin:8px 0 4px}
+  .sub{color:var(--sub);font-size:14px;margin:0 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  label{display:block;font-size:14px;color:var(--sub);margin:10px 0 4px}
+  input{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:16px}
+  .row{display:flex;gap:10px}.row>div{flex:1}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 14px}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:bold}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .msg{font-size:14px;margin:8px 0;color:var(--sub)}.err{color:#d64545}
+  .brushes{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+  .brush{display:flex;align-items:center;gap:6px;padding:8px 12px;font-size:14px}
+  .brush.on{outline:2px solid var(--accent)}
+  .dot{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid var(--line)}
+  table{border-collapse:separate;border-spacing:4px;width:100%}
+  th{font-size:13px;color:var(--sub);font-weight:normal;padding:2px}
+  th small{display:block;font-size:11px}
+  td.d{font-size:14px;white-space:nowrap;padding-right:6px}
+  td.d span{color:var(--sub);font-size:12px;margin-left:4px}
+  td.c{height:44px;border-radius:8px;border:1px solid var(--line);text-align:center;font-size:13px;user-select:none;cursor:pointer;-webkit-user-select:none}
+  td.c.v1{background:var(--c100);color:#fff;border-color:transparent}
+  td.c.v08{background:var(--c80);color:#223;border-color:transparent}
+  td.c.v05{background:var(--c50);color:#332;border-color:transparent}
+  table.res td.c{cursor:default;height:52px;line-height:1.2}
+  .best{outline:3px solid var(--accent)}
+  .who{font-size:11px;opacity:.9}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .tag{font-size:13px;padding:2px 10px;border-radius:99px;border:1px solid var(--line)}
+  .tag.ok{background:var(--c100);color:#fff;border-color:transparent}
+  .rec{padding:10px 0;border-top:1px solid var(--line);font-size:15px}.rec:first-of-type{border-top:0}
+  .lock{text-align:center;color:var(--sub);padding:18px 8px}
+  .hidden{display:none}
+  code{word-break:break-all;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="ttl">約出行・時間統整</h1>
+  <p class="sub" id="sub">每個人填自己可行的日期與時段，填完送出後才看得到大家的結果。</p>
+
+  <!-- 建立頁 -->
+  <div id="create" class="card hidden">
+    <label>行程名稱</label>
+    <input id="c-title" value="一起出去玩" maxlength="40">
+    <div class="row">
+      <div><label>開始日期</label><input type="date" id="c-start"></div>
+      <div><label>結束日期</label><input type="date" id="c-end"></div>
+    </div>
+    <label>人數</label>
+    <input type="number" id="c-n" value="4" min="2" max="20">
+    <p class="msg" id="c-msg"></p>
+    <button class="primary" id="c-go">建立並取得連結</button>
+  </div>
+
+  <!-- 填寫頁 -->
+  <div id="fill" class="card hidden">
+    <label>你的名字</label>
+    <input id="f-name" maxlength="12" placeholder="例如：小明">
+    <p class="msg">選一種筆刷，點選（或按住拖曳）格子標記。多個日期、多個時段都可以填。</p>
+    <div class="brushes" id="brushes"></div>
+    <div id="grid"></div>
+    <p class="msg" id="f-msg"></p>
+    <button class="primary" id="f-go">送出（送出後可查看大家的結果）</button>
+  </div>
+
+  <!-- 結果頁 -->
+  <div id="lockbox" class="card lock hidden">🔒 送出你的時間後，就能看到大家的結果。</div>
+  <div id="result" class="hidden">
+    <div class="card"><b>推薦時段</b><div id="recs"></div></div>
+    <div class="card"><b>全部時段</b>
+      <p class="msg">數字＝大家可行度加總（100%=1、80%=0.8、50%=0.5）。藍框為推薦。</p>
+      <div id="resgrid"></div>
+      <div class="tags" id="status"></div>
+    </div>
+  </div>
+
+  <div id="share" class="card hidden">
+    <b>分享連結給大家</b>
+    <p class="msg"><code id="link"></code></p>
+    <button id="copy">複製連結</button>
+  </div>
+</div>
+
+<script>
+const API='https://jsonblob.com/api/jsonBlob';
+const SLOTS=[['m','早','~12:00'],['a','午','12:00~17:00'],['e','晚','17:00~']];
+const LEVELS=[[1,'絕對可以','100%','v1','var(--c100)'],[0.8,'大概率可以','80%','v08','var(--c80)'],[0.5,'可能可以','50%','v05','var(--c50)'],[0,'清除','','','var(--card)']];
+const $=id=>document.getElementById(id);
+const WD='日一二三四五六';
+let room=null,blobId=location.hash.slice(1),brush=1,mine={};
+
+function show(id,on){$(id).classList.toggle('hidden',!on)}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dates(){const out=[];let d=new Date(room.start+'T00:00');const e=new Date(room.end+'T00:00');while(d<=e){out.push(ymd(d));d.setDate(d.getDate()+1)}return out}
+function lab(s){const d=new Date(s+'T00:00');return [(d.getMonth()+1)+'/'+d.getDate(),'週'+WD[d.getDay()]]}
+function cls(v){return v===1?'v1':v===0.8?'v08':v===0.5?'v05':''}
+function txt(v){return v?Math.round(v*100)+'%':''}
+
+async function api(method,body,id){
+  const r=await fetch(API+(id?'/'+id:''),{method,headers:{'Content-Type':'application/json','Accept':'application/json'},body:body?JSON.stringify(body):undefined});
+  if(!r.ok)throw new Error('伺服器回應 '+r.status);
+  return r;
+}
+
+/* ---------- 建立 ---------- */
+function initCreate(){
+  const t=new Date();$('c-start').value=ymd(t);t.setDate(t.getDate()+30);$('c-end').value=ymd(t);
+  show('create',true);
+  $('c-go').onclick=async()=>{
+    const s=$('c-start').value,e=$('c-end').value,n=+$('c-n').value;
+    const days=(new Date(e)-new Date(s))/864e5+1;
+    if(!s||!e||days<1)return $('c-msg').textContent='請確認日期範圍';
+    if(days>62)return $('c-msg').textContent='日期範圍最多 62 天';
+    $('c-go').disabled=true;$('c-msg').textContent='建立中…';
+    try{
+      const r=await api('POST',{title:$('c-title').value.trim()||'一起出去玩',start:s,end:e,n:n||4,responses:{}});
+      let id=(r.headers.get('Location')||'').split('/').pop();
+      if(!id)throw new Error('無法取得房間編號');
+      location.hash=id;location.reload();
+    }catch(x){$('c-msg').textContent='建立失敗：'+x.message;$('c-msg').className='msg err';$('c-go').disabled=false}
+  };
+}
+
+/* ---------- 房間 ---------- */
+async function load(){
+  try{room=await (await api('GET',null,blobId)).json()}
+  catch(x){$('sub').textContent='讀取失敗：'+x.message;$('sub').className='sub err';return}
+  $('ttl').textContent=room.title;
+  $('sub').textContent=`${room.start} ~ ${room.end}・共 ${room.n} 人`;
+  $('link').textContent=location.href;show('share',true);
+  $('copy').onclick=()=>{navigator.clipboard.writeText(location.href);$('copy').textContent='已複製'};
+  const saved=localStorage.getItem('trip-name-'+blobId)||'';
+  $('f-name').value=saved;
+  if(saved&&room.responses[saved])mine=Object.assign({},room.responses[saved].cells);
+  buildBrushes();buildGrid($('grid'),true);show('fill',true);
+  $('f-name').addEventListener('change',()=>{const n=$('f-name').value.trim();if(room.responses[n]){mine=Object.assign({},room.responses[n].cells);buildGrid($('grid'),true)}});
+  $('f-go').onclick=submit;
+  refreshResult();
+}
+
+function buildBrushes(){
+  const box=$('brushes');box.innerHTML='';
+  LEVELS.forEach(([v,name,pct,,color])=>{
+    const b=document.createElement('button');b.className='brush'+(v===brush?' on':'');
+    b.innerHTML=`<span class="dot" style="background:${color}"></span>${name}${pct?'('+pct+')':''}`;
+    b.onclick=()=>{brush=v;buildBrushes()};box.appendChild(b);
+  });
+}
+
+function buildGrid(el,editable){
+  let h='<table'+(editable?'':' class="res"')+'><tr><th></th>'+SLOTS.map(s=>`<th>${s[1]}<small>${s[2]}</small></th>`).join('')+'</tr>';
+  dates().forEach(d=>{
+    const [md,wd]=lab(d);h+=`<tr><td class="d">${md}<span>${wd}</span></td>`;
+    SLOTS.forEach(s=>{const k=d+'|'+s[0];h+=`<td class="c ${editable?cls(mine[k]):''}" data-k="${k}">${editable?txt(mine[k]):''}</td>`});
+    h+='</tr>';
+  });
+  el.innerHTML=h+'</table>';
+  if(!editable)return;
+  let down=false;
+  const paint=td=>{const k=td.dataset.k;if(!k)return;if(brush)mine[k]=brush;else delete mine[k];td.className='c '+cls(mine[k]);td.textContent=txt(mine[k])};
+  el.onpointerdown=e=>{const td=e.target.closest('td.c');if(!td)return;down=true;paint(td)};
+  el.onpointerover=e=>{if(!down||e.pointerType==='touch')return;const td=e.target.closest('td.c');if(td)paint(td)};
+  window.onpointerup=()=>down=false;
+}
+
+async function submit(){
+  const name=$('f-name').value.trim();
+  if(!name){$('f-msg').textContent='請先輸入名字';$('f-msg').className='msg err';return}
+  if(!Object.keys(mine).length&&!confirm('你還沒有標記任何時段，確定要送出嗎？'))return;
+  $('f-go').disabled=true;$('f-msg').className='msg';$('f-msg').textContent='送出中…';
+  try{
+    const latest=await (await api('GET',null,blobId)).json();   // 先取最新，避免蓋掉別人
+    latest.responses[name]={cells:mine,t:Date.now()};
+    await api('PUT',latest,blobId);
+    room=latest;localStorage.setItem('trip-name-'+blobId,name);
+    $('f-msg').textContent='已送出，可再修改後重新送出。';
+    refreshResult();
+  }catch(x){$('f-msg').textContent='送出失敗：'+x.message;$('f-msg').className='msg err'}
+  $('f-go').disabled=false;
+}
+
+/* ---------- 結果（本人送出後才顯示） ---------- */
+function refreshResult(){
+  const me=localStorage.getItem('trip-name-'+blobId);
+  const ok=me&&room.responses[me];
+  show('lockbox',!ok);show('result',!!ok);
+  if(!ok)return;
+  const names=Object.keys(room.responses),score={},who={};
+  dates().forEach(d=>SLOTS.forEach(s=>{
+    const k=d+'|'+s[0];let sum=0;const w=[];
+    names.forEach(n=>{const v=room.responses[n].cells[k];if(v){sum+=v;w.push([n,v])}});
+    score[k]=sum;who[k]=w;
+  }));
+  const ranked=Object.keys(score).filter(k=>score[k]>0).sort((a,b)=>score[b]-score[a]||who[b].length-who[a].length||a.localeCompare(b));
+  const top=ranked.slice(0,3),topSet=new Set(top);
+  const pretty=k=>{const [d,s]=k.split('|');const [md,wd]=lab(d);const sl=SLOTS.find(x=>x[0]===s);return `${md}（${wd}）${sl[1]} ${sl[2]}`};
+  $('recs').innerHTML=top.length?top.map(k=>{
+    const miss=names.length<room.n?`・還有 ${room.n-names.length} 人未填`:'';
+    return `<div class="rec"><b>${pretty(k)}</b>　可行度 ${score[k].toFixed(1)} / ${room.n}<br><span class="who">${who[k].map(([n,v])=>n+' '+txt(v)).join('、')}${miss}</span></div>`;
+  }).join(''):'<div class="msg">目前還沒有任何人標記時段。</div>';
+  buildGrid($('resgrid'),false);
+  const max=Math.max(1,...Object.values(score));
+  $('resgrid').querySelectorAll('td.c').forEach(td=>{
+    const k=td.dataset.k,v=score[k];
+    if(v>0){td.style.background=`color-mix(in srgb,var(--c100) ${Math.round(25+75*v/max)}%,var(--card))`;td.style.color=v/max>0.55?'#fff':'inherit'}
+    td.innerHTML=v>0?`<b>${v.toFixed(1)}</b><div class="who">${who[k].length}人</div>`:'';
+    if(topSet.has(k))td.classList.add('best');
+    td.title=who[k].map(([n,x])=>n+' '+txt(x)).join('、');
+  });
+  $('status').innerHTML=names.map(n=>`<span class="tag ok">${n} ✓</span>`).join('')+(names.length<room.n?`<span class="tag">還有 ${room.n-names.length} 人未填</span>`:'');
+}
+
+if(blobId)load();else initCreate();
+</script>
+</body>
+</html>
