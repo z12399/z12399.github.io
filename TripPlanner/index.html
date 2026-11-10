@@ -99,7 +99,7 @@
 </div>
 
 <script>
-const API='https://jsonblob.com/api/jsonBlob';
+const DB='https://trip-planner-f4cc6-default-rtdb.asia-southeast1.firebasedatabase.app';
 const SLOTS=[['m','早','~12:00'],['a','午','12:00~17:00'],['e','晚','17:00~']];
 const LEVELS=[[1,'絕對可以','100%','v1','var(--c100)'],[0.8,'大概率可以','80%','v08','var(--c80)'],[0.5,'可能可以','50%','v05','var(--c50)'],[0,'清除','','','var(--card)']];
 const $=id=>document.getElementById(id);
@@ -113,11 +113,13 @@ function lab(s){const d=new Date(s+'T00:00');return [(d.getMonth()+1)+'/'+d.getD
 function cls(v){return v===1?'v1':v===0.8?'v08':v===0.5?'v05':''}
 function txt(v){return v?Math.round(v*100)+'%':''}
 
-async function api(method,body,id){
-  const r=await fetch(API+(id?'/'+id:''),{method,headers:{'Content-Type':'application/json','Accept':'application/json'},body:body?JSON.stringify(body):undefined});
+async function db(method,path,body){
+  const r=await fetch(DB+'/rooms/'+path+'.json',{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});
   if(!r.ok)throw new Error('伺服器回應 '+r.status);
-  return r;
+  return r.json();
 }
+function newId(){const a=crypto.getRandomValues(new Uint8Array(12));return Array.from(a,x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')}
+function nameKey(n){return n.replace(/[.$#\[\]\/]/g,'_')}
 
 /* ---------- 建立 ---------- */
 function initCreate(){
@@ -130,17 +132,22 @@ function initCreate(){
     if(days>62)return $('c-msg').textContent='日期範圍最多 62 天';
     $('c-go').disabled=true;$('c-msg').textContent='建立中…';
     try{
-      const r=await api('POST',{title:$('c-title').value.trim()||'一起出去玩',start:s,end:e,n:n||4,responses:{}});
-      let id=(r.headers.get('Location')||'').split('/').pop();
-      if(!id)throw new Error('無法取得房間編號');
+      const id=newId();
+      await db('PUT',id,{title:$('c-title').value.trim()||'一起出去玩',start:s,end:e,n:n||4});
       location.hash=id;location.reload();
     }catch(x){$('c-msg').textContent='建立失敗：'+x.message;$('c-msg').className='msg err';$('c-go').disabled=false}
   };
 }
 
 /* ---------- 房間 ---------- */
+function normalize(){
+  room.responses=room.responses||{};
+  Object.keys(room.responses).forEach(k=>{const r=room.responses[k];r.name=r.name||k;r.cells=r.cells||{}});
+}
+function byName(n){return room.responses[nameKey(n)]}
+
 async function load(){
-  try{room=await (await api('GET',null,blobId)).json()}
+  try{room=await db('GET',blobId);if(!room)throw new Error('找不到這個房間');normalize()}
   catch(x){$('sub').textContent='讀取失敗：'+x.message;$('sub').className='sub err';return}
   $('ttl').textContent=room.title;
   $('sub').textContent=`${room.start} ~ ${room.end}・共 ${room.n} 人`;
@@ -148,9 +155,9 @@ async function load(){
   $('copy').onclick=()=>{navigator.clipboard.writeText(location.href);$('copy').textContent='已複製'};
   const saved=localStorage.getItem('trip-name-'+blobId)||'';
   $('f-name').value=saved;
-  if(saved&&room.responses[saved])mine=Object.assign({},room.responses[saved].cells);
+  if(saved&&byName(saved))mine=Object.assign({},byName(saved).cells);
   buildBrushes();buildGrid($('grid'),true);show('fill',true);
-  $('f-name').addEventListener('change',()=>{const n=$('f-name').value.trim();if(room.responses[n]){mine=Object.assign({},room.responses[n].cells);buildGrid($('grid'),true)}});
+  $('f-name').addEventListener('change',()=>{const n=$('f-name').value.trim();if(byName(n)){mine=Object.assign({},byName(n).cells);buildGrid($('grid'),true)}});
   $('f-go').onclick=submit;
   refreshResult();
 }
@@ -186,10 +193,8 @@ async function submit(){
   if(!Object.keys(mine).length&&!confirm('你還沒有標記任何時段，確定要送出嗎？'))return;
   $('f-go').disabled=true;$('f-msg').className='msg';$('f-msg').textContent='送出中…';
   try{
-    const latest=await (await api('GET',null,blobId)).json();   // 先取最新，避免蓋掉別人
-    latest.responses[name]={cells:mine,t:Date.now()};
-    await api('PUT',latest,blobId);
-    room=latest;localStorage.setItem('trip-name-'+blobId,name);
+    await db('PUT',blobId+'/responses/'+encodeURIComponent(nameKey(name)),{name,cells:mine,t:Date.now()});  // 只寫自己的節點，不會蓋掉別人
+    room=await db('GET',blobId);normalize();localStorage.setItem('trip-name-'+blobId,name);
     $('f-msg').textContent='已送出，可再修改後重新送出。';
     refreshResult();
   }catch(x){$('f-msg').textContent='送出失敗：'+x.message;$('f-msg').className='msg err'}
@@ -199,13 +204,14 @@ async function submit(){
 /* ---------- 結果（本人送出後才顯示） ---------- */
 function refreshResult(){
   const me=localStorage.getItem('trip-name-'+blobId);
-  const ok=me&&room.responses[me];
+  const ok=me&&byName(me);
   show('lockbox',!ok);show('result',!!ok);
   if(!ok)return;
-  const names=Object.keys(room.responses),score={},who={};
+  const names=Object.values(room.responses).map(r=>r.name),score={},who={};
+  const cellOf=n=>byName(n).cells;
   dates().forEach(d=>SLOTS.forEach(s=>{
     const k=d+'|'+s[0];let sum=0;const w=[];
-    names.forEach(n=>{const v=room.responses[n].cells[k];if(v){sum+=v;w.push([n,v])}});
+    names.forEach(n=>{const v=cellOf(n)[k];if(v){sum+=v;w.push([n,v])}});
     score[k]=sum;who[k]=w;
   }));
   const ranked=Object.keys(score).filter(k=>score[k]>0).sort((a,b)=>score[b]-score[a]||who[b].length-who[a].length||a.localeCompare(b));
