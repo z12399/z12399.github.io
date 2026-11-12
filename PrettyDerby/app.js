@@ -12401,6 +12401,24 @@ function renderRaces() {
   const focusedRaceKey = grid.contains(focusedRace) ? focusedRace.dataset.raceKey : '';
   let replacementFocusTarget = null;
   grid.innerHTML = '';
+  // Cups planned by cup-planner.html (data/cup-schedule.js). They are links,
+  // not races: this engine is hard-wired to its own cups and never runs them.
+  const cupLinks = byId('cupPlannerLinks');
+  if (cupLinks) cupLinks.innerHTML = '';
+  (cupLinks ? window.PRETTY_DERBY_BOOTSTRAP?.cupEntries?.() || [] : []).forEach(cup => {
+    const link = document.createElement('a');
+    link.className = 'race-card race-card--cup-link';
+    link.href = cup.href;
+    link.dataset.cupId = cup.id;
+    link.style.textDecoration = 'none';
+    link.innerHTML = '<span class="race-card-header"><span class="race-icon">LOH</span><span class="race-name"></span></span><span class="race-meta"></span><span class="race-tags"></span>';
+    link.querySelector('.race-icon').textContent = String(cup.id).split('-')[0].toUpperCase();
+    link.querySelector('.race-name').textContent = cup.label;
+    link.querySelector('.race-meta').textContent = cup.live ? '進行中' : '即將開始';
+    link.querySelector('.race-tags').textContent = '在「杯賽缺口規劃」中規劃　｜　開啟 →';
+    link.setAttribute('aria-label', `${cup.label}，開啟杯賽缺口規劃`);
+    cupLinks.append(link);
+  });
   allRaces().forEach((race, index) => {
     const template = byId('raceTemplate').content.cloneNode(true);
     const button = template.querySelector('button');
@@ -12427,14 +12445,19 @@ function renderRaces() {
       .filter(part => part && part !== trackLabel && part !== `${meters}m`)
       .join('・');
     const actionText = primary ? '目前目標' : '切換目標';
-    const scheduleLabel = race.scheduleStatus === 'OFFICIAL_TW_CONFIRMED'
+    const endsAt = Date.parse(race.officialEvidence?.period?.endsAt || '');
+    const ended = endsAt < Date.now();
+    button.classList.toggle('race-card--ended', ended);
+    const scheduleLabel = ended
+      ? `已結束（${race.phaseLabel || '活動期間已過'}）`
+      : race.scheduleStatus === 'OFFICIAL_TW_CONFIRMED'
       ? `繁中官方・${race.phaseLabel || '條件已確認'}`
       : race.scheduleStatus === 'PROJECTED_FROM_JP_VERSION'
       ? race.phaseLabel || '同版本預排'
       : race.current ? '預設規劃範本' : '';
     button.querySelector('.race-tags').textContent = [scheduleLabel, conditionLabel, actionText]
       .filter(Boolean).join('　｜　');
-    button.setAttribute('aria-label', `${race.name}，${actionText}`);
+    button.setAttribute('aria-label', `${race.name}${ended ? '（已結束）' : ''}，${actionText}`);
     button.onclick = () => {
       if (!selectSingleRace(index)) return;
       applyRaceEventMode(primaryRace());
@@ -12505,7 +12528,9 @@ function renderCurrentRaceProfile() {
     ? 'U-tools 馬身校正＋繁中服技能過濾'
     : '本地賽道幾何估算';
   const snapshotDate = gameCatalog?.metadata?.asOf || '日期未確認';
-  const scheduleNote = race.scheduleStatus === 'OFFICIAL_TW_CONFIRMED'
+  const scheduleNote = Date.parse(race.officialEvidence?.period?.endsAt || '') < Date.now()
+    ? `此活動已結束${race.phaseLabel ? `（${race.phaseLabel}）` : ''}；目前杯賽請改選「選擇目標」中的杯賽缺口規劃入口。`
+    : race.scheduleStatus === 'OFFICIAL_TW_CONFIRMED'
     ? `繁中官方已確認${race.phaseLabel ? `（${race.phaseLabel}）` : ''}。`
     : race.scheduleStatus === 'PROJECTED_FROM_JP_VERSION'
     ? '日服同版本預排，繁中服日期與條件待官方確認。'

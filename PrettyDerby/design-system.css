@@ -508,6 +508,15 @@ button:disabled { cursor: not-allowed; }
 #launchShell .launch-card--lineage strong, #launchShell .launch-card--lineage .launch-card__action { color: #fff; }
 #launchShell .launch-card--lineage > .launch-card__description { color: #d7f3eb; }
 #launchShell .launch-card--lineage .launch-card__symbol { color: #fff; background: rgb(255 255 255 / 14%); }
+/* Current cup planner: full-width first card naming the current/next cup (filled by app-bootstrap.js). */
+#launchShell .launch-card--featured { grid-column: 1 / -1; grid-template-rows: min-content min-content min-content; min-height: 0; border-color: var(--ds-forest); background: #f2faf8; box-shadow: inset 5px 0 0 var(--ds-forest); }
+#launchShell .launch-card--featured:hover, #launchShell .launch-card--featured:focus-visible { border-color: var(--ds-forest-deep); background: #eaf6f3; }
+#launchShell .launch-card--featured .launch-card__cup { grid-column: 2; grid-row: 1; color: var(--ds-forest); font-size: 16px; font-weight: 700; }
+#launchShell .launch-card--featured strong { grid-row: 2; }
+#launchShell .launch-card--featured > .launch-card__description { grid-row: 3; }
+#launchShell .launch-card--featured .launch-card__symbol { grid-row: 1 / span 3; background: #fff; }
+#launchShell .launch-card--featured .launch-card__action { grid-row: 1 / span 3; color: var(--ds-forest); }
+#launchShell .launch-card--featured .launch-card__cup[hidden] { display: none; }
 #launchShell .launch-footer { gap: 16px; padding-top: 22px; color: var(--ds-muted); font-size: 14px; }
 #launchShell .launch-footer a { color: var(--ds-muted); text-decoration-color: #aebec5; }
 #launchShell .launch-status { color: var(--ds-muted); font-size: 14px; }
@@ -517,6 +526,10 @@ button:disabled { cursor: not-allowed; }
 #goal .profile-heading h3 { font-size: 20px; }
 #goal .race-card { min-height: 122px; padding: 15px 17px; }
 #goal .race-list-heading { margin-bottom: 12px; }
+#goal .race-grid--cups:not(:empty) { margin-bottom: 13px; }
+#goal .race-card--cup-link { display: flex; flex-direction: column; border-color: var(--ds-forest); background: #f2faf8; box-shadow: inset 3px 0 0 var(--ds-forest); color: var(--ds-ink); }
+#goal .race-card--cup-link .race-tags { color: var(--ds-forest); }
+#goal .race-card--ended:not(.primary-target) { opacity: .72; }
 
 @media (max-width: 640px) {
   #launchShell { width: calc(100% - 36px); margin: 22px auto 32px; }

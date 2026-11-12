@@ -200,11 +200,53 @@
     button.addEventListener('click', showLaunch);
   });
 
+  // Cup planner entry: a tiny schedule file generated together with
+  // data/cup-meta.js (tools/build-cup-meta.mjs) names the current/next cup.
+  // Times are Asia/Taipei wall-clock strings ("2026-12-15 12:00:00").
+  const taipeiTime = value => (value ? Date.parse(`${String(value).replace(' ', 'T')}+08:00`) : NaN);
+  const monthDay = value => {
+    const match = String(value || '').match(/^\d{4}-(\d{2})-(\d{2})/);
+    return match ? `${Number(match[1])}/${Number(match[2])}` : '';
+  };
+  // Cups that have not ended yet, soonest first.
+  function cupEntries(now = Date.now()) {
+    const cups = window.CUP_SCHEDULE?.cups;
+    if (!Array.isArray(cups)) return [];
+    return cups
+      .filter(cup => cup?.id && !(taipeiTime(cup.end) < now))
+      .sort((a, b) => (taipeiTime(a.start) || 0) - (taipeiTime(b.start) || 0))
+      .map(cup => {
+        const range = cup.start && cup.end ? `${monthDay(cup.start)}–${monthDay(cup.end)}` : '';
+        return {
+          id: cup.id,
+          name: cup.name,
+          range,
+          label: range ? `${cup.name}（${range}）` : cup.name,
+          live: taipeiTime(cup.start) <= now,
+          href: `cup-planner.html?cup=${encodeURIComponent(cup.id)}`
+        };
+      });
+  }
+  function renderCupLaunch() {
+    const card = byId('launchCupPlanner');
+    const label = byId('launchCupCurrent');
+    const cup = cupEntries()[0];
+    if (!card || !label || !cup) return;
+    card.href = cup.href;
+    label.textContent = `${cup.live ? '進行中' : '下一場'}：${cup.label}`;
+    label.hidden = false;
+    card.setAttribute('aria-label', `開啟杯賽缺口規劃：${cup.label}`);
+  }
+  loadScript('data/cup-schedule.js').then(renderCupLaunch).catch(() => {
+    // The card still links to cup-planner.html without the schedule label.
+  });
+
   // Useful for static diagnostics and future UI instrumentation; exposing the
   // manifests does not trigger a network request or load any script.
   window.PRETTY_DERBY_BOOTSTRAP = Object.freeze({
     manifests,
     status: toolStatus,
-    chooseTool
+    chooseTool,
+    cupEntries
   });
 })();

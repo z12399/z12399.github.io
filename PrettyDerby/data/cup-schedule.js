@@ -1,0 +1,1 @@
+window.CUP_SCHEDULE = {"generatedFrom":"tools/build-cup-meta.mjs","cups":[{"id":"loh-sapporo-turf-2600","name":"LOH｜札幌 芝 2600m","eventMode":"loh","plannedDate":"2026-12-15","start":"2026-12-15 12:00:00","end":"2026-12-27 11:59:59","timezone":"Asia/Taipei"}]};

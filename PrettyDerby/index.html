@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>因子育成計畫器｜賽馬娘</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="style.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="affinity.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="current-race.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="skill-plan.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="advanced-tools.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="usability.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="design-system.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="lazy-lineage.css?v=99eb93ffe4269861" />
-    <link rel="stylesheet" href="compatibility.css?v=99eb93ffe4269861" />
+    <link rel="stylesheet" href="style.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="affinity.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="current-race.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="skill-plan.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="advanced-tools.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="usability.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="design-system.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="lazy-lineage.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="compatibility.css?v=88385cecf7a86577" />
   </head>
   <body>
     <section class="launch-shell" id="launchShell" aria-labelledby="launchTitle">
@@ -23,6 +23,13 @@
           <h1 id="launchTitle">選擇工具</h1>
         </div>
         <div class="launch-options" aria-label="選擇工具">
+          <a class="launch-card launch-card--cup launch-card--featured" id="launchCupPlanner" href="cup-planner.html" style="text-decoration: none">
+            <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H5a3 3 0 0 0 3 4m8-4h3a3 3 0 0 1-3 4M12 13v4m-4 3h8"/></svg></span>
+            <span class="launch-card__eyebrow launch-card__cup" id="launchCupCurrent" hidden></span>
+            <strong>杯賽缺口規劃</strong>
+            <span class="launch-card__description">對照 meta 採用率，列出缺的技能、PT 與種馬來源。</span>
+            <span class="launch-card__action" aria-hidden="true">→</span>
+          </a>
           <button type="button" class="launch-card launch-card--lineage" id="launchLineage" data-tool="planner" data-planner-entry="manual-lineage">
             <span class="launch-card__symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M5 17v-4h14v4"/><rect x="8.5" y="2" width="7" height="6" rx="2"/><rect x="2" y="17" width="6" height="5" rx="1.5"/><rect x="16" y="17" width="6" height="5" rx="1.5"/></svg></span>
             <strong>族譜與賽程</strong>
@@ -125,6 +132,7 @@
             <div class="race-list-heading">
               <div><h3>選擇目標</h3></div>
             </div>
+            <div class="race-grid race-grid--cups" id="cupPlannerLinks" aria-label="杯賽缺口規劃"></div>
             <div class="race-grid" id="raceGrid"></div>
             <details class="race-library secondary-disclosure">
               <summary>
@@ -1063,6 +1071,6 @@
       </button>
     </template>
     <!-- Lazy planner order: data/factor-execution-profile.js -> data/goal-race-schedules.js -> factor-execution-core.js -> g1-schedule-core.js -> manual-lineage-red-projection-core.js -> app.js. -->
-    <script src="app-bootstrap.js?v=99eb93ffe4269861" defer></script>
+    <script src="app-bootstrap.js?v=88385cecf7a86577" defer></script>
   </body>
 </html>

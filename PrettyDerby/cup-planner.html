@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>杯賽缺口規劃｜賽馬娘</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="design-system.css?v=88385cecf7a86577" />
+    <link rel="stylesheet" href="cup-planner.css?v=88385cecf7a86577" />
+  </head>
+  <body class="cup-page">
+    <header class="cp-header">
+      <div class="cp-header__top">
+        <a class="cp-back" href="index.html">← 所有工具</a>
+        <h1>杯賽缺口規劃</h1>
+      </div>
+      <p class="cp-fresh" id="freshness">資料載入中…</p>
+      <div class="cp-plandate" id="planDate"></div>
+      <nav class="cp-nav" aria-label="步驟">
+        <a href="#step-target">① 目標</a>
+        <a href="#step-route">懶人路線</a>
+        <a href="#step-deck">② 戰馬配卡</a>
+        <a href="#step-gap">③ 技能缺口</a>
+        <a href="#step-pt">④ 技能取捨</a>
+        <a href="#step-stallion">⑤ 種馬反推</a>
+      </nav>
+    </header>
+
+    <main class="cp-main" id="app">
+      <section class="cp-section" id="step-target" aria-labelledby="h-target"></section>
+      <section class="cp-section cp-route" id="step-route" aria-labelledby="h-route"></section>
+      <section class="cp-section" id="step-deck" aria-labelledby="h-deck"></section>
+      <section class="cp-section" id="step-gap" aria-labelledby="h-gap"></section>
+      <section class="cp-section" id="step-pt" aria-labelledby="h-pt"></section>
+      <section class="cp-section" id="step-stallion" aria-labelledby="h-stallion"></section>
+    </main>
+
+    <dialog class="cp-dialog" id="cardPicker" aria-labelledby="pickerTitle">
+      <div class="cp-dialog__inner">
+        <header class="cp-dialog__head">
+          <h2 id="pickerTitle">選擇支援卡</h2>
+          <button type="button" class="ghost" data-action="picker-close">關閉</button>
+        </header>
+        <div class="cp-dialog__controls">
+          <input type="search" id="pickerSearch" placeholder="搜尋卡名或角色" aria-label="搜尋卡名或角色" autocomplete="off" />
+          <select id="pickerType" aria-label="類型"></select>
+          <label class="cp-check"><input type="checkbox" id="pickerOwnedOnly" /> 只看持有</label>
+          <label class="cp-check"><input type="checkbox" id="pickerMetaOnly" /> 只看此型 meta 卡</label>
+        </div>
+        <p class="cp-muted cp-dialog__note" id="pickerNote"></p>
+        <div class="cp-dialog__list" id="pickerList"></div>
+      </div>
+    </dialog>
+
+    <script src="data/gametora-data.js?v=88385cecf7a86577"></script>
+    <script src="data/cup-catalog.js?v=88385cecf7a86577" onerror="window.CUP_CATALOG_MISSING = true"></script>
+    <script src="data/cup-meta.js?v=88385cecf7a86577"></script>
+    <script src="data/user-inventory.js?v=88385cecf7a86577"></script>
+    <script src="data/owned-breeder-registry.js?v=88385cecf7a86577"></script>
+    <script src="data/scenario-skill-sources.js?v=88385cecf7a86577" onerror="window.SCENARIO_SKILL_SOURCES_MISSING = true"></script>
+    <script src="data/support-event-routes.js?v=88385cecf7a86577" onerror="window.SUPPORT_EVENT_ROUTES_MISSING = true"></script>
+    <script src="data/support-event-routes-tw-extra.js?v=88385cecf7a86577" onerror="window.SUPPORT_EVENT_ROUTES_TW_EXTRA_MISSING = true"></script>
+    <script src="data/factor-run-strategy.js?v=88385cecf7a86577" onerror="window.FACTOR_RUN_STRATEGY_MISSING = true"></script>
+    <script src="cup-gap-core.js?v=88385cecf7a86577"></script>
+    <script src="cup-pick-core.js?v=88385cecf7a86577"></script>
+    <script src="cup-planner.js?v=88385cecf7a86577"></script>
+  </body>
+</html>
